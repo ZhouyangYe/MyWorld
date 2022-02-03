@@ -1,0 +1,12 @@
+[submodule "libs/bgfx.cmake"]
+	path = libs/bgfx.cmake
+	url = git@github.com:ZhouyangYe/bgfx.cmake.git
+[submodule "libs/glfw"]
+	path = libs/glfw
+	url = git@github.com:ZhouyangYe/glfw.git
+[submodule "libs/glm"]
+	path = libs/glm
+	url = git@github.com:ZhouyangYe/glm.git
+[submodule "libs/tomlplusplus"]
+	path = libs/tomlplusplus
+	url = git@github.com:ZhouyangYe/tomlplusplus.git

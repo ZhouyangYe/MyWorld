@@ -8,16 +8,16 @@ add_executable(${PROJECT_NAME}
 )
 
 # add glfw
-add_subdirectory(vendors/glfw)
+add_subdirectory(libs/glfw)
 
 # add glm
-add_subdirectory(vendors/glm)
+add_subdirectory(libs/glm)
 
 # add TOML
-add_subdirectory(vendors/tomlplusplus)
+add_subdirectory(libs/tomlplusplus)
 
 # add bgfx
-add_subdirectory(vendors/bgfx.cmake)
+add_subdirectory(libs/bgfx.cmake)
 
 # add include directories
 target_include_directories(${PROJECT_NAME}
@@ -29,6 +29,8 @@ target_link_libraries(${PROJECT_NAME}
   glm
   tomlplusplus_tomlplusplus
   bgfx
+  bx
+  bimg
 )
 
 # set c++ version

@@ -56,7 +56,7 @@ bgfx::ShaderHandle loadShader(const char *FILENAME)
         case bgfx::RendererType::Noop:
         case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
         case bgfx::RendererType::Direct3D11:
-        case bgfx::RendererType::Direct3D12:    shaderPath = "c:\\Bright\\dev\\MyWorld\\vendors\\bgfx.cmake\\bgfx\\examples\\runtime\\shaders\\dx11\\";  break;
+        case bgfx::RendererType::Direct3D12:    shaderPath = "c:\\Bright\\dev\\MyWorld\\libs\\bgfx.cmake\\bgfx\\examples\\runtime\\shaders\\dx11\\";  break;
         case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
         case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
         case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;

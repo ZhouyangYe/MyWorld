@@ -10,3 +10,6 @@
 [submodule "libs/tomlplusplus"]
 	path = libs/tomlplusplus
 	url = git@github.com:ZhouyangYe/tomlplusplus.git
+[submodule "libs/entt"]
+	path = libs/entt
+	url = git@github.com:ZhouyangYe/entt.git

@@ -5,6 +5,21 @@ project(MyWorld)
 
 add_executable(${PROJECT_NAME}
   src/main.cpp
+  src/Window/Window.h
+  src/Window/Window.cpp
+  src/Core/App.h
+  src/Core/App.cpp
+  src/Core/Util.h
+  src/Core/Util.cpp
+  src/Events/Event.h
+  src/Events/KeyCode.h
+  src/Events/KeyEvent.h
+  src/Events/MouseCode.h
+  src/Events/MouseEvent.h
+  src/Renderer/Renderer.h
+  src/Renderer/Renderer.cpp
+  src/Renderer/Camera.h
+  src/Renderer/Camera.cpp
 )
 
 # add glfw

@@ -112,8 +112,16 @@ namespace MyWorld
     void Renderer::Terminate()
     {
         bgfx::destroy(program);
-        /*bgfx::destroy(ibh);
-        bgfx::destroy(vbh);*/
         bgfx::shutdown();
+    }
+
+    void Renderer::Begin()
+    {
+
+    }
+
+    void Renderer::End()
+    {
+        bgfx::frame();
     }
 }

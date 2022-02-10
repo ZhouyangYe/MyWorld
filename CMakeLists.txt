@@ -5,8 +5,6 @@ project(MyWorld)
 
 add_executable(${PROJECT_NAME}
   src/main.cpp
-  src/Window/Window.h
-  src/Window/Window.cpp
   src/Core/App.h
   src/Core/App.cpp
   src/Core/Util.h
@@ -20,6 +18,10 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Renderer.cpp
   src/Renderer/Camera.h
   src/Renderer/Camera.cpp
+  src/Window/Window.h
+  src/Window/Window.cpp
+  src/Renderer/Block.h
+  src/Renderer/Block.cpp
 )
 
 # add glfw
@@ -34,6 +36,9 @@ add_subdirectory(libs/tomlplusplus)
 # add bgfx
 add_subdirectory(libs/bgfx.cmake)
 
+# add bgfx
+add_subdirectory(libs/entt)
+
 # add include directories
 target_include_directories(${PROJECT_NAME}
   PUBLIC src
@@ -46,6 +51,7 @@ target_link_libraries(${PROJECT_NAME}
   bgfx
   bx
   bimg
+  EnTT
 )
 
 # set c++ version

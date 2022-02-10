@@ -1,6 +1,4 @@
 #pragma once
-#include <stdio.h>
-#include <string.h>
 #include <iostream>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
@@ -28,6 +26,8 @@ namespace MyWorld
 		};
 		static void Init(RenderParam param);
 		static void Terminate();
+		static void Begin();
+		static void End();
 		static bgfx::ProgramHandle& getProgramHandle();
 		static bgfx::VertexLayout& getVertexLayout();
 	};

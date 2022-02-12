@@ -11,10 +11,10 @@ namespace MyWorld {
 			MOUSE_WHEEL = 3,
 			WINDOW = 4,
 		};
-		const int m_type;
+		const int type;
 
 		Event(int type)
-			: m_type(type)
+			: type(type)
 		{}
 	};
 }

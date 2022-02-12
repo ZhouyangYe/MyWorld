@@ -3,7 +3,9 @@
 namespace MyWorld
 {
     bgfx::ProgramHandle Renderer::program = {};
-    bgfx::VertexLayout Renderer::vLayout;
+    bgfx::VertexLayout Renderer::colorLayout;
+    bgfx::VertexLayout Renderer::textureLayout;
+    bgfx::VertexLayout Renderer::colorTextureLayout;
 
     bgfx::ShaderHandle Renderer::loadShader(const char* fileName)
     {
@@ -11,18 +13,18 @@ namespace MyWorld
         //dx11/  dx9/   essl/  glsl/  metal/ pssl/  spirv/
         bgfx::ShaderHandle invalid = BGFX_INVALID_HANDLE;
         switch (bgfx::getRendererType()) {
-        case bgfx::RendererType::Noop:
-        case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
-        case bgfx::RendererType::Direct3D11:
-        case bgfx::RendererType::Direct3D12:    shaderPath = "c:\\Bright\\dev\\MyWorld\\libs\\bgfx.cmake\\bgfx\\examples\\runtime\\shaders\\dx11\\";  break;
-        case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
-        case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
-        case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;
-        case bgfx::RendererType::OpenGLES:      shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/essl/";  break;
-        case bgfx::RendererType::Vulkan:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/spirv/"; break;
-        case bgfx::RendererType::Nvn:
-        case bgfx::RendererType::WebGPU:
-        case bgfx::RendererType::Count:         return invalid; // count included to keep compiler warnings happy
+            case bgfx::RendererType::Noop:
+            case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
+            case bgfx::RendererType::Direct3D11:
+            case bgfx::RendererType::Direct3D12:    shaderPath = "c:\\Bright\\dev\\MyWorld\\libs\\bgfx.cmake\\bgfx\\examples\\runtime\\shaders\\dx11\\";  break;
+            case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
+            case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
+            case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;
+            case bgfx::RendererType::OpenGLES:      shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/essl/";  break;
+            case bgfx::RendererType::Vulkan:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/spirv/"; break;
+            case bgfx::RendererType::Nvn:
+            case bgfx::RendererType::WebGPU:
+            case bgfx::RendererType::Count:         return invalid; // count included to keep compiler warnings happy
         }
 
         size_t shaderLen = strlen(shaderPath);
@@ -52,9 +54,19 @@ namespace MyWorld
         return program;
     }
 
-    bgfx::VertexLayout& Renderer::getVertexLayout()
+    bgfx::VertexLayout& Renderer::getColorLayout()
     {
-        return vLayout;
+        return colorLayout;
+    }
+
+    bgfx::VertexLayout& Renderer::getTextureLayout()
+    {
+        return textureLayout;
+    }
+
+    bgfx::VertexLayout& Renderer::getColorTextureLayout()
+    {
+        return colorTextureLayout;
     }
 
     void Renderer::Init(RenderParam param)
@@ -79,7 +91,7 @@ namespace MyWorld
 
         bgfxInit.platformData = pd;
         bgfx::init(bgfxInit);
-        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
 
         bgfx::ShaderHandle vsh = loadShader("vs_cubes.bin");
@@ -103,9 +115,18 @@ namespace MyWorld
         program = bgfx::createProgram(vsh, fsh, true);
         printf("program handle %i created\n", program.idx);
 
-        vLayout.begin()
+        colorLayout.begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        textureLayout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+            .end();
+        colorTextureLayout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
     }
 

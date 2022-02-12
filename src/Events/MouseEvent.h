@@ -12,10 +12,10 @@ namespace MyWorld {
 			MOUSE_UP = 1,
 			MOUSE_HOLD = 2,
 		};
-		const MouseCode m_mouseCode;
-		const ACTION m_action;
+		const MouseCode mouseCode;
+		const ACTION action;
 		MousePressEvent(TYPE type, MouseCode mouseCode, ACTION action)
-			: Event(type), m_mouseCode(mouseCode), m_action(action)
+			: Event(type), mouseCode(mouseCode), action(action)
 		{
 
 		};
@@ -24,9 +24,9 @@ namespace MyWorld {
 	class MouseWheelEvent : public Event
 	{
 	public:
-		const float m_xOffset, m_yOffset;
+		const float xOffset, yOffset;
 		MouseWheelEvent(TYPE type, float xOffset, float yOffset)
-			: Event(type), m_xOffset(xOffset), m_yOffset(yOffset)
+			: Event(type), xOffset(xOffset), yOffset(yOffset)
 		{
 
 		};
@@ -35,10 +35,10 @@ namespace MyWorld {
 	class MouseMoveEvent : public Event
 	{
 	public:
-		const float m_xPos;
-		const float m_yPos;
+		const float xPos;
+		const float yPos;
 		MouseMoveEvent(TYPE type, const float xPos, const float yPos)
-			: Event(type), m_xPos(xPos), m_yPos(yPos)
+			: Event(type), xPos(xPos), yPos(yPos)
 		{
 
 		};

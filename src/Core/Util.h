@@ -3,6 +3,10 @@
 #include <string>
 #include <functional>
 #include <stdio.h>
+#include <math.h>
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define BT_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 

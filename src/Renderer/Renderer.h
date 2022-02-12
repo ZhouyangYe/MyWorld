@@ -17,7 +17,9 @@ namespace MyWorld
 		};
 		static bgfx::ShaderHandle loadShader(const char* fileName);
 		static bgfx::ProgramHandle program;
-		static bgfx::VertexLayout vLayout;
+		static bgfx::VertexLayout colorLayout;
+		static bgfx::VertexLayout textureLayout;
+		static bgfx::VertexLayout colorTextureLayout;
 	public:
 		struct RenderParam
 		{
@@ -29,6 +31,8 @@ namespace MyWorld
 		static void Begin();
 		static void End();
 		static bgfx::ProgramHandle& getProgramHandle();
-		static bgfx::VertexLayout& getVertexLayout();
+		static bgfx::VertexLayout& getColorLayout();
+		static bgfx::VertexLayout& getTextureLayout();
+		static bgfx::VertexLayout& getColorTextureLayout();
 	};
 }

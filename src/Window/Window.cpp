@@ -4,6 +4,9 @@ namespace MyWorld {
 
     GLFWwindow* Window::m_window = nullptr;
     WindowData Window::m_window_data = {};
+    bool Window::shouldCloseWindow = false;
+    WindowSize Window::size;
+    WindowSize Window::center;
 
     GLFWwindow* Window::getGlfwWindowObj()
     {
@@ -17,7 +20,12 @@ namespace MyWorld {
 
     bool Window::shouldWindowTerminate()
     {
-        return glfwWindowShouldClose(m_window);
+        return shouldCloseWindow || glfwWindowShouldClose(m_window);
+    }
+
+    void Window::setShouldWindowClose(bool shouldClose)
+    {
+        shouldCloseWindow = shouldClose;
     }
 
     void Window::glfw_error_callback(int error, const char* desc)
@@ -32,8 +40,30 @@ namespace MyWorld {
         m_window_data.eventHandler = fn;
     }
 
+    const WindowSize Window::getWindowSize()
+    {
+        return size;
+    }
+
+    const WindowSize Window::getCenter()
+    {
+        return center;
+    }
+
+    void Window::setWindowSize(WindowSize s)
+    {
+        size = s;
+        center = WindowSize{ s.width / 2, s.height / 2 };
+    }
+
+    double Window::getCurrentTime()
+    {
+        return glfwGetTime();
+    }
+
     void Window::Init(WindowParams &params)
     {
+        setWindowSize(params.size);
         // Setup window
         glfwSetErrorCallback(glfw_error_callback);
         if (!glfwInit())
@@ -151,13 +181,6 @@ namespace MyWorld {
     void Window::End()
     {
         // glfwSwapBuffers(m_window);
-    }
-
-    const WindowSize Window::getWindowSize()
-    {
-        int display_w, display_h;
-        glfwGetFramebufferSize(m_window, &display_w, &display_h);
-        return WindowSize{ display_w, display_h };
     }
 
 }

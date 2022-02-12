@@ -35,7 +35,7 @@ namespace MyWorld
 
     void Block::Init()
     {
-        vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, sizeof(cubeVertices)), Renderer::getVertexLayout());
+        vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, sizeof(cubeVertices)), Renderer::getColorLayout());
         ibh = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, sizeof(cubeTriList)));
     }
 
@@ -48,20 +48,17 @@ namespace MyWorld
     Block::Block()
     {}
 
-    Block::Block(BlockParams params) : coords(params.coords), rotate(params.rotate)
+    Block::Block(glm::vec3 coords) : coords(coords)
     {
     }
 
 	void Block::Draw()
 	{
-        float mtx[16];
-        bx::mtxRotateXY(mtx, rotate.x, rotate.y);
-        mtx[12] = coords.x;
-        mtx[13] = coords.y;
-        mtx[14] = coords.z;
+        glm::mat4 mtx(1.0f);
+        mtx = glm::translate(mtx, coords);
 
         // Set model matrix for rendering.
-        bgfx::setTransform(mtx);
+        bgfx::setTransform(&mtx);
 
         // Set vertex and index buffer.
         bgfx::setVertexBuffer(0, vbh);

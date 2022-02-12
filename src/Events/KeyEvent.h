@@ -12,10 +12,10 @@ namespace MyWorld {
 			KEY_UP = 1,
 			KEY_HOLD = 2,
 		};
-		const KeyCode m_keyCode;
-		const int m_action;
+		const KeyCode keyCode;
+		const int action;
 		KeyPressEvent(int type, KeyCode keyCode, int action)
-			: Event(type), m_keyCode(keyCode), m_action(action)
+			: Event(type), keyCode(keyCode), action(action)
 		{
 			
 		};

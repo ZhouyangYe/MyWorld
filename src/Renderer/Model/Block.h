@@ -1,15 +1,11 @@
 #pragma once
-#include "Renderer.h"
+#include "../Renderer.h"
 
 namespace MyWorld
 {
 	class Block
 	{
 	private:
-		struct Transform
-		{
-			float x, y, z;
-		};
 		struct PosColorVertex
 		{
 			float x;
@@ -19,18 +15,12 @@ namespace MyWorld
 		};
 		static PosColorVertex cubeVertices[];
 		static const uint16_t cubeTriList[];
-		Transform coords;
-		Transform rotate;
+		glm::vec3 coords;
 		static bgfx::VertexBufferHandle vbh;
 		static bgfx::IndexBufferHandle ibh;
 	public:
-		struct BlockParams
-		{
-			Transform coords;
-			Transform rotate;
-		};
 		Block();
-		Block(BlockParams params);
+		Block(glm::vec3 coords);
 		void Draw();
 		static void Init();
 		static void Terminate();

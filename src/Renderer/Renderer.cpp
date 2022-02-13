@@ -2,14 +2,55 @@
 
 namespace MyWorld
 {
+    static bx::DefaultAllocator s_allocator;
+    static bx::AllocatorI* g_allocator = &s_allocator;
+    typedef bx::StringT<&g_allocator> String;
+
+    static String s_currentDir;
+
+    class FileReader : public bx::FileReader
+    {
+        typedef bx::FileReader super;
+
+    public:
+        bx::DefaultAllocator g_allocator;
+        virtual bool open(const bx::FilePath& _filePath, bx::Error* _err) override
+        {
+            String filePath(s_currentDir);
+            filePath.append(_filePath);
+            return super::open(filePath.getPtr(), _err);
+        }
+    };
+
     bgfx::ProgramHandle Renderer::program = {};
     bgfx::VertexLayout Renderer::colorLayout;
     bgfx::VertexLayout Renderer::textureLayout;
     bgfx::VertexLayout Renderer::colorTextureLayout;
 
-    bgfx::ShaderHandle Renderer::loadShader(const char* fileName)
+    const bgfx::Memory* Renderer::loadMem(bx::FileReaderI* _reader, const char* _filePath)
     {
+        if (bx::open(_reader, _filePath))
+        {
+            uint32_t size = (uint32_t)bx::getSize(_reader);
+            const bgfx::Memory* mem = bgfx::alloc(size + 1);
+            bx::read(_reader, mem->data, size, bx::ErrorAssert{});
+            bx::close(_reader);
+            mem->data[mem->size - 1] = '\0';
+            return mem;
+        }
+
+        DBG("Failed to load %s.", _filePath);
+        return NULL;
+    }
+
+    bgfx::ShaderHandle Renderer::loadShader(const char* _name)
+    {
+        bx::FileReaderI* _reader = BX_NEW(g_allocator, FileReader);
+
+        char filePath[512];
+
         const char* shaderPath = "???";
+
         //dx11/  dx9/   essl/  glsl/  metal/ pssl/  spirv/
         bgfx::ShaderHandle invalid = BGFX_INVALID_HANDLE;
         switch (bgfx::getRendererType()) {
@@ -27,26 +68,14 @@ namespace MyWorld
             case bgfx::RendererType::Count:         return invalid; // count included to keep compiler warnings happy
         }
 
-        size_t shaderLen = strlen(shaderPath);
-        size_t fileLen = strlen(fileName);
-        char* filePath = (char*)malloc(shaderLen + fileLen + 1);
-        memcpy(filePath, shaderPath, shaderLen);
-        memcpy(&filePath[shaderLen], fileName, fileLen);
-        filePath[shaderLen + fileLen] = 0;    // properly null terminate
-        FILE* file = fopen(filePath, "rb");
+        bx::strCopy(filePath, BX_COUNTOF(filePath), shaderPath);
+        bx::strCat(filePath, BX_COUNTOF(filePath), _name);
+        bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
 
-        if (!file) {
-            return invalid;
-        }
+        bgfx::ShaderHandle handle = bgfx::createShader(loadMem(_reader, filePath));
+        bgfx::setName(handle, _name);
 
-        fseek(file, 0, SEEK_END);
-        long fileSize = ftell(file);
-        fseek(file, 0, SEEK_SET);
-        const bgfx::Memory* mem = bgfx::alloc(fileSize + 1);
-        fread(mem->data, 1, fileSize, file);
-        mem->data[mem->size - 1] = '\0';
-        fclose(file);
-        return bgfx::createShader(mem);
+        return handle;
     }
 
     bgfx::ProgramHandle& Renderer::getProgramHandle()
@@ -94,7 +123,7 @@ namespace MyWorld
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
 
-        bgfx::ShaderHandle vsh = loadShader("vs_cubes.bin");
+        bgfx::ShaderHandle vsh = loadShader("vs_cubes");
         printf("shader handle %i created for vs_cubes.bin\n", vsh.idx);
         if (vsh.idx == USHRT_MAX)
         {
@@ -103,7 +132,7 @@ namespace MyWorld
             return;
         }
 
-        bgfx::ShaderHandle fsh = loadShader("fs_cubes.bin");
+        bgfx::ShaderHandle fsh = loadShader("fs_cubes");
         printf("shader handle %i created for fs_cubes.bin \n", fsh.idx);
         if (fsh.idx == USHRT_MAX)
         {

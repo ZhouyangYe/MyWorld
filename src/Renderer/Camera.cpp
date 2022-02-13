@@ -1,8 +1,8 @@
 #include "Camera.h"
 
-#define WALK_SPEED 16.0f
-#define SPRINT_SPEED 25.0f
-#define CRAWL_SPEED 10.0f
+#define WALK_SPEED 2.0f
+#define SPRINT_SPEED 3.0f
+#define CRAWL_SPEED 1.0f
 
 namespace MyWorld
 {
@@ -25,7 +25,7 @@ namespace MyWorld
 	void Camera::Init(CameraParam param)
 	{
 		view = glm::lookAt(eye, eye + forward, up);
-		proj = glm::perspective(glm::pi<float>() / 3, float(param.windowSize.width) / float(param.windowSize.height), 1.0f, 100.0f);
+		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.08f, 128.0f);
 	}
 
 	void Camera::Terminate()

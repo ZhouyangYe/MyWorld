@@ -28,7 +28,9 @@ add_executable(${PROJECT_NAME}
   src/Core/Time.cpp
   src/Core/Cursor.h
   src/Core/Cursor.cpp
-)
+  src/Renderer/Model/Grass.h
+  src/Renderer/Model/Grass.cpp
+ "src/Renderer/Model/Texture.h")
 
 # add glfw
 add_subdirectory(libs/glfw)

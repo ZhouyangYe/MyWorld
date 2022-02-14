@@ -22,12 +22,7 @@ namespace MyWorld
         }
     };
 
-    bgfx::ProgramHandle Renderer::program = {};
-    bgfx::VertexLayout Renderer::colorLayout;
-    bgfx::VertexLayout Renderer::textureLayout;
-    bgfx::VertexLayout Renderer::colorTextureLayout;
-
-    const bgfx::Memory* Renderer::loadMem(bx::FileReaderI* _reader, const char* _filePath)
+    static const bgfx::Memory* loadMem(bx::FileReaderI* _reader, const char* _filePath)
     {
         if (bx::open(_reader, _filePath))
         {
@@ -43,10 +38,53 @@ namespace MyWorld
         return NULL;
     }
 
+    static void imageReleaseCb(void* _ptr, void* _userData)
+    {
+        BX_UNUSED(_ptr);
+        bimg::ImageContainer* imageContainer = (bimg::ImageContainer*)_userData;
+        bimg::imageFree(imageContainer);
+    }
+
+    void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
+    {
+        if (bx::open(_reader, _filePath))
+        {
+            uint32_t size = (uint32_t)bx::getSize(_reader);
+            void* data = BX_ALLOC(_allocator, size);
+            bx::read(_reader, data, size, bx::ErrorAssert{});
+            bx::close(_reader);
+            if (NULL != _size)
+            {
+                *_size = size;
+            }
+            return data;
+        }
+        else
+        {
+            DBG("Failed to open: %s.", _filePath);
+        }
+
+        if (NULL != _size)
+        {
+            *_size = 0;
+        }
+
+        return NULL;
+    }
+
+    void unload(void* _ptr)
+    {
+        BX_FREE(g_allocator, _ptr);
+    }
+
+    bgfx::ProgramHandle Renderer::program = {};
+    bgfx::VertexLayout Renderer::colorLayout;
+    bgfx::VertexLayout Renderer::textureLayout;
+    bgfx::VertexLayout Renderer::colorTextureLayout;
+    bx::FileReaderI* Renderer::_reader;
+
     bgfx::ShaderHandle Renderer::loadShader(const char* _name)
     {
-        bx::FileReaderI* _reader = BX_NEW(g_allocator, FileReader);
-
         char filePath[512];
 
         const char* shaderPath = "???";
@@ -57,7 +95,7 @@ namespace MyWorld
             case bgfx::RendererType::Noop:
             case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
             case bgfx::RendererType::Direct3D11:
-            case bgfx::RendererType::Direct3D12:    shaderPath = "c:\\Bright\\dev\\MyWorld\\libs\\bgfx.cmake\\bgfx\\examples\\runtime\\shaders\\dx11\\";  break;
+            case bgfx::RendererType::Direct3D12:    shaderPath = "C:\\BrighT\\Dev\\MyWorld\\resource\\shaders\\bin\\";  break;
             case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
             case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
             case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;
@@ -76,6 +114,97 @@ namespace MyWorld
         bgfx::setName(handle, _name);
 
         return handle;
+    }
+
+    bgfx::TextureHandle Renderer::loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
+    {
+        BX_UNUSED(_skip);
+        bgfx::TextureHandle handle = BGFX_INVALID_HANDLE;
+
+        uint32_t size;
+        void* data = load(_reader, g_allocator, _filePath, &size);
+        if (NULL != data)
+        {
+            bimg::ImageContainer* imageContainer = bimg::imageParse(g_allocator, data, size);
+
+            if (NULL != imageContainer)
+            {
+                if (NULL != _orientation)
+                {
+                    *_orientation = imageContainer->m_orientation;
+                }
+
+                const bgfx::Memory* mem = bgfx::makeRef(
+                    imageContainer->m_data
+                    , imageContainer->m_size
+                    , imageReleaseCb
+                    , imageContainer
+                );
+                unload(data);
+
+                if (imageContainer->m_cubeMap)
+                {
+                    handle = bgfx::createTextureCube(
+                        uint16_t(imageContainer->m_width)
+                        , 1 < imageContainer->m_numMips
+                        , imageContainer->m_numLayers
+                        , bgfx::TextureFormat::Enum(imageContainer->m_format)
+                        , _flags
+                        , mem
+                    );
+                }
+                else if (1 < imageContainer->m_depth)
+                {
+                    handle = bgfx::createTexture3D(
+                        uint16_t(imageContainer->m_width)
+                        , uint16_t(imageContainer->m_height)
+                        , uint16_t(imageContainer->m_depth)
+                        , 1 < imageContainer->m_numMips
+                        , bgfx::TextureFormat::Enum(imageContainer->m_format)
+                        , _flags
+                        , mem
+                    );
+                }
+                else if (bgfx::isTextureValid(0, false, imageContainer->m_numLayers, bgfx::TextureFormat::Enum(imageContainer->m_format), _flags))
+                {
+                    handle = bgfx::createTexture2D(
+                        uint16_t(imageContainer->m_width)
+                        , uint16_t(imageContainer->m_height)
+                        , 1 < imageContainer->m_numMips
+                        , imageContainer->m_numLayers
+                        , bgfx::TextureFormat::Enum(imageContainer->m_format)
+                        , _flags
+                        , mem
+                    );
+                }
+
+                if (bgfx::isValid(handle))
+                {
+                    bgfx::setName(handle, _filePath);
+                }
+
+                if (NULL != _info)
+                {
+                    bgfx::calcTextureSize(
+                        *_info
+                        , uint16_t(imageContainer->m_width)
+                        , uint16_t(imageContainer->m_height)
+                        , uint16_t(imageContainer->m_depth)
+                        , imageContainer->m_cubeMap
+                        , 1 < imageContainer->m_numMips
+                        , imageContainer->m_numLayers
+                        , bgfx::TextureFormat::Enum(imageContainer->m_format)
+                    );
+                }
+            }
+        }
+
+        return handle;
+    }
+
+    bgfx::TextureHandle Renderer::loadTexture(const char* _name, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
+    {
+        return loadTexture(_reader, _name, _flags, _skip, _info, _orientation);
     }
 
     bgfx::ProgramHandle& Renderer::getProgramHandle()
@@ -100,6 +229,7 @@ namespace MyWorld
 
     void Renderer::Init(RenderParam param)
     {
+        _reader = BX_NEW(g_allocator, FileReader);
         bgfx::PlatformData pd;
         pd.ndt = NULL;
         pd.nwh = param.window;
@@ -123,8 +253,8 @@ namespace MyWorld
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
 
-        bgfx::ShaderHandle vsh = loadShader("vs_cubes");
-        printf("shader handle %i created for vs_cubes.bin\n", vsh.idx);
+        bgfx::ShaderHandle vsh = loadShader("vs_texture");
+        printf("shader handle %i created for vs_texture.bin\n", vsh.idx);
         if (vsh.idx == USHRT_MAX)
         {
             printf("*** shader model not supported or file not found ****\n");
@@ -132,8 +262,8 @@ namespace MyWorld
             return;
         }
 
-        bgfx::ShaderHandle fsh = loadShader("fs_cubes");
-        printf("shader handle %i created for fs_cubes.bin \n", fsh.idx);
+        bgfx::ShaderHandle fsh = loadShader("fs_texture");
+        printf("shader handle %i created for fs_texture.bin \n", fsh.idx);
         if (fsh.idx == USHRT_MAX)
         {
             printf("*** shader model not supported or file not found ****\n");
@@ -161,6 +291,7 @@ namespace MyWorld
 
     void Renderer::Terminate()
     {
+        unload(_reader);
         bgfx::destroy(program);
         bgfx::shutdown();
     }

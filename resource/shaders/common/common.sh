@@ -3,5 +3,5 @@
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
-#include <bgfx_shader.sh>
+#include <../../libs/bgfx.cmake/bgfx/src/bgfx_shader.sh>
 #include "shaderlib.sh"

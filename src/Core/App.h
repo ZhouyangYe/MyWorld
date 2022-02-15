@@ -5,7 +5,9 @@
 
 #include "Renderer/Renderer.h"
 #include "Renderer/Camera.h"
-#include "Renderer/Model/Block.h"
+#include "Renderer/Model/Blocks/Block.h"
+#include "Renderer/Model/Blocks/Grass.h"
+#include "Renderer/Model/Blocks/Dirt.h"
 #include "Window/Window.h"
 #include "EventsHandler.h"
 #include "Time.h";

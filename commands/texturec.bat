@@ -1,1 +1,0 @@
-out\libs\bgfx.cmake\Debug\texturec -f ./resource/images/cute.jpg -o ./resource/images/bin/cute.dds

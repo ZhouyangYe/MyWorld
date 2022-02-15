@@ -9,11 +9,15 @@ namespace MyWorld
 	{
 		WindowParams windowParams;
 		Window::Init(windowParams);
-		WindowSize windowSize = MyWorld::Window::getWindowSize();
 
+		WindowSize windowSize = MyWorld::Window::getWindowSize();
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
 		Camera::Init({ { windowSize.width, windowSize.height } });
-		Block::Init();
+
+		// register blocks
+		Block::Register();
+		Grass::Register();
+		Dirt::Register();
 
 		Window::setEventCallback([](Event& event)
 			{
@@ -33,7 +37,11 @@ namespace MyWorld
 
 	void App::Terminate()
 	{
-		Block::Terminate();
+		// destroy blocks
+		Block::Destroy();
+		Grass::Destroy();
+		Dirt::Destroy();
+
 		Renderer::Terminate();
 		Camera::Terminate();
 
@@ -44,21 +52,21 @@ namespace MyWorld
 	{
 		unsigned int counter = 0;
 
-		MyWorld::Block blocks_1[25 * 25];
+		MyWorld::Grass blocks_1[25 * 25];
 		for (uint32_t yy = 0; yy < 25; ++yy)
 		{
 			for (uint32_t xx = 0; xx < 25; ++xx)
 			{
-				blocks_1[yy * 25 + xx] = MyWorld::Block({-10.0f + float(xx) * 1.0f, -10.0f + float(yy) * 1.0f, 0.0f});
+				blocks_1[yy * 25 + xx] = MyWorld::Grass({-10.0f + float(xx) * 1.0f, -10.0f + float(yy) * 1.0f, 0.0f});
 			}
 		}
 
-		MyWorld::Block blocks_2[25 * 25];
+		MyWorld::Dirt blocks_2[25 * 25];
 		for (uint32_t yy = 0; yy < 25; ++yy)
 		{
 			for (uint32_t xx = 0; xx < 25; ++xx)
 			{
-				blocks_2[yy * 25 + xx] = MyWorld::Block({ -10.0f + float(xx) * 1.0f, -10.0f + float(yy) * 1.0f, -1.0f });
+				blocks_2[yy * 25 + xx] = MyWorld::Dirt({ -10.0f + float(xx) * 1.0f, -10.0f + float(yy) * 1.0f, -1.0f });
 			}
 		}
 

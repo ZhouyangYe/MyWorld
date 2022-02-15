@@ -54,25 +54,7 @@ namespace MyWorld
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
 
-        bgfx::ShaderHandle vsh = Tools::loadShader("vs_texture");
-        printf("shader handle %i created for vs_texture.bin\n", vsh.idx);
-        if (vsh.idx == USHRT_MAX)
-        {
-            printf("*** shader model not supported or file not found ****\n");
-            bgfx::shutdown();
-            return;
-        }
-
-        bgfx::ShaderHandle fsh = Tools::loadShader("fs_texture");
-        printf("shader handle %i created for fs_texture.bin \n", fsh.idx);
-        if (fsh.idx == USHRT_MAX)
-        {
-            printf("*** shader model not supported or file not found ****\n");
-            bgfx::shutdown();
-            return;
-        }
-
-        program = bgfx::createProgram(vsh, fsh, true);
+        program = Tools::createProgram("vs_texture", "fs_texture");
         printf("program handle %i created\n", program.idx);
 
         colorLayout.begin()

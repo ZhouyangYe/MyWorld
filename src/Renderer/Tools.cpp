@@ -203,6 +203,29 @@ namespace MyWorld
         return loadTexture(_reader, _name, _flags, _skip, _info, _orientation);
     }
 
+    bgfx::ProgramHandle Tools::createProgram(const char* vs_name, const char* fs_name)
+    {
+        bgfx::ShaderHandle vsh = Tools::loadShader(vs_name);
+        printf("shader handle %i created for vs_texture.bin\n", vsh.idx);
+        if (vsh.idx == USHRT_MAX)
+        {
+            printf("*** shader model not supported or file not found ****\n");
+            bgfx::shutdown();
+            return BGFX_INVALID_HANDLE;
+        }
+
+        bgfx::ShaderHandle fsh = Tools::loadShader(fs_name);
+        printf("shader handle %i created for fs_texture.bin \n", fsh.idx);
+        if (fsh.idx == USHRT_MAX)
+        {
+            printf("*** shader model not supported or file not found ****\n");
+            bgfx::shutdown();
+            return BGFX_INVALID_HANDLE;
+        }
+
+        return bgfx::createProgram(vsh, fsh, true);
+    }
+
     void Tools::Init()
     {
         _reader = BX_NEW(g_allocator, FileReader);

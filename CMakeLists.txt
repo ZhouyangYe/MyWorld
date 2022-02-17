@@ -9,6 +9,14 @@ add_executable(${PROJECT_NAME}
   src/Core/App.cpp
   src/Core/Util.h
   src/Core/Util.cpp
+  src/Core/EventsHandler.h
+  src/Core/EventsHandler.cpp
+  src/Core/Time.h
+  src/Core/Time.cpp
+  src/Core/Cursor.h
+  src/Core/Cursor.cpp
+  src/Core/Chunk.h
+  src/Core/Chunk.cpp
   src/Events/Event.h
   src/Events/KeyCode.h
   src/Events/KeyEvent.h
@@ -18,24 +26,18 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Renderer.cpp
   src/Renderer/Camera.h
   src/Renderer/Camera.cpp
-  src/Window/Window.h
-  src/Window/Window.cpp
   src/Renderer/Model/Blocks/Block.h
   src/Renderer/Model/Blocks/Block.cpp
   src/Renderer/Model/Blocks/Grass.h
   src/Renderer/Model/Blocks/Grass.cpp
   src/Renderer/Model/Blocks/Dirt.h
   src/Renderer/Model/Blocks/Dirt.cpp
-  src/Core/EventsHandler.h
-  src/Core/EventsHandler.cpp
-  src/Core/Time.h
-  src/Core/Time.cpp
-  src/Core/Cursor.h
-  src/Core/Cursor.cpp
   src/Renderer/Model/Texture.h
   src/Renderer/Model/Texture.cpp
   src/Renderer/Tools.h
   src/Renderer/Tools.cpp
+  src/Window/Window.h
+  src/Window/Window.cpp
 )
 
 # add glfw

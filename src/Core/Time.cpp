@@ -13,7 +13,6 @@ namespace MyWorld
 	void Time::updateTime()
 	{
 		double currentTime = Window::getCurrentTime();
-		// std::cout << currentTime << prevTime << std::endl;
 		deltaTime = currentTime - prevTime;
 		prevTime = currentTime;
 	}

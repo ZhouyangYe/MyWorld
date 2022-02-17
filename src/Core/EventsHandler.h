@@ -5,6 +5,7 @@
 #include "Renderer/Camera.h"
 #include "Window/Window.h"
 #include "Cursor.h"
+#include "Renderer/Model/Blocks/Block.h"
 
 namespace MyWorld
 {

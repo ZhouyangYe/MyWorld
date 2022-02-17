@@ -51,6 +51,9 @@ namespace MyWorld
 				Cursor::hide();
 			Cursor::hideCursor = !Cursor::hideCursor;
 			break;
+		case Key::T:
+			if (event.action == KeyPressEvent::KEY_PRESS) Block::switchRenderMode();
+			break;
 		case Key::Escape:
 			Window::setShouldWindowClose(true);
 			break;

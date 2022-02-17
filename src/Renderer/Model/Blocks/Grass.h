@@ -14,6 +14,6 @@ namespace MyWorld
 		Grass();
 		Grass(glm::vec3 coords);
 		~Grass();
-		void Draw() override;
+		void Draw(uint8_t& idx) override;
 	};
 }

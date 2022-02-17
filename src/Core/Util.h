@@ -4,6 +4,7 @@
 #include <functional>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>

@@ -28,8 +28,8 @@ namespace MyWorld
 	Dirt::~Dirt()
 	{}
 
-	void Dirt::Draw()
+	void Dirt::Draw(uint8_t& idx)
 	{
-		Block::Draw(vbh, Block::ibh_t1);
+		Block::Draw(vbh, Block::getIbh(idx));
 	}
 }

@@ -14,7 +14,7 @@ namespace MyWorld
 	void Dirt::Destroy()
 	{
 		bgfx::destroy(vbh);
-		delete cubeVertices;
+		delete[] cubeVertices;
 		cubeVertices = nullptr;
 	}
 
@@ -28,8 +28,8 @@ namespace MyWorld
 	Dirt::~Dirt()
 	{}
 
-	void Dirt::Draw(uint8_t& idx)
+	void Dirt::Draw(uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(idx));
+		Block::Draw(vbh, Block::getIbh(faces));
 	}
 }

@@ -14,6 +14,6 @@ namespace MyWorld
 		Dirt();
 		Dirt(glm::vec3 coords);
 		~Dirt();
-		void Draw(uint8_t &idx) override;
+		void Draw(uint8_t& faces) override;
 	};
 }

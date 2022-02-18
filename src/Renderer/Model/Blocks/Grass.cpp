@@ -14,7 +14,7 @@ namespace MyWorld
 	void Grass::Destroy()
 	{
 		bgfx::destroy(vbh);
-		delete cubeVertices;
+		delete[] cubeVertices;
 		cubeVertices = nullptr;
 	}
 
@@ -28,8 +28,8 @@ namespace MyWorld
 	Grass::~Grass()
 	{}
 
-	void Grass::Draw(uint8_t& idx)
+	void Grass::Draw(uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(idx));
+		Block::Draw(vbh, Block::getIbh(faces));
 	}
 }

@@ -36,20 +36,22 @@ namespace MyWorld
 			TOP    = 1 << 4,
 			BOTTOM = 1 << 5
 		};
-		static const enum TYPE : int
+		static const enum TYPE : uint8_t
 		{
-			AIR   = 0,
-			DIRT  = 1,
-			GRASS = 2
+			INVALID = 0,
+			AIR     = 1,
+			DIRT    = 2,
+			GRASS   = 3
 		};
+		const Block::TYPE type;
 		Block();
-		Block(glm::vec3 coords);
-		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh);
+		Block(Block::TYPE type, glm::vec3 &coords);
 		static bgfx::IndexBufferHandle& getIbh(uint8_t &idx);
 		static void switchRenderMode();
 		static void createIbh(uint8_t& idx);
 		static void Register();
 		static void Destroy();
-		virtual void Draw(uint8_t& idx) = 0;
+		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh);
+		virtual void Draw(uint8_t& faces) = 0;
 	};
 }

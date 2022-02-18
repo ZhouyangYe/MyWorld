@@ -132,10 +132,10 @@ namespace MyWorld
         texture = nullptr;
     }
 
-    Block::Block()
+    Block::Block() : type(TYPE::INVALID)
     {}
 
-    Block::Block(glm::vec3 coords) : coords(coords)
+    Block::Block(Block::TYPE type, glm::vec3 &coords) : coords(coords), type(type)
     {
     }
 

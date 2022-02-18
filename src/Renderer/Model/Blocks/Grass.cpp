@@ -21,7 +21,7 @@ namespace MyWorld
 	Grass::Grass()
 	{}
 
-	Grass::Grass(glm::vec3 coords) : Block(coords)
+	Grass::Grass(glm::vec3 coords) : Block(Block::GRASS, coords)
 	{
 	}
 

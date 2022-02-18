@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.20.2)
 project(MyWorld)
 
 add_executable(${PROJECT_NAME}
+  libs/PerlinNoise/PerlinNoise.hpp
+
   src/main.cpp
   src/Core/App.h
   src/Core/App.cpp
@@ -38,6 +40,8 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Tools.cpp
   src/Window/Window.h
   src/Window/Window.cpp
+  src/Renderer/Model/Blocks/Air.h
+  src/Renderer/Model/Blocks/Air.cpp
 )
 
 # add glfw
@@ -58,6 +62,7 @@ add_subdirectory(libs/entt)
 # add include directories
 target_include_directories(${PROJECT_NAME}
   PUBLIC src
+  PUBLIC libs/PerlinNoise
 )
 
 target_link_libraries(${PROJECT_NAME}

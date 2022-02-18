@@ -13,3 +13,6 @@
 [submodule "libs/entt"]
 	path = libs/entt
 	url = git@github.com:ZhouyangYe/entt.git
+[submodule "libs/PerlinNoise"]
+	path = libs/PerlinNoise
+	url = git@github.com:ZhouyangYe/PerlinNoise.git

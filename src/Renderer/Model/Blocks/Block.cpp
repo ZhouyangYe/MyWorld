@@ -6,7 +6,7 @@ namespace MyWorld
     bgfx::IndexBufferHandle Block::ibh[64];
     bool Block::isDebugMode = false;
 
-    // three textures: top, middle and bottom;
+    // three textures: middle, top and bottom;
     Block::PosTextureVertex* Block::getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit }; // 0.0, 0.0
@@ -47,6 +47,7 @@ namespace MyWorld
         return vertices;
     }
 
+    // create cache for index buffer
     void Block::createIbh(uint8_t& idx)
     {
         uint8_t counter = 0;
@@ -115,6 +116,11 @@ namespace MyWorld
         }
     }
 
+    glm::vec3 Block::getCoords()
+    {
+        return coords;
+    }
+
     void Block::Register()
     {
         ibh[0] = BGFX_INVALID_HANDLE;
@@ -132,7 +138,7 @@ namespace MyWorld
         texture = nullptr;
     }
 
-    Block::Block() : type(TYPE::INVALID)
+    Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), type(TYPE::INVALID)
     {}
 
     Block::Block(Block::TYPE type, glm::vec3 &coords) : coords(coords), type(type)
@@ -141,6 +147,8 @@ namespace MyWorld
 
 	void Block::Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh)
 	{
+        if (ibh.idx == bgfx::kInvalidHandle) return;
+
         glm::mat4 mtx(1.0f);
         mtx = glm::translate(mtx, coords);
 
@@ -158,7 +166,7 @@ namespace MyWorld
             | BGFX_STATE_WRITE_A
             | BGFX_STATE_WRITE_Z
             | BGFX_STATE_DEPTH_TEST_LESS
-            // | BGFX_STATE_CULL_CW
+            | BGFX_STATE_CULL_CW
             | BGFX_STATE_MSAA
             | BGFX_STATE_BLEND_ALPHA
         );

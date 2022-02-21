@@ -3,12 +3,13 @@
 namespace MyWorld
 {
 	bool Cursor::hideCursor = false;
+	float Cursor::sensitivity = 0.5f;
 	glm::vec2 Cursor::prevCoord;
 	glm::vec2 Cursor::delta = { 0.0f, 0.0f };
 
 	glm::vec2 Cursor::getDeltaCoord()
 	{
-		return delta;
+		return delta * sensitivity;
 	}
 
 	void Cursor::updateCoord(glm::vec2 coord)

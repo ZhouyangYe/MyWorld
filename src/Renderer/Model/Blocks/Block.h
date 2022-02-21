@@ -51,6 +51,7 @@ namespace MyWorld
 		static void createIbh(uint8_t& idx);
 		static void Register();
 		static void Destroy();
+		glm::vec3 getCoords();
 		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh);
 		virtual void Draw(uint8_t& faces) = 0;
 	};

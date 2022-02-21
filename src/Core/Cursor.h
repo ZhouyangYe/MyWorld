@@ -13,6 +13,7 @@ namespace MyWorld
 		static void reset();
 		static void show();
 	private:
+		static float sensitivity;
 		static glm::vec2 prevCoord;
 		static glm::vec2 delta;
 	};

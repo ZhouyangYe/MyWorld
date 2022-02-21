@@ -19,6 +19,9 @@ namespace MyWorld
 		Grass::Register();
 		Dirt::Register();
 
+		// initialize chunk
+		Chunk::Init();
+
 		Window::setEventCallback([](Event& event)
 			{
 				switch (event.type)
@@ -64,10 +67,7 @@ namespace MyWorld
 			chunk.Draw();
 			// Main logic end
 
-			if (Cursor::hideCursor)
-			{
-				Cursor::reset();
-			}
+			if (Cursor::hideCursor) Cursor::reset();
 
 			Window::End();
 			Renderer::End();

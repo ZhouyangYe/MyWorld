@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.20.2)
 project(MyWorld)
 
 add_executable(${PROJECT_NAME}
-  libs/PerlinNoise/PerlinNoise.hpp
+  libs/FastNoiseLite/Cpp/FastNoiseLite.h
 
   src/main.cpp
   src/Core/App.h
@@ -62,7 +62,7 @@ add_subdirectory(libs/entt)
 # add include directories
 target_include_directories(${PROJECT_NAME}
   PUBLIC src
-  PUBLIC libs/PerlinNoise
+  PUBLIC libs/FastNoiseLite/Cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

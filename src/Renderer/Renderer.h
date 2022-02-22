@@ -11,7 +11,6 @@ namespace MyWorld
 		{
 			int width, height;
 		};
-		static bgfx::ProgramHandle program;
 		static bgfx::VertexLayout colorLayout;
 		static bgfx::VertexLayout textureLayout;
 		static bgfx::VertexLayout colorTextureLayout;
@@ -21,6 +20,8 @@ namespace MyWorld
 			void* window = nullptr;
 			WindowSize windowSize;
 		};
+		static bgfx::ProgramHandle texture_program;
+		static bgfx::ProgramHandle water_program;
 		static void Init(RenderParam param);
 		static void Terminate();
 		static void Begin();

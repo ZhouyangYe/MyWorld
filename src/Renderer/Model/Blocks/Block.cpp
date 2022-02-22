@@ -5,8 +5,17 @@ namespace MyWorld
     Texture* Block::texture = nullptr;
     bgfx::IndexBufferHandle Block::ibh[64];
     bool Block::isDebugMode = false;
+    const uint64_t Block::default_state = 0
+        | BGFX_STATE_WRITE_RGB
+        | BGFX_STATE_WRITE_A
+        | BGFX_STATE_WRITE_Z
+        | BGFX_STATE_DEPTH_TEST_LESS
+        | BGFX_STATE_CULL_CW
+        | BGFX_STATE_MSAA
+        | BGFX_STATE_BLEND_ALPHA;
 
-    // three textures: middle, top and bottom;
+    // --- Vertex and index buffer pair type 1 --- begin
+    // three textures: side, top and bottom;
     Block::PosTextureVertex* Block::getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit }; // 0.0, 0.0
@@ -42,6 +51,46 @@ namespace MyWorld
             { 0.0f, 1.0f, 0.0f,  b_bottom_left.x,  b_bottom_left.y }, // 5 + 8 --- 0,1,0
             { 1.0f, 1.0f, 0.0f,     b_top_left.x,     b_top_left.y }, // 6 + 8 --- 1,1,0
             { 1.0f, 1.0f, 1.0f,    t_top_right.x,    t_top_right.y }  // 7 + 8 --- 1,1,1 --- top
+        };
+
+        return vertices;
+    }
+
+    Block::PosColorTextureVertex* Block::getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color)
+    {
+        glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit }; // 0.0, 0.0
+        glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };      // 1.0, 0.0
+        glm::vec2 top_left = { (side.x - 1) * xUnit, (side.y - 1) * yUnit };          // 0.0, 1.0
+        glm::vec2 top_right = { side.x * xUnit, (side.y - 1) * yUnit };         // 1.0, 1.0
+
+        glm::vec2 t_bottom_left = { (top.x - 1) * xUnit, top.y * yUnit }; // 0.0, 0.0
+        glm::vec2 t_bottom_right = { top.x * xUnit, top.y * yUnit };      // 1.0, 0.0
+        glm::vec2 t_top_left = { (top.x - 1) * xUnit, (top.y - 1) * yUnit };          // 0.0, 1.0
+        glm::vec2 t_top_right = { top.x * xUnit, (top.y - 1) * yUnit };         // 1.0, 1.0
+
+        glm::vec2 b_bottom_left = { (bottom.x - 1) * xUnit, bottom.y * yUnit }; // 0.0, 0.0
+        glm::vec2 b_bottom_right = { bottom.x * xUnit, bottom.y * yUnit };      // 1.0, 0.0
+        glm::vec2 b_top_left = { (bottom.x - 1) * xUnit, (bottom.y - 1) * yUnit };          // 0.0, 1.0
+        glm::vec2 b_top_right = { bottom.x * xUnit, (bottom.y - 1) * yUnit };         // 1.0, 1.0
+
+        PosColorTextureVertex* vertices = new PosColorTextureVertex[16]{
+            { 0.0f, 0.0f, 0.0f, color,    bottom_left.x,    bottom_left.y }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color,   bottom_right.x,   bottom_right.y }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color,      top_right.x,      top_right.y }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, color,       top_left.x,       top_left.y }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, color,      top_right.x,      top_right.y }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, color,   bottom_right.x,   bottom_right.y }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color,    bottom_left.x,    bottom_left.y }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color,       top_left.x,       top_left.y }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, color, b_bottom_right.x, b_bottom_right.y }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color,    b_top_right.x,    b_top_right.y }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color, t_bottom_right.x, t_bottom_right.y }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, color,  t_bottom_left.x,  t_bottom_left.y }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, color,     t_top_left.x,     t_top_left.y }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, color,  b_bottom_left.x,  b_bottom_left.y }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color,     b_top_left.x,     b_top_left.y }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color,    t_top_right.x,    t_top_right.y }  // 7 + 8 --- 1,1,1 --- top
         };
 
         return vertices;
@@ -96,11 +145,10 @@ namespace MyWorld
     {
         if (idx == 0) return ibh[0];
 
-        bgfx::IndexBufferHandle test = ibh[idx];
-
-        if (!ibh[idx].idx) createIbh(idx);
+        if (ibh[idx].idx == bgfx::kInvalidHandle) createIbh(idx);
         return ibh[idx];
     }
+    // --- Vertex and index buffer pair type 1 --- end
 
     void Block::switchRenderMode()
     {
@@ -123,7 +171,8 @@ namespace MyWorld
 
     void Block::Register()
     {
-        ibh[0] = BGFX_INVALID_HANDLE;
+        for (int i = 0; i < 64; i++)
+            ibh[i] = BGFX_INVALID_HANDLE;
 
         texture = new Texture("c:\\Bright\\Dev\\MyWorld\\resource\\images\\bin\\blocks.dds", glm::vec2{ 512.0f, 1024.0f });
     }
@@ -145,7 +194,7 @@ namespace MyWorld
     {
     }
 
-	void Block::Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh)
+	void Block::Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)
 	{
         if (ibh.idx == bgfx::kInvalidHandle) return;
 
@@ -161,17 +210,9 @@ namespace MyWorld
         texture->bind();
 
         // Set render states.
-        bgfx::setState(0
-            | BGFX_STATE_WRITE_RGB
-            | BGFX_STATE_WRITE_A
-            | BGFX_STATE_WRITE_Z
-            | BGFX_STATE_DEPTH_TEST_LESS
-            | BGFX_STATE_CULL_CW
-            | BGFX_STATE_MSAA
-            | BGFX_STATE_BLEND_ALPHA
-        );
+        bgfx::setState(state);
 
         // Submit primitive for rendering to view 0.
-        bgfx::submit(0, Renderer::getProgramHandle());
+        bgfx::submit(0, program);
 	}
 }

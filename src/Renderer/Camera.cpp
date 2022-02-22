@@ -10,7 +10,7 @@ namespace MyWorld
 
 	glm::mat4 Camera::view;
 	glm::mat4 Camera::proj;
-	glm::vec3 Camera::eye = { 0.0f, 0.0f, 200.0f };
+	glm::vec3 Camera::eye = { -1.0f, 0.0f, 100.0f };
 	glm::vec3 Camera::forward = { 1.0f, 0.0f, 0.0f };
 	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
 	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));

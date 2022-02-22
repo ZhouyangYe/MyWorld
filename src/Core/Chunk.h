@@ -5,6 +5,7 @@
 #include "Renderer/Model/Blocks/Air.h"
 #include "Renderer/Model/Blocks/Grass.h"
 #include "Renderer/Model/Blocks/Dirt.h"
+#include "Renderer/Model/Blocks/Water.h"
 
 #define X_OFFSET CHUNK_DEPTH
 #define Y_OFFSET CHUNK_WIDTH * CHUNK_DEPTH
@@ -23,6 +24,7 @@ namespace MyWorld
 		Chunk(glm::vec3 coords);
 		~Chunk();
 		static void Init();
+		static void Terminate();
 		void Draw();
 	};
 }

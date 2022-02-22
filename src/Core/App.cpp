@@ -14,11 +14,6 @@ namespace MyWorld
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
 		Camera::Init({ { windowSize.width, windowSize.height } });
 
-		// register blocks
-		Block::Register();
-		Grass::Register();
-		Dirt::Register();
-
 		// initialize chunk
 		Chunk::Init();
 
@@ -39,12 +34,8 @@ namespace MyWorld
 	}
 
 	void App::Terminate()
-	{
-		// destroy blocks
-		Block::Destroy();
-		Grass::Destroy();
-		Dirt::Destroy();
-
+	{		
+		Chunk::Terminate();
 		Renderer::Terminate();
 		Camera::Terminate();
 

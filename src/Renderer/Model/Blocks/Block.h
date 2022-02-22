@@ -5,8 +5,6 @@
 #define xUnit 1/16
 #define yUnit 1/16
 
-
-
 namespace MyWorld
 {
 	class Block
@@ -20,7 +18,17 @@ namespace MyWorld
 			float u;
 			float v;
 		};
+		struct PosColorTextureVertex
+		{
+			float x;
+			float y;
+			float z;
+			uint32_t abgr;
+			float u;
+			float v;
+		};
 		static PosTextureVertex* getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom);
+		static PosColorTextureVertex* getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color);
 		static bgfx::IndexBufferHandle ibh[];
 	private:
 		glm::vec3 coords;
@@ -41,8 +49,10 @@ namespace MyWorld
 			INVALID = 0,
 			AIR     = 1,
 			DIRT    = 2,
-			GRASS   = 3
+			GRASS   = 3,
+			WATER   = 4,
 		};
+		static const uint64_t default_state;
 		const Block::TYPE type;
 		Block();
 		Block(Block::TYPE type, glm::vec3 &coords);
@@ -52,7 +62,7 @@ namespace MyWorld
 		static void Register();
 		static void Destroy();
 		glm::vec3 getCoords();
-		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh);
+		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
 		virtual void Draw(uint8_t& faces) = 0;
 	};
 }

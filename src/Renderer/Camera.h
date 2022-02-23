@@ -29,6 +29,7 @@ namespace MyWorld
 		static bool moveRight;
 		static bool moveForward;
 		static bool moveBackward;
+		static const glm::vec3& getCameraCoords();
 		static void Init(CameraParam param);
 		static void Terminate();
 		static void Begin();

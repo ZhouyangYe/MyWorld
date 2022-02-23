@@ -54,6 +54,7 @@ namespace MyWorld
 		};
 		static const uint64_t default_state;
 		const Block::TYPE type;
+		uint8_t faces = 0;
 		Block();
 		Block(Block::TYPE type, glm::vec3 &coords);
 		static bgfx::IndexBufferHandle& getIbh(uint8_t &idx);

@@ -22,6 +22,11 @@ namespace MyWorld
 	bool Camera::moveForward = false;
 	bool Camera::moveBackward = false;
 
+	const glm::vec3& Camera::getCameraCoords()
+	{
+		return eye;
+	}
+
 	void Camera::Init(CameraParam param)
 	{
 		view = glm::lookAt(eye, eye + forward, up);

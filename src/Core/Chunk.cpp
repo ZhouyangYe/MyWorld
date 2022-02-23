@@ -1,4 +1,5 @@
 #include "Chunk.h"
+#include <bitset>
 
 namespace MyWorld
 {
@@ -46,6 +47,15 @@ namespace MyWorld
 
 				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
+					// TODO: delete this!
+					if (x == 0 && y == 15 && z == 125)
+					{
+						Water* waterBlock = new Water({ (float)x, (float)y, (float)z });
+						blocks.push_back(waterBlock);
+						transparent_blocks.push_back(waterBlock);
+						continue;
+					}
+
 					if (z < surface)
 					{
 						if (z == edge && z >= 119)
@@ -68,6 +78,54 @@ namespace MyWorld
 				}
 			}
 		}
+
+		for (int i = 0; i < blocks.size(); i++)
+		{
+			if (blocks[i]->type != Block::AIR)
+			{
+				Block* block = blocks[i];
+				Block::TYPE type = block->type;
+				glm::vec3 coords = block->getCoords();
+
+				// TODO: frustum culling
+				// TODO: optimize it!
+				if (coords.z == 0 || blocks[i - 1]->type == Block::AIR || (type != Block::WATER && blocks[i - 1]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::BOTTOM;
+				}
+				if (coords.z == CHUNK_DEPTH - 1 || blocks[i + 1]->type == Block::AIR || (type != Block::WATER && blocks[i + 1]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::TOP;
+				}
+
+				if (coords.x == 0 || blocks[i - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - X_OFFSET]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::WEST;
+				}
+				if (coords.x == CHUNK_WIDTH - 1 || blocks[i + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + X_OFFSET]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::EAST;
+				}
+
+				if (coords.y == 0 || blocks[i - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - Y_OFFSET]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::SOUTH;
+				}
+				if (coords.y == CHUNK_WIDTH - 1 || blocks[i + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + Y_OFFSET]->type == Block::WATER))
+				{
+					block->faces |= Block::DIRECTION::NORTH;
+				}
+
+				// draw non-transparent blocks first
+				if (type == Block::WATER)
+				{
+					if (block->faces != 0) transparent_blocks.push_back(block);
+					continue;
+				}
+
+				if (block->faces != 0) blocks[i]->Draw(block->faces);
+			}
+		}
 	}
 
 	Chunk::~Chunk()
@@ -79,45 +137,21 @@ namespace MyWorld
 
 	void Chunk::Draw()
 	{
+		// draw opaque blocks first
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			if (blocks[i]->type != Block::AIR)
-			{
-				uint8_t faces = 0;
-				glm::vec3 coords = blocks[i]->getCoords();
-				Block::TYPE type = blocks[i]->type;
+			blocks[i]->Draw(blocks[i]->faces);
+		}
 
-				// TODO: frustum culling
-				// TODO: optimize it!
-				if (coords.z == 0 || blocks[i - 1]->type == Block::AIR || (type != Block::WATER && blocks[i - 1]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::BOTTOM;
-				}
-				if (coords.z == CHUNK_DEPTH - 1 || blocks[i + 1]->type == Block::AIR || (type != Block::WATER && blocks[i + 1]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::TOP;
-				}
-
-				if (coords.x == 0 || blocks[i - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - X_OFFSET]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::WEST;
-				}
-				if (coords.x == CHUNK_WIDTH - 1 || blocks[i + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + X_OFFSET]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::EAST;
-				}
-
-				if (coords.y == 0 || blocks[i - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - Y_OFFSET]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::SOUTH;
-				}
-				if (coords.y == CHUNK_WIDTH - 1 || blocks[i + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + Y_OFFSET]->type == Block::WATER))
-				{
-					faces |= Block::DIRECTION::NORTH;
-				}
-
-				if (faces != 0) blocks[i]->Draw(faces);
-			}
+		// draw transparent blocks
+		int size = transparent_blocks.size();
+		Block** sortedBlocks = transparent_blocks.data();
+		mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
+			return glm::length(item1->getCoords() - Camera::getCameraCoords()) - glm::length(item2->getCoords() - Camera::getCameraCoords());
+		});
+		for (int i = 0; i < size; i++)
+		{
+			sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
 		}
 	}
 }

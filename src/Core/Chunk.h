@@ -20,6 +20,7 @@ namespace MyWorld
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
 		static const int CHUNK_DEPTH;
+		static float getLength(Block* block);
 		std::vector<Block*> blocks;
 		std::vector<Block*> transparent_blocks;
 	public:

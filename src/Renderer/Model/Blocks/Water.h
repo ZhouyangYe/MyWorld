@@ -1,5 +1,6 @@
 #pragma once
 #include "Block.h"
+#include "../../Camera.h"
 
 namespace MyWorld
 {
@@ -14,6 +15,6 @@ namespace MyWorld
 		Water();
 		Water(glm::vec3 coords);
 		~Water();
-		void Draw(uint8_t& faces) override;
+		void Draw(const uint8_t& faces) override;
 	};
 }

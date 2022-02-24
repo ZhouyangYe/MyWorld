@@ -28,7 +28,7 @@ namespace MyWorld
 	Grass::~Grass()
 	{}
 
-	void Grass::Draw(uint8_t& faces)
+	void Grass::Draw(const uint8_t& faces)
 	{
 		Block::Draw(vbh, Block::getIbh(faces));
 	}

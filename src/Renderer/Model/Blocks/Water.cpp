@@ -28,7 +28,7 @@ namespace MyWorld
 	Water::~Water()
 	{}
 
-	void Water::Draw(uint8_t& faces)
+	void Water::Draw(const uint8_t& faces)
 	{
 		Block::Draw(vbh, Block::getIbh(faces), Renderer::water_program, Block::default_state & (~BGFX_STATE_CULL_CW));
 	}

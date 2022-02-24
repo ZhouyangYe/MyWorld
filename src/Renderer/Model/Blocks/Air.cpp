@@ -11,6 +11,6 @@ namespace MyWorld
 	Air::~Air()
 	{}
 
-	void Air::Draw(uint8_t& faces)
+	void Air::Draw(const uint8_t& faces)
 	{}
 }

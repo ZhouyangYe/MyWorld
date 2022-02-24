@@ -30,7 +30,7 @@ namespace MyWorld
 	void Camera::Init(CameraParam param)
 	{
 		view = glm::lookAt(eye, eye + forward, up);
-		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.08f, 128.0f);
+		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.01f, 128.0f);
 	}
 
 	void Camera::Terminate()

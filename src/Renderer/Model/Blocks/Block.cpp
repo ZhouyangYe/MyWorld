@@ -2,8 +2,16 @@
 
 namespace MyWorld
 {
+    const glm::vec3 Block::NorthFaceVec  = glm::vec3{ 0.5f, 1.0f, 0.5f };
+    const glm::vec3 Block::SouthFaceVec  = glm::vec3{ 0.5f, 0.0f, 0.5f };
+    const glm::vec3 Block::WestFaceVec   = glm::vec3{ 0.0f, 0.5f, 0.5f };
+    const glm::vec3 Block::EastFaceVec   = glm::vec3{ 1.0f, 0.5f, 0.5f };
+    const glm::vec3 Block::TopFaceVec    = glm::vec3{ 0.5f, 0.5f, 1.0f };
+    const glm::vec3 Block::BottomFaceVec = glm::vec3{ 0.5f, 0.5f, 0.0f };
+
     Texture* Block::texture = nullptr;
     bgfx::IndexBufferHandle Block::ibh[64];
+    uint16_t* Block::triListPointers[64];
     bool Block::isDebugMode = false;
     const uint64_t Block::default_state = 0
         | BGFX_STATE_WRITE_RGB
@@ -96,8 +104,8 @@ namespace MyWorld
         return vertices;
     }
 
-    // create cache for index buffer
-    void Block::createIbh(uint8_t& idx)
+    // create cache for static index buffer
+    void Block::createIbh(const uint8_t& idx)
     {
         uint8_t counter = 0;
         for (uint8_t i = 0; i < 6 ; i++)
@@ -138,10 +146,11 @@ namespace MyWorld
             }
         }
 
+        triListPointers[idx] = cubeTriList;
         ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, size * sizeof(uint16_t)));
     }
 
-    bgfx::IndexBufferHandle& Block::getIbh(uint8_t &idx)
+    bgfx::IndexBufferHandle& Block::getIbh(const uint8_t &idx)
     {
         if (idx == 0) return ibh[0];
 
@@ -164,7 +173,7 @@ namespace MyWorld
         }
     }
 
-    glm::vec3 Block::getCoords()
+    const glm::vec3& Block::getCoords()
     {
         return coords;
     }
@@ -181,6 +190,7 @@ namespace MyWorld
     {
         for (uint8_t i = 0; i < 64; i++)
         {
+            delete[] triListPointers[i];
             if (ibh[i].idx && bgfx::isValid(ibh[i])) bgfx::destroy(ibh[i]);
         }
         delete texture;
@@ -203,6 +213,7 @@ namespace MyWorld
 
         // Set model matrix for rendering.
         bgfx::setTransform(&mtx);
+        bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
 
         // Set vertex and index buffer.
         bgfx::setVertexBuffer(0, vbh);

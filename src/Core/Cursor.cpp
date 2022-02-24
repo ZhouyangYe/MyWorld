@@ -3,7 +3,7 @@
 namespace MyWorld
 {
 	bool Cursor::hideCursor = false;
-	float Cursor::sensitivity = 0.5f;
+	float Cursor::sensitivity = 0.2f;
 	glm::vec2 Cursor::prevCoord;
 	glm::vec2 Cursor::delta = { 0.0f, 0.0f };
 

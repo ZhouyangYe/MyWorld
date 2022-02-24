@@ -1,11 +1,41 @@
 #include "Chunk.h"
-#include <bitset>
 
 namespace MyWorld
 {
 	const int Chunk::CHUNK_DEPTH = 256;
 	const int Chunk::CHUNK_WIDTH = 16;
 	FastNoiseLite Chunk::noise;
+
+	float Chunk::getLength(Block* block)
+	{
+		const glm::vec3 coords = block->getCoords();
+		glm::vec3 center;
+		switch (block->faces)
+		{
+		case Block::DIRECTION::NORTH:
+			center = coords + Block::NorthFaceVec;
+			break;
+		case Block::DIRECTION::SOUTH:
+			center = coords + Block::SouthFaceVec;
+			break;
+		case Block::DIRECTION::WEST:
+			center = coords + Block::WestFaceVec;
+			break;
+		case Block::DIRECTION::EAST:
+			center = coords + Block::EastFaceVec;
+			break;
+		case Block::DIRECTION::TOP:
+			center = coords + Block::TopFaceVec;
+			break;
+		case Block::DIRECTION::BOTTOM:
+			center = coords + Block::BottomFaceVec;
+			break;
+		default:
+			break;
+		}
+
+		return glm::length2(center - Camera::getCameraCoords());
+	}
 
 	void Chunk::Init()
 	{
@@ -37,6 +67,7 @@ namespace MyWorld
 
 	Chunk::Chunk(glm::vec3 coords)
 	{
+		// create all blocks in the chunk
 		for (int y = 0; y < CHUNK_WIDTH; y++)
 		{
 			for (int x = 0; x < CHUNK_WIDTH; x++)
@@ -50,9 +81,7 @@ namespace MyWorld
 					// TODO: delete this!
 					if (x == 0 && y == 15 && z == 125)
 					{
-						Water* waterBlock = new Water({ (float)x, (float)y, (float)z });
-						blocks.push_back(waterBlock);
-						transparent_blocks.push_back(waterBlock);
+						blocks.push_back(new Water({ (float)x, (float)y, (float)z }));
 						continue;
 					}
 
@@ -79,6 +108,7 @@ namespace MyWorld
 			}
 		}
 
+		// figure out the faces to be drawn
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			if (blocks[i]->type != Block::AIR)
@@ -116,21 +146,35 @@ namespace MyWorld
 					block->faces |= Block::DIRECTION::NORTH;
 				}
 
-				// draw non-transparent blocks first
+				// put transparent blocks into a separate array
 				if (type == Block::WATER)
 				{
-					if (block->faces != 0) transparent_blocks.push_back(block);
-					continue;
+					if (block->faces != 0)
+					{
+						for (int i = 0; i < 6; i++)
+						{
+							uint8_t face = 1 << i;
+							if (block->faces & face)
+							{
+								Water* water = new Water(block->getCoords());
+								water->faces |= face;
+								transparent_blocks.push_back(water);
+							}
+						}
+					}
 				}
-
-				if (block->faces != 0) blocks[i]->Draw(block->faces);
 			}
 		}
 	}
 
 	Chunk::~Chunk()
 	{
-		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter) {
+		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
+		{
+			delete *iter;
+		}
+		for (std::vector<Block*>::iterator iter = transparent_blocks.begin(); iter != transparent_blocks.end(); ++iter)
+		{
 			delete *iter;
 		}
 	}
@@ -140,18 +184,23 @@ namespace MyWorld
 		// draw opaque blocks first
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			blocks[i]->Draw(blocks[i]->faces);
+			if (blocks[i]->faces != 0 && blocks[i]->type != Block::WATER)
+				blocks[i]->Draw(blocks[i]->faces);
 		}
 
 		// draw transparent blocks
 		int size = transparent_blocks.size();
-		Block** sortedBlocks = transparent_blocks.data();
-		mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
-			return glm::length(item1->getCoords() - Camera::getCameraCoords()) - glm::length(item2->getCoords() - Camera::getCameraCoords());
-		});
-		for (int i = 0; i < size; i++)
+		if (size)
 		{
-			sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
+			Block** sortedBlocks = transparent_blocks.data();
+			// draw far blocks first
+			mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
+				return getLength(item1) - getLength(item2);
+			});
+			for (int i = size - 1; i >= 0; i--)
+			{
+				sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
+			}
 		}
 	}
 }

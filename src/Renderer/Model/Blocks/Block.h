@@ -29,12 +29,20 @@ namespace MyWorld
 		};
 		static PosTextureVertex* getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom);
 		static PosColorTextureVertex* getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color);
-		static bgfx::IndexBufferHandle ibh[];
-	private:
 		glm::vec3 coords;
+	private:
 		static Texture* texture;
 		static bool isDebugMode;
+		static bgfx::IndexBufferHandle ibh[];
+		static uint16_t* triListPointers[];
+		static void createIbh(const uint8_t& idx);
 	public:
+		static const glm::vec3 NorthFaceVec;
+		static const glm::vec3 SouthFaceVec;
+		static const glm::vec3 WestFaceVec;
+		static const glm::vec3 EastFaceVec;
+		static const glm::vec3 TopFaceVec;
+		static const glm::vec3 BottomFaceVec;
 		static const enum DIRECTION : uint8_t
 		{
 			NORTH  = 1 << 0,
@@ -57,13 +65,12 @@ namespace MyWorld
 		uint8_t faces = 0;
 		Block();
 		Block(Block::TYPE type, glm::vec3 &coords);
-		static bgfx::IndexBufferHandle& getIbh(uint8_t &idx);
+		static bgfx::IndexBufferHandle& getIbh(const uint8_t &idx);
 		static void switchRenderMode();
-		static void createIbh(uint8_t& idx);
 		static void Register();
 		static void Destroy();
-		glm::vec3 getCoords();
+		const glm::vec3& getCoords();
 		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
-		virtual void Draw(uint8_t& faces) = 0;
+		virtual void Draw(const uint8_t& faces) = 0;
 	};
 }

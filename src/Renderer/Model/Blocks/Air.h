@@ -9,6 +9,6 @@ namespace MyWorld
 		Air();
 		Air(glm::vec3 coords);
 		~Air();
-		void Draw(uint8_t& faces) override;
+		void Draw(const uint8_t& faces) override;
 	};
 }

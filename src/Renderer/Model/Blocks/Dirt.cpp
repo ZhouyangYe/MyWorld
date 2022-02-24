@@ -28,7 +28,7 @@ namespace MyWorld
 	Dirt::~Dirt()
 	{}
 
-	void Dirt::Draw(uint8_t& faces)
+	void Dirt::Draw(const uint8_t& faces)
 	{
 		Block::Draw(vbh, Block::getIbh(faces));
 	}

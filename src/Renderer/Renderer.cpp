@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Model/Texture.h"
 
 namespace MyWorld
 {
@@ -66,10 +67,13 @@ namespace MyWorld
             .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
             .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
+
+        Texture::Init();
     }
 
     void Renderer::Terminate()
     {
+        Texture::Destroy();
         Tools::Terminate();
 
         bgfx::destroy(texture_program);

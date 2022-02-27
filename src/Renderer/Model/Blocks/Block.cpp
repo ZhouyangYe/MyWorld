@@ -26,20 +26,20 @@ namespace MyWorld
     // three textures: side, top and bottom;
     Block::PosTextureVertex* Block::getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom)
     {
-        glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit }; // 0.0, 0.0
-        glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };      // 1.0, 0.0
-        glm::vec2 top_left = { (side.x - 1) * xUnit, (side.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 top_right = { side.x * xUnit, (side.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
+        glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };               // 1.0, 0.0
+        glm::vec2 top_left = { (side.x - 1) * xUnit, (side.y - 1) * yUnit };       // 0.0, 1.0
+        glm::vec2 top_right = { side.x * xUnit, (side.y - 1) * yUnit };            // 1.0, 1.0
 
-        glm::vec2 t_bottom_left = { (top.x - 1) * xUnit, top.y * yUnit }; // 0.0, 0.0
-        glm::vec2 t_bottom_right = { top.x * xUnit, top.y * yUnit };      // 1.0, 0.0
-        glm::vec2 t_top_left = { (top.x - 1) * xUnit, (top.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 t_top_right = { top.x * xUnit, (top.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 t_bottom_left = { (top.x - 1) * xUnit, top.y * yUnit };          // 0.0, 0.0
+        glm::vec2 t_bottom_right = { top.x * xUnit, top.y * yUnit };               // 1.0, 0.0
+        glm::vec2 t_top_left = { (top.x - 1) * xUnit, (top.y - 1) * yUnit };       // 0.0, 1.0
+        glm::vec2 t_top_right = { top.x * xUnit, (top.y - 1) * yUnit };            // 1.0, 1.0
 
-        glm::vec2 b_bottom_left = { (bottom.x - 1) * xUnit, bottom.y * yUnit }; // 0.0, 0.0
-        glm::vec2 b_bottom_right = { bottom.x * xUnit, bottom.y * yUnit };      // 1.0, 0.0
-        glm::vec2 b_top_left = { (bottom.x - 1) * xUnit, (bottom.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 b_top_right = { bottom.x * xUnit, (bottom.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 b_bottom_left = { (bottom.x - 1) * xUnit, bottom.y * yUnit };    // 0.0, 0.0
+        glm::vec2 b_bottom_right = { bottom.x * xUnit, bottom.y * yUnit };         // 1.0, 0.0
+        glm::vec2 b_top_left = { (bottom.x - 1) * xUnit, (bottom.y - 1) * yUnit }; // 0.0, 1.0
+        glm::vec2 b_top_right = { bottom.x * xUnit, (bottom.y - 1) * yUnit };      // 1.0, 1.0
 
         PosTextureVertex* vertices = new PosTextureVertex[16] {
             { 0.0f, 0.0f, 0.0f,    bottom_left.x,    bottom_left.y }, // 0 --- 0,0,0
@@ -66,20 +66,20 @@ namespace MyWorld
 
     Block::PosColorTextureVertex* Block::getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color)
     {
-        glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit }; // 0.0, 0.0
-        glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };      // 1.0, 0.0
-        glm::vec2 top_left = { (side.x - 1) * xUnit, (side.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 top_right = { side.x * xUnit, (side.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
+        glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };               // 1.0, 0.0
+        glm::vec2 top_left = { (side.x - 1) * xUnit, (side.y - 1) * yUnit };       // 0.0, 1.0
+        glm::vec2 top_right = { side.x * xUnit, (side.y - 1) * yUnit };            // 1.0, 1.0
 
-        glm::vec2 t_bottom_left = { (top.x - 1) * xUnit, top.y * yUnit }; // 0.0, 0.0
-        glm::vec2 t_bottom_right = { top.x * xUnit, top.y * yUnit };      // 1.0, 0.0
-        glm::vec2 t_top_left = { (top.x - 1) * xUnit, (top.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 t_top_right = { top.x * xUnit, (top.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 t_bottom_left = { (top.x - 1) * xUnit, top.y * yUnit };          // 0.0, 0.0
+        glm::vec2 t_bottom_right = { top.x * xUnit, top.y * yUnit };               // 1.0, 0.0
+        glm::vec2 t_top_left = { (top.x - 1) * xUnit, (top.y - 1) * yUnit };       // 0.0, 1.0
+        glm::vec2 t_top_right = { top.x * xUnit, (top.y - 1) * yUnit };            // 1.0, 1.0
 
-        glm::vec2 b_bottom_left = { (bottom.x - 1) * xUnit, bottom.y * yUnit }; // 0.0, 0.0
-        glm::vec2 b_bottom_right = { bottom.x * xUnit, bottom.y * yUnit };      // 1.0, 0.0
-        glm::vec2 b_top_left = { (bottom.x - 1) * xUnit, (bottom.y - 1) * yUnit };          // 0.0, 1.0
-        glm::vec2 b_top_right = { bottom.x * xUnit, (bottom.y - 1) * yUnit };         // 1.0, 1.0
+        glm::vec2 b_bottom_left = { (bottom.x - 1) * xUnit, bottom.y * yUnit };    // 0.0, 0.0
+        glm::vec2 b_bottom_right = { bottom.x * xUnit, bottom.y * yUnit };         // 1.0, 0.0
+        glm::vec2 b_top_left = { (bottom.x - 1) * xUnit, (bottom.y - 1) * yUnit }; // 0.0, 1.0
+        glm::vec2 b_top_right = { bottom.x * xUnit, (bottom.y - 1) * yUnit };      // 1.0, 1.0
 
         PosColorTextureVertex* vertices = new PosColorTextureVertex[16]{
             { 0.0f, 0.0f, 0.0f, color,    bottom_left.x,    bottom_left.y }, // 0 --- 0,0,0

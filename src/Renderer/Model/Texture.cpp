@@ -13,8 +13,8 @@ namespace MyWorld
 
 	void Texture::bind()
 	{
-		bgfx::setTexture(0, s_texColor, textureHandle, 
-			BGFX_SAMPLER_MIN_POINT
+		bgfx::setTexture(0, s_texColor, textureHandle, 0
+			| BGFX_SAMPLER_MIN_POINT
 			| BGFX_SAMPLER_MAG_POINT
 			| BGFX_SAMPLER_MIP_POINT
 			| BGFX_SAMPLER_U_CLAMP

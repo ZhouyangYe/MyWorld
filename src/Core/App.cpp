@@ -14,8 +14,8 @@ namespace MyWorld
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
 		Camera::Init({ { windowSize.width, windowSize.height } });
 
-		// initialize chunk
-		Chunk::Init();
+		// initialize app data
+		Data::Init();
 
 		Window::setEventCallback([](Event& event)
 			{
@@ -35,7 +35,7 @@ namespace MyWorld
 
 	void App::Terminate()
 	{		
-		Chunk::Terminate();
+		Data::Destroy();
 		Renderer::Terminate();
 		Camera::Terminate();
 
@@ -44,25 +44,24 @@ namespace MyWorld
 
 	void App::Run()
 	{
-		Chunk chunk({ 0.0f, 0.0f, 0.0f });
+		Time::updateTime();
 
-		while (!Window::shouldWindowTerminate())
+		Window::Begin();
+		Renderer::Begin();
+		Camera::Begin();
+
+		// Main logic begin
+		/*for (int i = 0; i < 2; i++)
 		{
-			Time::updateTime();
+			Data::chunks[i].Draw();
+		}*/
+		Data::chunks[0]->Draw();
+		// Main logic end
 
-			Window::Begin();
-			Renderer::Begin();
-			Camera::Begin();
+		if (Cursor::hideCursor) Cursor::reset();
 
-			// Main logic begin
-			chunk.Draw();
-			// Main logic end
-
-			if (Cursor::hideCursor) Cursor::reset();
-
-			Window::End();
-			Renderer::End();
-			Camera::End();
-		}
+		Window::End();
+		Renderer::End();
+		Camera::End();
 	}
 }

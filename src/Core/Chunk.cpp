@@ -2,10 +2,12 @@
 
 namespace MyWorld
 {
-	const int Chunk::CHUNK_DEPTH = 256;
+	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
+	bool Chunk::showEdge = true;
 	FastNoiseLite Chunk::noise;
 
+	// get block's faces' distance to camera
 	float Chunk::getLength(Block* block)
 	{
 		const glm::vec3 coords = block->getCoords();
@@ -37,113 +39,50 @@ namespace MyWorld
 		return glm::length2(center - Camera::getCameraCoords());
 	}
 
-	void Chunk::Init()
+	void Chunk::faceCullingAndSeparating()
 	{
-		// register blocks
-		Block::Register();
-		Grass::Register();
-		Dirt::Register();
-		Water::Register();
-
-		noise.SetSeed(6666);
-		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		noise.SetFrequency(0.015);
-		noise.SetFractalType(FastNoiseLite::FractalType_DomainWarpProgressive);
-		noise.SetFractalOctaves(8);
-		noise.SetFractalLacunarity(2.1);
-		noise.SetFractalGain(0.5);
-		noise.SetFractalWeightedStrength(0.1);
-		noise.SetFractalPingPongStrength(1.5);
-	}
-
-	void Chunk::Terminate()
-	{
-		// destroy blocks
-		Block::Destroy();
-		Grass::Destroy();
-		Dirt::Destroy();
-		Water::Destroy();
-	}
-
-	Chunk::Chunk(glm::vec3 coords)
-	{
-		// create all blocks in the chunk
-		for (int y = 0; y < CHUNK_WIDTH; y++)
-		{
-			for (int x = 0; x < CHUNK_WIDTH; x++)
-			{
-				const float data = (noise.GetNoise((float)x, (float)y) + 1) / 2;
-				const int surface = (int)(CHUNK_DEPTH * data);
-				const int edge = surface - 1;
-
-				for (int z = 0; z < CHUNK_DEPTH; z++)
-				{
-					// TODO: delete this!
-					if (x == 0 && y == 15 && z == 125)
-					{
-						blocks.push_back(new Water({ (float)x, (float)y, (float)z }));
-						continue;
-					}
-
-					if (z < surface)
-					{
-						if (z == edge && z >= 119)
-						{
-							blocks.push_back(new Grass({ (float)x, (float)y, (float)z }));
-						}
-						else
-						{
-							blocks.push_back(new Dirt({ (float)x, (float)y, (float)z }));
-						}
-					}
-					else if (z < 120)
-					{
-						blocks.push_back(new Water({ (float)x, (float)y, (float)z }));
-					}
-					else
-					{
-						blocks.push_back(new Air({ (float)x, (float)y, (float)z }));
-					}
-				}
-			}
-		}
-
-		// figure out the faces to be drawn
+		// figure out which faces to be drawn
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			if (blocks[i]->type != Block::AIR)
 			{
 				Block* block = blocks[i];
 				Block::TYPE type = block->type;
-				glm::vec3 coords = block->getCoords();
+				glm::vec3 blockCoords = block->getCoords();
 
 				// TODO: frustum culling
 				// TODO: optimize it!
-				if (coords.z == 0 || blocks[i - 1]->type == Block::AIR || (type != Block::WATER && blocks[i - 1]->type == Block::WATER))
+				if (blockCoords.z == 0 || blocks[i - 1]->type == Block::AIR || (type != Block::WATER && blocks[i - 1]->type == Block::WATER))
 				{
-					block->faces |= Block::DIRECTION::BOTTOM;
+					if (showEdge || blockCoords.z != 0)
+						block->faces |= Block::DIRECTION::BOTTOM;
 				}
-				if (coords.z == CHUNK_DEPTH - 1 || blocks[i + 1]->type == Block::AIR || (type != Block::WATER && blocks[i + 1]->type == Block::WATER))
+				if (blockCoords.z == CHUNK_DEPTH - 1 || blocks[i + 1]->type == Block::AIR || (type != Block::WATER && blocks[i + 1]->type == Block::WATER))
 				{
-					block->faces |= Block::DIRECTION::TOP;
-				}
-
-				if (coords.x == 0 || blocks[i - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - X_OFFSET]->type == Block::WATER))
-				{
-					block->faces |= Block::DIRECTION::WEST;
-				}
-				if (coords.x == CHUNK_WIDTH - 1 || blocks[i + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + X_OFFSET]->type == Block::WATER))
-				{
-					block->faces |= Block::DIRECTION::EAST;
+					if (showEdge || blockCoords.z != CHUNK_DEPTH - 1)
+						block->faces |= Block::DIRECTION::TOP;
 				}
 
-				if (coords.y == 0 || blocks[i - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - Y_OFFSET]->type == Block::WATER))
+				if (blockCoords.x == coords.x || blocks[i - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - X_OFFSET]->type == Block::WATER))
 				{
-					block->faces |= Block::DIRECTION::SOUTH;
+					if (type == Block::WATER || showEdge || blockCoords.x != coords.x)
+						block->faces |= Block::DIRECTION::WEST;
 				}
-				if (coords.y == CHUNK_WIDTH - 1 || blocks[i + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + Y_OFFSET]->type == Block::WATER))
+				if (blockCoords.x == coords.x + CHUNK_WIDTH - 1 || blocks[i + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + X_OFFSET]->type == Block::WATER))
 				{
-					block->faces |= Block::DIRECTION::NORTH;
+					if (type == Block::WATER || showEdge || blockCoords.x != coords.x + CHUNK_WIDTH - 1)
+						block->faces |= Block::DIRECTION::EAST;
+				}
+
+				if (blockCoords.y == coords.y || blocks[i - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - Y_OFFSET]->type == Block::WATER))
+				{
+					if (type == Block::WATER || showEdge || blockCoords.y != coords.y)
+						block->faces |= Block::DIRECTION::SOUTH;
+				}
+				if (blockCoords.y == coords.y + CHUNK_WIDTH - 1 || blocks[i + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + Y_OFFSET]->type == Block::WATER))
+				{
+					if (type == Block::WATER || showEdge || blockCoords.y != coords.y + CHUNK_WIDTH - 1)
+						block->faces |= Block::DIRECTION::NORTH;
 				}
 
 				// put transparent blocks into a separate array
@@ -163,8 +102,88 @@ namespace MyWorld
 						}
 					}
 				}
+				// put opaque blocks into a separate array
+				else if (block->faces != 0)
+				{
+					opaque_blocks.push_back(block);
+				}
 			}
 		}
+	}
+
+	void Chunk::toggleFaceCulling()
+	{
+		showEdge = !showEdge;
+	}
+
+	void Chunk::Init()
+	{
+		// register blocks
+		Block::Register();
+		Grass::Register();
+		Dirt::Register();
+		Water::Register();
+
+		noise.SetSeed(666666);
+		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		noise.SetFrequency(0.003f);
+		noise.SetFractalType(FastNoiseLite::FractalType_FBm);
+		noise.SetFractalOctaves(4);
+		noise.SetFractalLacunarity(1.5f);
+		noise.SetFractalGain(1.4f);
+		noise.SetFractalWeightedStrength(0.4f);
+		// noise.SetFractalPingPongStrength(1.5f);
+	}
+
+	void Chunk::Destroy()
+	{
+		// destroy blocks
+		Block::Destroy();
+		Grass::Destroy();
+		Dirt::Destroy();
+		Water::Destroy();
+	}
+
+	Chunk::Chunk()
+	{}
+
+	Chunk::Chunk(glm::vec2 coords = glm::vec2{ 0.0f, 0.0f }) : coords(coords)
+	{
+		// create all blocks in the chunk
+		for (int y = 0; y < CHUNK_WIDTH; y++)
+		{
+			for (int x = 0; x < CHUNK_WIDTH; x++)
+			{
+				const float data = (noise.GetNoise((float)x + coords.x, (float)y + coords.y) + 1) / 2;
+				const int surface = (int)(CHUNK_DEPTH * data);
+				const int edge = surface - 1;
+
+				for (int z = 0; z < CHUNK_DEPTH; z++)
+				{
+					if (z < surface)
+					{
+						if (z == edge && z >= 192)
+						{
+							blocks.push_back(new Grass({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+						}
+						else
+						{
+							blocks.push_back(new Dirt({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+						}
+					}
+					else if (z < 193)
+					{
+						blocks.push_back(new Water({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+					}
+					else
+					{
+						blocks.push_back(new Air({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+					}
+				}
+			}
+		}
+
+		faceCullingAndSeparating();
 	}
 
 	Chunk::~Chunk()
@@ -182,10 +201,9 @@ namespace MyWorld
 	void Chunk::Draw()
 	{
 		// draw opaque blocks first
-		for (int i = 0; i < blocks.size(); i++)
+		for (int i = 0; i < opaque_blocks.size(); i++)
 		{
-			if (blocks[i]->faces != 0 && blocks[i]->type != Block::WATER)
-				blocks[i]->Draw(blocks[i]->faces);
+			opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
 		}
 
 		// draw transparent blocks
@@ -202,5 +220,17 @@ namespace MyWorld
 				sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
 			}
 		}
+	}
+
+	void Chunk::toggleEdge()
+	{
+		transparent_blocks.clear();
+		opaque_blocks.clear();
+		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
+		{
+			(*iter)->faces = 0;
+		}
+
+		faceCullingAndSeparating();
 	}
 }

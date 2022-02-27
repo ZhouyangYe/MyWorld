@@ -6,14 +6,29 @@ namespace MyWorld {
     WindowData Window::m_window_data = {};
     bool Window::shouldCloseWindow = false;
     WindowSize Window::size;
-    WindowSize Window::center;
+    glm::vec2 Window::center;
+
+    void Window::hideCursor()
+    {
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
+    void Window::showCursor()
+    {
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    void Window::setCursorPos(double width, double height)
+    {
+        glfwSetCursorPos(m_window, width, height);
+    }
 
     GLFWwindow* Window::getGlfwWindowObj()
     {
         return m_window;
     }
 
-    HWND Window::getWindowHWND()
+    const HWND& Window::getWindowHWND()
     {
         return glfwGetWin32Window(m_window);
     }
@@ -40,12 +55,12 @@ namespace MyWorld {
         m_window_data.eventHandler = fn;
     }
 
-    const WindowSize Window::getWindowSize()
+    const WindowSize& Window::getWindowSize()
     {
         return size;
     }
 
-    const WindowSize Window::getCenter()
+    const glm::vec2& Window::getCenter()
     {
         return center;
     }
@@ -53,7 +68,7 @@ namespace MyWorld {
     void Window::setWindowSize(WindowSize s)
     {
         size = s;
-        center = WindowSize{ s.width / 2, s.height / 2 };
+        center = glm::vec2{ s.width / 2, s.height / 2 };
     }
 
     double Window::getCurrentTime()

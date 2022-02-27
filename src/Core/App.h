@@ -5,10 +5,10 @@
 
 #include "Renderer/Renderer.h"
 #include "Renderer/Camera.h"
-#include "Chunk.h"
 #include "Window/Window.h"
 #include "EventsHandler.h"
-#include "Time.h";
+#include "Time.h"
+#include "Data.h"
 
 namespace MyWorld
 {

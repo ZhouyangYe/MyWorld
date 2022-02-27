@@ -44,7 +44,9 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Model/Blocks/Air.cpp
   src/Renderer/Model/Blocks/Water.h
   src/Renderer/Model/Blocks/Water.cpp
-)
+  src/Core/Data.h
+  src/Core/Data.cpp
+ )
 
 # add glfw
 add_subdirectory(libs/glfw)

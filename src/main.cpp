@@ -4,7 +4,10 @@ int main(void)
 {
     MyWorld::App::Init();
 
-    MyWorld::App::Run();
+    while (!MyWorld::Window::shouldWindowTerminate())
+    {
+        MyWorld::App::Run();
+    }
 
     MyWorld::App::Terminate();
 

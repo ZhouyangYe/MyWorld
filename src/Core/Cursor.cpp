@@ -14,29 +14,29 @@ namespace MyWorld
 
 	void Cursor::updateCoord(glm::vec2 coord)
 	{
-		WindowSize center = Window::getCenter();
+		glm::vec2 center = Window::getCenter();
 		if (prevCoord.length == 0)
 			prevCoord = coord;
 
 		delta = coord - prevCoord;
-		prevCoord = hideCursor ? glm::vec2{ center.width, center.height } : coord;
+		prevCoord = hideCursor ? center : coord;
 	}
 
 	void Cursor::hide()
 	{
-		WindowSize center = Window::getCenter();
-		prevCoord = glm::vec2{ center.width, center.height };
-		glfwSetInputMode(Window::getGlfwWindowObj(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glm::vec2 center = Window::getCenter();
+		prevCoord = glm::vec2{ center.x, center.y };
+		Window::hideCursor();
 	}
 
 	void Cursor::reset()
 	{
-		WindowSize center = Window::getCenter();
-		glfwSetCursorPos(Window::getGlfwWindowObj(), center.width, center.height);
+		glm::vec2 center = Window::getCenter();
+		Window::setCursorPos(center.x, center.y);
 	}
 
 	void Cursor::show()
 	{
-		glfwSetInputMode(Window::getGlfwWindowObj(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		Window::showCursor();
 	}
 }

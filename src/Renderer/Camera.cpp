@@ -10,7 +10,7 @@ namespace MyWorld
 
 	glm::mat4 Camera::view;
 	glm::mat4 Camera::proj;
-	glm::vec3 Camera::eye = { -1.0f, 0.0f, 100.0f };
+	glm::vec3 Camera::eye = { -1.0f, 0.0f, 200.0f };
 	glm::vec3 Camera::forward = { 1.0f, 0.0f, 0.0f };
 	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
 	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));
@@ -87,7 +87,8 @@ namespace MyWorld
 	void Camera::MoveForward()
 	{
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
-		eye += glm::vec3{ forward.x * movement, forward.y * movement, 0.0f };
+		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
+		eye += glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
 		view = glm::lookAt(eye, eye + forward, up);
 	}
 

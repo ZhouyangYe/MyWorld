@@ -6,6 +6,8 @@
 #include "Window/Window.h"
 #include "Cursor.h"
 #include "Renderer/Model/Blocks/Block.h"
+#include "Chunk.h"
+#include "Data.h"
 
 namespace MyWorld
 {

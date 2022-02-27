@@ -54,6 +54,16 @@ namespace MyWorld
 		case Key::T:
 			if (event.action == KeyPressEvent::KEY_PRESS) Block::switchRenderMode();
 			break;
+		case Key::O:
+			if (event.action == KeyPressEvent::KEY_PRESS)
+			{
+				Chunk::toggleFaceCulling();
+				for (std::vector<Chunk*>::iterator iter = Data::chunks.begin(); iter != Data::chunks.end(); ++iter)
+				{
+					(*iter)->toggleEdge();
+				}
+			}
+			break;
 		case Key::Escape:
 			Window::setShouldWindowClose(true);
 			break;

@@ -44,22 +44,25 @@ namespace MyWorld
 		static GLFWwindow* m_window;
 		static WindowData m_window_data;
 		static WindowSize size;
-		static WindowSize center;
+		static glm::vec2 center;
 		static void glfw_error_callback(int error, const char* description);
 		static bool shouldCloseWindow;
 	public:
 		static GLFWwindow* getGlfwWindowObj();
-		static HWND getWindowHWND();
+		static const HWND& getWindowHWND();
 		static bool shouldWindowTerminate();
 		static void Init(WindowParams &params);
 		static void Terminate();
 		static void Begin();
 		static void End();
-		static const WindowSize getWindowSize();
-		static const WindowSize getCenter();
+		static const WindowSize& getWindowSize();
+		static const glm::vec2& getCenter();
 		static void setWindowSize(WindowSize size);
 		static void setEventCallback(const std::function<void(Event& e)>& fn);
 		static void setShouldWindowClose(bool shouldClose);
+		static void hideCursor();
+		static void showCursor();
+		static void setCursorPos(double width, double height);
 		static double getCurrentTime();
 	};
 }

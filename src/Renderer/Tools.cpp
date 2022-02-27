@@ -88,18 +88,18 @@ namespace MyWorld
         //dx11/  dx9/   essl/  glsl/  metal/ pssl/  spirv/
         bgfx::ShaderHandle invalid = BGFX_INVALID_HANDLE;
         switch (bgfx::getRendererType()) {
-        case bgfx::RendererType::Noop:
-        case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
-        case bgfx::RendererType::Direct3D11:
-        case bgfx::RendererType::Direct3D12:    shaderPath = "C:\\BrighT\\Dev\\MyWorld\\resource\\shaders\\bin\\";  break;
-        case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
-        case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
-        case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;
-        case bgfx::RendererType::OpenGLES:      shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/essl/";  break;
-        case bgfx::RendererType::Vulkan:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/spirv/"; break;
-        case bgfx::RendererType::Nvn:
-        case bgfx::RendererType::WebGPU:
-        case bgfx::RendererType::Count:         return invalid; // count included to keep compiler warnings happy
+            case bgfx::RendererType::Noop:
+            case bgfx::RendererType::Direct3D9:     shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/dx9/";   break;
+            case bgfx::RendererType::Direct3D11:
+            case bgfx::RendererType::Direct3D12:    shaderPath = "C:\\BrighT\\Dev\\MyWorld\\resource\\shaders\\bin\\";  break;
+            case bgfx::RendererType::Gnm:           shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/pssl/";  break;
+            case bgfx::RendererType::Metal:         shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/metal/"; break;
+            case bgfx::RendererType::OpenGL:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/glsl/";  break;
+            case bgfx::RendererType::OpenGLES:      shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/essl/";  break;
+            case bgfx::RendererType::Vulkan:        shaderPath = "vendors/bgfx.cmake/bgfx/examples/runtime/shaders/spirv/"; break;
+            case bgfx::RendererType::Nvn:
+            case bgfx::RendererType::WebGPU:
+            case bgfx::RendererType::Count:         return invalid; // count included to keep compiler warnings happy
         }
 
         bx::strCopy(filePath, BX_COUNTOF(filePath), shaderPath);

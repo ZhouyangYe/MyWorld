@@ -17,17 +17,24 @@ namespace MyWorld
 	class Chunk
 	{
 	private:
+		static bool showEdge;
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
 		static const int CHUNK_DEPTH;
 		static float getLength(Block* block);
+		void faceCullingAndSeparating();
+		glm::vec2 coords;
 		std::vector<Block*> blocks;
+		std::vector<Block*> opaque_blocks;
 		std::vector<Block*> transparent_blocks;
 	public:
-		Chunk(glm::vec3 coords);
+		Chunk();
+		Chunk(glm::vec2 coords);
 		~Chunk();
+		static void toggleFaceCulling();
 		static void Init();
-		static void Terminate();
+		static void Destroy();
 		void Draw();
+		void toggleEdge();
 	};
 }

@@ -16,6 +16,7 @@ namespace MyWorld
 		static bgfx::VertexLayout textureArrayLayout;
 		static bgfx::VertexLayout colorTextureLayout;
 		static bgfx::VertexLayout colorTextureArrayLayout;
+		static uint32_t debugMode;
 	public:
 		struct RenderParam
 		{
@@ -30,10 +31,13 @@ namespace MyWorld
 		static void Terminate();
 		static void Begin();
 		static void End();
+		static void switchRenderMode();
+		static bool toggleDebugText();
 		static const bgfx::VertexLayout& getColorLayout();
 		static const bgfx::VertexLayout& getTextureLayout();
 		static const bgfx::VertexLayout& getTextureArrayLayout();
 		static const bgfx::VertexLayout& getColorTextureLayout();
 		static const bgfx::VertexLayout& getColorTextureArrayLayout();
+		static const uint32_t& getDebugMode();
 	};
 }

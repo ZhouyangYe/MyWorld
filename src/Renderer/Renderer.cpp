@@ -12,6 +12,7 @@ namespace MyWorld
     bgfx::VertexLayout Renderer::textureArrayLayout;
     bgfx::VertexLayout Renderer::colorTextureLayout;
     bgfx::VertexLayout Renderer::colorTextureArrayLayout;
+    uint32_t Renderer::debugMode = BGFX_DEBUG_NONE;
 
     const bgfx::VertexLayout& Renderer::getColorLayout()
     {
@@ -115,5 +116,42 @@ namespace MyWorld
     void Renderer::End()
     {
         bgfx::frame();
+    }
+
+    void Renderer::switchRenderMode()
+    {
+        if (debugMode & BGFX_DEBUG_WIREFRAME)
+        {
+            debugMode &= ~BGFX_DEBUG_WIREFRAME;
+            bgfx::setDebug(debugMode);
+        }
+        else
+        {
+            // debug using wireframes
+            debugMode |= BGFX_DEBUG_WIREFRAME;
+            bgfx::setDebug(debugMode);
+        }
+    }
+
+    bool Renderer::toggleDebugText()
+    {
+        if (debugMode & BGFX_DEBUG_TEXT)
+        {
+            debugMode &= ~BGFX_DEBUG_TEXT;
+            bgfx::setDebug(debugMode);
+            return false;
+        }
+        else
+        {
+            // show 2d debug text
+            debugMode |= BGFX_DEBUG_TEXT;
+            bgfx::setDebug(debugMode);
+            return true;
+        }
+    }
+
+    const uint32_t& Renderer::getDebugMode()
+    {
+        return debugMode;
     }
 }

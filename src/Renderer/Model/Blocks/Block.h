@@ -55,7 +55,6 @@ namespace MyWorld
 		glm::vec3 coords;
 	private:
 		static Texture* texture;
-		static bool isDebugMode;
 		static bgfx::IndexBufferHandle ibh[];
 		static uint16_t* triListPointers[];
 		static void createIbh(const uint8_t& idx);
@@ -89,7 +88,6 @@ namespace MyWorld
 		Block();
 		Block(Block::TYPE type, glm::vec3 &coords);
 		static bgfx::IndexBufferHandle& getIbh(const uint8_t &idx);
-		static void switchRenderMode();
 		static void Register();
 		static void Destroy();
 		const glm::vec3& getCoords();

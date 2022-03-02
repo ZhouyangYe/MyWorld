@@ -39,9 +39,9 @@ namespace MyWorld
 		return glm::length2(center - Camera::getCameraCoords());
 	}
 
+	// figure out which faces to be drawn, merge blocks, and put opaque and transparent blocks into different arrays
 	void Chunk::faceCullingAndSeparating()
 	{
-		// figure out which faces to be drawn
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			if (blocks[i]->type != Block::AIR)
@@ -211,7 +211,7 @@ namespace MyWorld
 		if (size)
 		{
 			Block** sortedBlocks = transparent_blocks.data();
-			// draw far blocks first
+			// draw far faces first
 			mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
 				return getLength(item1) - getLength(item2);
 			});

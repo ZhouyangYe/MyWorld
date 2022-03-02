@@ -12,7 +12,6 @@ namespace MyWorld
     Texture* Block::texture = nullptr;
     bgfx::IndexBufferHandle Block::ibh[64];
     uint16_t* Block::triListPointers[64];
-    bool Block::isDebugMode = false;
     const uint64_t Block::default_state = 0
         | BGFX_STATE_WRITE_RGB
         | BGFX_STATE_WRITE_A
@@ -220,20 +219,6 @@ namespace MyWorld
         return ibh[idx];
     }
     // --- Vertex and index buffer pair type 1 --- end
-
-    void Block::switchRenderMode()
-    {
-        isDebugMode = !isDebugMode;
-        if (isDebugMode)
-        {
-            // debug using wireframes
-            bgfx::setDebug(BGFX_DEBUG_WIREFRAME);
-        }
-        else
-        {
-            bgfx::setDebug(BGFX_DEBUG_NONE);
-        }
-    }
 
     const glm::vec3& Block::getCoords()
     {

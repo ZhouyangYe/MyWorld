@@ -9,6 +9,7 @@
 #include "EventsHandler.h"
 #include "Time.h"
 #include "Data.h"
+#include "Info.h"
 
 namespace MyWorld
 {

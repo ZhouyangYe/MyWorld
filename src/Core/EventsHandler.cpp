@@ -52,7 +52,7 @@ namespace MyWorld
 			Cursor::hideCursor = !Cursor::hideCursor;
 			break;
 		case Key::T:
-			if (event.action == KeyPressEvent::KEY_PRESS) Block::switchRenderMode();
+			if (event.action == KeyPressEvent::KEY_PRESS) Renderer::switchRenderMode();
 			break;
 		case Key::O:
 			if (event.action == KeyPressEvent::KEY_PRESS)
@@ -62,6 +62,13 @@ namespace MyWorld
 				{
 					(*iter)->toggleEdge();
 				}
+			}
+			break;
+		case Key::I:
+			if (event.action == KeyPressEvent::KEY_PRESS)
+			{
+				const bool showInfo = Renderer::toggleDebugText();
+				Info::setVisible(showInfo);
 			}
 			break;
 		case Key::Escape:

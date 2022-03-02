@@ -50,14 +50,13 @@ namespace MyWorld
 		Renderer::Begin();
 		Camera::Begin();
 
-		// Main logic begin
 		/*for (int i = 0; i < 2; i++)
 		{
 			Data::chunks[i].Draw();
 		}*/
 		Data::chunks[0]->Draw();
-		// Main logic end
 
+		Info::Update();
 		if (Cursor::hideCursor) Cursor::reset();
 
 		Window::End();

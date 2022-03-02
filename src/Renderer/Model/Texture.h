@@ -16,6 +16,7 @@ namespace MyWorld
 		~Texture();
 		void bind();
 		const bgfx::TextureHandle& getTextureHandle();
+		const bgfx::TextureInfo& getInfo();
 		static void Init();
 		static void Destroy();
 	};

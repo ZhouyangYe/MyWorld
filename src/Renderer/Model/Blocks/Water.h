@@ -7,6 +7,8 @@ namespace MyWorld
 	class Water : public Block
 	{
 	private:
+		bgfx::ProgramHandle program;
+		static Block::PosColorTextureArrayVertex* cubeVertices_ta;
 		static Block::PosColorTextureVertex* cubeVertices;
 		static bgfx::VertexBufferHandle vbh;
 	public:

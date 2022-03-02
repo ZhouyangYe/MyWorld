@@ -24,7 +24,8 @@ namespace MyWorld
 
     // --- Vertex and index buffer pair type 1 --- begin
     // three textures: side, top and bottom;
-    Block::PosTextureVertex* Block::getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom)
+    // vertices for texture
+    Block::PosTextureVertex* Block::getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
         glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };               // 1.0, 0.0
@@ -64,7 +65,8 @@ namespace MyWorld
         return vertices;
     }
 
-    Block::PosColorTextureVertex* Block::getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color)
+    // vertices for texture color
+    Block::PosColorTextureVertex* Block::getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
         glm::vec2 bottom_right = { side.x * xUnit, side.y * yUnit };               // 1.0, 0.0
@@ -104,26 +106,61 @@ namespace MyWorld
         return vertices;
     }
 
-    Block::PosTextureVertex* Block::getVerticesType3(glm::vec2& side, glm::vec2& top, glm::vec2& bottom)
+    // vetices for texture array
+    Block::PosTextureArrayVertex* Block::getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom)
     {
-        PosTextureVertex* vertices = new PosTextureVertex[16]{
-            { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }, // 0 --- 0,0,0
-            { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // 1 --- 1,0,0
-            { 1.0f, 0.0f, 1.0f, 1.0f, 1.0f }, // 2 --- 1,0,1
-            { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // 3 --- 0,0,1
-            { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }, // 4 --- 0,1,1
-            { 0.0f, 1.0f, 0.0f, 1.0f, 0.0f }, // 5 --- 0,1,0
-            { 1.0f, 1.0f, 0.0f, 0.0f, 0.0f }, // 6 --- 1,1,0
-            { 1.0f, 1.0f, 1.0f, 0.0f, 1.0f }, // 7 --- 1,1,1
+        const float sideImageIdx = (side.y - 1) * WIDTH_NUM + side.x - 1;
+        const float topImageIdx = (top.y - 1) * WIDTH_NUM + top.x - 1;
+        const float bottomIdx = (bottom.y - 1) * WIDTH_NUM + bottom.x - 1;
 
-            { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // 0 + 8 --- 0,0,0
-            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // 1 + 8 --- 1,0,0
-            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f }, // 2 + 8 --- 1,0,1 --- top
-            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, // 3 + 8 --- 0,0,1 --- top
-            { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f }, // 4 + 8 --- 0,1,1 --- top
-            { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f }, // 5 + 8 --- 0,1,0
-            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f }, // 6 + 8 --- 1,1,0
-            { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f }  // 7 + 8 --- 1,1,1 --- top
+        PosTextureArrayVertex* vertices = new PosTextureArrayVertex[16]{
+            { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, sideImageIdx }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, sideImageIdx }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, sideImageIdx }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, sideImageIdx }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, sideImageIdx }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, sideImageIdx }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, sideImageIdx }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, sideImageIdx }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, bottomIdx }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, bottomIdx }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, topImageIdx }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, topImageIdx }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, topImageIdx }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, bottomIdx }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, bottomIdx }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, topImageIdx }  // 7 + 8 --- 1,1,1 --- top
+        };
+
+        return vertices;
+    }
+
+    // vertices for texture array color
+    Block::PosColorTextureArrayVertex* Block::getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color)
+    {
+        const float sideImageIdx = (side.y - 1) * WIDTH_NUM + side.x - 1;
+        const float topImageIdx = (top.y - 1) * WIDTH_NUM + top.x - 1;
+        const float bottomIdx = (bottom.y - 1) * WIDTH_NUM + bottom.x - 1;
+
+        PosColorTextureArrayVertex* vertices = new PosColorTextureArrayVertex[16]{
+            { 0.0f, 0.0f, 0.0f, color, 0.0f, 1.0f, sideImageIdx }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color, 1.0f, 1.0f, sideImageIdx }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color, 1.0f, 0.0f, sideImageIdx }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f, sideImageIdx }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, color, 1.0f, 0.0f, sideImageIdx }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, color, 1.0f, 1.0f, sideImageIdx }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color, 0.0f, 1.0f, sideImageIdx }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color, 0.0f, 0.0f, sideImageIdx }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, color, 1.0f, 0.0f, bottomIdx }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color, 1.0f, 1.0f, bottomIdx }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color, 1.0f, 0.0f, topImageIdx }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f, topImageIdx }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, color, 0.0f, 1.0f, topImageIdx }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, color, 0.0f, 0.0f, bottomIdx }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color, 0.0f, 1.0f, bottomIdx }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color, 1.0f, 1.0f, topImageIdx }  // 7 + 8 --- 1,1,1 --- top
         };
 
         return vertices;

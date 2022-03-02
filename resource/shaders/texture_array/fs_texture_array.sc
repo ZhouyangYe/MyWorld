@@ -5,5 +5,5 @@ $input v_texcoord0
 SAMPLER2DARRAY(s_texColor, 0);
 
 void main() {
-	gl_FragColor = vec4(texture2DArray(s_texColor, vec3(v_texcoord0, 2)).rgb, 1.0);
+	gl_FragColor = vec4(texture2DArray(s_texColor, v_texcoord0).rgb, 1.0);
 }

@@ -9,7 +9,6 @@ namespace MyWorld
 		if (arrayBufferSupported)
 		{
 			textureHandle = Tools::loadTexture(name, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info, NULL, &taInfo);
-			std::cout << "Texture array is supported!" << taInfo.width_num << "-" << taInfo.height_num << "\n";
 		}
 		else
 		{
@@ -21,6 +20,11 @@ namespace MyWorld
 	{
 		bgfx::destroy(textureHandle);
 		bgfx::destroy(s_texColor);
+	}
+
+	const bgfx::TextureInfo& Texture::getInfo()
+	{
+		return info;
 	}
 
 	void Texture::bind()

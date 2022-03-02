@@ -3,26 +3,39 @@
 
 namespace MyWorld
 {
-    bgfx::ProgramHandle Renderer::texture_program = {};
-    bgfx::ProgramHandle Renderer::texture_color_program = {};
-    bgfx::ProgramHandle Renderer::texture_array_program = {};
+    bgfx::ProgramHandle Renderer::texture_program = BGFX_INVALID_HANDLE;
+    bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
+    bgfx::ProgramHandle Renderer::texture_array_program = BGFX_INVALID_HANDLE;
+    bgfx::ProgramHandle Renderer::texture_array_color_program = BGFX_INVALID_HANDLE;
     bgfx::VertexLayout Renderer::colorLayout;
     bgfx::VertexLayout Renderer::textureLayout;
+    bgfx::VertexLayout Renderer::textureArrayLayout;
     bgfx::VertexLayout Renderer::colorTextureLayout;
+    bgfx::VertexLayout Renderer::colorTextureArrayLayout;
 
-    bgfx::VertexLayout& Renderer::getColorLayout()
+    const bgfx::VertexLayout& Renderer::getColorLayout()
     {
         return colorLayout;
     }
 
-    bgfx::VertexLayout& Renderer::getTextureLayout()
+    const bgfx::VertexLayout& Renderer::getTextureLayout()
     {
         return textureLayout;
     }
 
-    bgfx::VertexLayout& Renderer::getColorTextureLayout()
+    const bgfx::VertexLayout& Renderer::getTextureArrayLayout()
+    {
+        return textureArrayLayout;
+    }
+
+    const bgfx::VertexLayout& Renderer::getColorTextureLayout()
     {
         return colorTextureLayout;
+    }
+
+    const bgfx::VertexLayout& Renderer::getColorTextureArrayLayout()
+    {
+        return colorTextureArrayLayout;
     }
 
     void Renderer::Init(RenderParam param)
@@ -55,6 +68,7 @@ namespace MyWorld
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
         texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
+        texture_array_color_program = Tools::createProgram("vs_texture_array_color", "fs_texture_array_color");
 
         colorLayout.begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
@@ -64,10 +78,19 @@ namespace MyWorld
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
+        textureArrayLayout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
+            .end();
         colorTextureLayout.begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
             .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+            .end();
+        colorTextureArrayLayout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
             .end();
 
         Texture::Init();

@@ -13,7 +13,9 @@ namespace MyWorld
 		};
 		static bgfx::VertexLayout colorLayout;
 		static bgfx::VertexLayout textureLayout;
+		static bgfx::VertexLayout textureArrayLayout;
 		static bgfx::VertexLayout colorTextureLayout;
+		static bgfx::VertexLayout colorTextureArrayLayout;
 	public:
 		struct RenderParam
 		{
@@ -23,12 +25,15 @@ namespace MyWorld
 		static bgfx::ProgramHandle texture_program;
 		static bgfx::ProgramHandle texture_color_program;
 		static bgfx::ProgramHandle texture_array_program;
+		static bgfx::ProgramHandle texture_array_color_program;
 		static void Init(RenderParam param);
 		static void Terminate();
 		static void Begin();
 		static void End();
-		static bgfx::VertexLayout& getColorLayout();
-		static bgfx::VertexLayout& getTextureLayout();
-		static bgfx::VertexLayout& getColorTextureLayout();
+		static const bgfx::VertexLayout& getColorLayout();
+		static const bgfx::VertexLayout& getTextureLayout();
+		static const bgfx::VertexLayout& getTextureArrayLayout();
+		static const bgfx::VertexLayout& getColorTextureLayout();
+		static const bgfx::VertexLayout& getColorTextureArrayLayout();
 	};
 }

@@ -168,14 +168,12 @@ namespace MyWorld
 						}
 						else
 						{
-							// blocks.push_back(new Dirt({ (float)x + coords.x, (float)y + coords.y, (float)z }));
-							blocks.push_back(new Grass({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+							blocks.push_back(new Dirt({ (float)x + coords.x, (float)y + coords.y, (float)z }));
 						}
 					}
 					else if (z < 193)
 					{
-						blocks.push_back(new Air({ (float)x + coords.x, (float)y + coords.y, (float)z }));
-						// blocks.push_back(new Water({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+						blocks.push_back(new Water({ (float)x + coords.x, (float)y + coords.y, (float)z }));
 					}
 					else
 					{

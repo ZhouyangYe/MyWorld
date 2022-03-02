@@ -19,6 +19,15 @@ namespace MyWorld
 			float z;
 			float u;
 			float v;
+		}; 
+		struct PosTextureArrayVertex
+		{
+			float x;
+			float y;
+			float z;
+			float u;
+			float v;
+			float d;
 		};
 		struct PosColorTextureVertex
 		{
@@ -29,9 +38,20 @@ namespace MyWorld
 			float u;
 			float v;
 		};
-		static PosTextureVertex* getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom);
-		static PosColorTextureVertex* getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color);
-		static PosTextureVertex* getVerticesType3(glm::vec2& side, glm::vec2& top, glm::vec2& bottom);
+		struct PosColorTextureArrayVertex
+		{
+			float x;
+			float y;
+			float z;
+			uint32_t abgr;
+			float u;
+			float v;
+			float d;
+		};
+		static PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
+		static PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
+		static PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		static PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		glm::vec3 coords;
 	private:
 		static Texture* texture;

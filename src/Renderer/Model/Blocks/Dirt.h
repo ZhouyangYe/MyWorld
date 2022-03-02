@@ -6,6 +6,8 @@ namespace MyWorld
 	class Dirt : public Block
 	{
 	private:
+		bgfx::ProgramHandle program;
+		static Block::PosTextureArrayVertex* cubeVertices_ta;
 		static Block::PosTextureVertex* cubeVertices;
 		static bgfx::VertexBufferHandle vbh;
 	public:

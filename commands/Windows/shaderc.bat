@@ -6,3 +6,6 @@ out\libs\bgfx.cmake\Debug\shaderc -f ./resource/shaders/texture_color/fs_texture
 
 out\libs\bgfx.cmake\Debug\shaderc -f ./resource/shaders/texture_array/vs_texture_array.sc -o ./resource/shaders/bin/vs_texture_array.bin --type v --platform windows -p vs_5_0 -O 3
 out\libs\bgfx.cmake\Debug\shaderc -f ./resource/shaders/texture_array/fs_texture_array.sc -o ./resource/shaders/bin/fs_texture_array.bin --type f --platform windows -p ps_5_0 -O 3
+
+out\libs\bgfx.cmake\Debug\shaderc -f ./resource/shaders/texture_array_color/vs_texture_array_color.sc -o ./resource/shaders/bin/vs_texture_array_color.bin --type v --platform windows -p vs_5_0 -O 3
+out\libs\bgfx.cmake\Debug\shaderc -f ./resource/shaders/texture_array_color/fs_texture_array_color.sc -o ./resource/shaders/bin/fs_texture_array_color.bin --type f --platform windows -p ps_5_0 -O 3

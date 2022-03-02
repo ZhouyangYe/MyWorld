@@ -170,23 +170,20 @@ namespace MyWorld
                         int channels = 4;
                         int tilesXNum = taInfo->width_num;
                         int tilesYNum = taInfo->height_num;
-                        int tileWPixels = imageContainer->m_width / tilesXNum;           // number of pixels in a row of 1 tile
-                        int tileHPixels = imageContainer->m_height / tilesYNum;           // number of pixels in a column of 1 tile
+                        int tileWPixels = imageContainer->m_width / tilesXNum; // number of pixels in a row of 1 tile
+                        int tileHPixels = imageContainer->m_height / tilesYNum; // number of pixels in a column of 1 tile
                         int imageCount = tilesXNum * tilesYNum;
 
                         handle = bgfx::createTexture2D(
                             uint16_t(tileWPixels)
                             , uint16_t(tileHPixels)
-                            , false
+                            , 1 < imageContainer->m_numMips
                             , tilesXNum * tilesYNum
-                            , bgfx::TextureFormat::RGBA8
-                            , BGFX_SAMPLER_U_CLAMP
-                            | BGFX_SAMPLER_V_CLAMP
-                            | BGFX_SAMPLER_MIN_POINT
-                            | BGFX_SAMPLER_MAG_POINT
+                            , bgfx::TextureFormat::Enum(imageContainer->m_format)
+                            , _flags
                         );
 
-                        std::vector<unsigned char> tile(tileWPixels * tileHPixels * channels);
+                        std::vector<uint8_t> tile(tileWPixels * tileHPixels * channels);
                         int tilePitch = tileWPixels * channels;
                         int imagePitch = tilesXNum * tilePitch;
 

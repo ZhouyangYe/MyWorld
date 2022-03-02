@@ -7,7 +7,7 @@ namespace MyWorld
 
 	void Grass::Register()
 	{
-		cubeVertices = Block::getVerticesType1(glm::vec2{ 2.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f }, glm::vec2{ 3.0f, 1.0f });
+		cubeVertices = Block::getVerticesType3(glm::vec2{ 2.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f }, glm::vec2{ 3.0f, 1.0f });
 		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Block::PosTextureVertex)), Renderer::getTextureLayout());
 	}
 
@@ -30,6 +30,6 @@ namespace MyWorld
 
 	void Grass::Draw(const uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(faces));
+		Block::Draw(vbh, Block::getIbh(faces), Renderer::texture_array_program);
 	}
 }

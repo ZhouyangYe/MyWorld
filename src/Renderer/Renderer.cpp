@@ -4,7 +4,8 @@
 namespace MyWorld
 {
     bgfx::ProgramHandle Renderer::texture_program = {};
-    bgfx::ProgramHandle Renderer::water_program = {};
+    bgfx::ProgramHandle Renderer::texture_color_program = {};
+    bgfx::ProgramHandle Renderer::texture_array_program = {};
     bgfx::VertexLayout Renderer::colorLayout;
     bgfx::VertexLayout Renderer::textureLayout;
     bgfx::VertexLayout Renderer::colorTextureLayout;
@@ -52,7 +53,8 @@ namespace MyWorld
         bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
 
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
-        water_program = Tools::createProgram("vs_water", "fs_water");
+        texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
+        texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
 
         colorLayout.begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
@@ -77,7 +79,8 @@ namespace MyWorld
         Tools::Terminate();
 
         bgfx::destroy(texture_program);
-        bgfx::destroy(water_program);
+        bgfx::destroy(texture_color_program);
+        bgfx::destroy(texture_array_program);
         bgfx::shutdown();
     }
 

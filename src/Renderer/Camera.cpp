@@ -95,7 +95,8 @@ namespace MyWorld
 	void Camera::MoveBackward()
 	{
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
-		eye += -glm::vec3{ forward.x * movement, forward.y * movement, 0.0f };
+		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
+		eye += -glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
 		view = glm::lookAt(eye, eye + forward, up);
 	}
 

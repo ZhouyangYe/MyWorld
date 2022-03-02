@@ -31,14 +31,21 @@ namespace MyWorld
 {
 	class Tools
 	{
-	private:
-		static bx::FileReaderI* _reader;
-		static bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation);
 	public:
+		struct TextureArrayParam
+		{
+			int width_num = 1;
+			int height_num = 1;
+			TextureArrayParam(int width_num, int height_num) : width_num(width_num), height_num(height_num) {};
+		};
 		static bgfx::ShaderHandle loadShader(const char* fileName);
-		static bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL);
+		static bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL, TextureArrayParam* taInfo = NULL);
+		static bgfx::TextureHandle loadAtlasTextureToTA();
 		static bgfx::ProgramHandle createProgram(const char* vs_name, const char* fs_name);
 		static void Init();
 		static void Terminate();
+	private:
+		static bx::FileReaderI* _reader;
+		static bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation, TextureArrayParam* taInfo);
 	};
 }

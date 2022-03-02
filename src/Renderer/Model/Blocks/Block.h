@@ -2,8 +2,10 @@
 #include "../../Renderer.h"
 #include "../Texture.h"
 
-#define xUnit 1/16
-#define yUnit 1/16
+#define WIDTH_NUM 16
+#define HEIGHT_NUM 16
+#define xUnit 1/WIDTH_NUM
+#define yUnit 1/HEIGHT_NUM
 
 namespace MyWorld
 {
@@ -29,6 +31,7 @@ namespace MyWorld
 		};
 		static PosTextureVertex* getVerticesType1(glm::vec2 &side, glm::vec2 &top, glm::vec2 &bottom);
 		static PosColorTextureVertex* getVerticesType2(glm::vec2& side, glm::vec2& top, glm::vec2& bottom, uint32_t color);
+		static PosTextureVertex* getVerticesType3(glm::vec2& side, glm::vec2& top, glm::vec2& bottom);
 		glm::vec3 coords;
 	private:
 		static Texture* texture;

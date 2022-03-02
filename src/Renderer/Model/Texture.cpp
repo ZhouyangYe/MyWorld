@@ -4,11 +4,16 @@ namespace MyWorld
 {
 	bool Texture::arrayBufferSupported = false;
 
-	Texture::Texture(const char* name, glm::vec2 size) : textureHandle(Tools::loadTexture(name)), size(size), s_texColor(bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler))
+	Texture::Texture(const char* name, Tools::TextureArrayParam taInfo) : textureHandle(BGFX_INVALID_HANDLE), s_texColor(bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler))
 	{
 		if (arrayBufferSupported)
 		{
-			std::cout << "Texture array is supported!" << "\n";
+			textureHandle = Tools::loadTexture(name, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info, NULL, &taInfo);
+			std::cout << "Texture array is supported!" << taInfo.width_num << "-" << taInfo.height_num << "\n";
+		}
+		else
+		{
+			textureHandle = Tools::loadTexture(name, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info);
 		}
 	}
 
@@ -27,6 +32,11 @@ namespace MyWorld
 			| BGFX_SAMPLER_U_CLAMP
 			| BGFX_SAMPLER_V_CLAMP
 		);
+	}
+
+	const bgfx::TextureHandle& Texture::getTextureHandle()
+	{
+		return textureHandle;
 	}
 
 	void Texture::Init()

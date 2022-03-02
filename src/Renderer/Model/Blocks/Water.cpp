@@ -30,6 +30,6 @@ namespace MyWorld
 
 	void Water::Draw(const uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(faces), Renderer::water_program, Block::default_state & (~BGFX_STATE_CULL_CW));
+		Block::Draw(vbh, Block::getIbh(faces), Renderer::texture_color_program, Block::default_state & (~BGFX_STATE_CULL_CW));
 	}
 }

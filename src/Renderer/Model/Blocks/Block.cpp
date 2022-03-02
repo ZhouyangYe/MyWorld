@@ -104,6 +104,31 @@ namespace MyWorld
         return vertices;
     }
 
+    Block::PosTextureVertex* Block::getVerticesType3(glm::vec2& side, glm::vec2& top, glm::vec2& bottom)
+    {
+        PosTextureVertex* vertices = new PosTextureVertex[16]{
+            { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 1.0f }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, 1.0f, 0.0f }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 0.0f }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 0.0f, 1.0f }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f }  // 7 + 8 --- 1,1,1 --- top
+        };
+
+        return vertices;
+    }
+
     // create cache for static index buffer
     void Block::createIbh(const uint8_t& idx)
     {
@@ -183,7 +208,7 @@ namespace MyWorld
         for (int i = 0; i < 64; i++)
             ibh[i] = BGFX_INVALID_HANDLE;
 
-        texture = new Texture("c:\\Bright\\Dev\\MyWorld\\resource\\images\\bin\\blocks.dds", glm::vec2{ 512.0f, 1024.0f });
+        texture = new Texture("c:\\Bright\\Dev\\MyWorld\\resource\\images\\bin\\blocks.dds", Tools::TextureArrayParam{ WIDTH_NUM, HEIGHT_NUM });
     }
 
     void Block::Destroy()

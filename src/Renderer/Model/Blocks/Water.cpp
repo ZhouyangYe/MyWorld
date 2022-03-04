@@ -4,7 +4,7 @@ namespace MyWorld
 {
 	Block::PosColorTextureArrayVertex* Water::cubeVertices_ta = nullptr;
 	Block::PosColorTextureVertex* Water::cubeVertices = nullptr;
-	bgfx::VertexBufferHandle Water::vbh;
+	bgfx::VertexBufferHandle Water::vbh = BGFX_INVALID_HANDLE;
 
 	void Water::Register()
 	{
@@ -35,7 +35,7 @@ namespace MyWorld
 	Water::Water()
 	{}
 
-	Water::Water(glm::vec3 coords) : Block(Block::WATER, coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_color_program : Renderer::texture_color_program)
+	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::WATER, coords, chunk_coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_color_program : Renderer::texture_color_program)
 	{
 	}
 

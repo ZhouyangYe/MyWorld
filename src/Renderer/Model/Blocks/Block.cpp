@@ -225,6 +225,11 @@ namespace MyWorld
         return coords;
     }
 
+    const glm::vec3& Block::getCalculatedCoords()
+    {
+        return calculated_coords;
+    }
+
     void Block::Register()
     {
         for (int i = 0; i < 64; i++)
@@ -244,10 +249,10 @@ namespace MyWorld
         texture = nullptr;
     }
 
-    Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), type(TYPE::INVALID)
+    Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), chunk_coords({0.0f, 0.0f}), type(TYPE::INVALID)
     {}
 
-    Block::Block(Block::TYPE type, glm::vec3 &coords) : coords(coords), type(type)
+    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), chunk_coords(chunk_coords), calculated_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
     {
     }
 
@@ -256,7 +261,7 @@ namespace MyWorld
         if (ibh.idx == bgfx::kInvalidHandle) return;
 
         glm::mat4 mtx(1.0f);
-        mtx = glm::translate(mtx, coords);
+        mtx = glm::translate(mtx, calculated_coords);
 
         // Set model matrix for rendering.
         bgfx::setTransform(&mtx);

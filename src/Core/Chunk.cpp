@@ -1,4 +1,5 @@
 #include "Chunk.h"
+#include <bitset>
 
 namespace MyWorld
 {
@@ -10,27 +11,27 @@ namespace MyWorld
 	// get block's faces' distance to camera
 	float Chunk::getLength(Block* block)
 	{
-		const glm::vec3 coords = block->getCoords();
+		const glm::vec3 blockCoords = block->getCalculatedCoords();
 		glm::vec3 center;
 		switch (block->faces)
 		{
 		case Block::DIRECTION::NORTH:
-			center = coords + Block::NorthFaceVec;
+			center = blockCoords + Block::NorthFaceVec;
 			break;
 		case Block::DIRECTION::SOUTH:
-			center = coords + Block::SouthFaceVec;
+			center = blockCoords + Block::SouthFaceVec;
 			break;
 		case Block::DIRECTION::WEST:
-			center = coords + Block::WestFaceVec;
+			center = blockCoords + Block::WestFaceVec;
 			break;
 		case Block::DIRECTION::EAST:
-			center = coords + Block::EastFaceVec;
+			center = blockCoords + Block::EastFaceVec;
 			break;
 		case Block::DIRECTION::TOP:
-			center = coords + Block::TopFaceVec;
+			center = blockCoords + Block::TopFaceVec;
 			break;
 		case Block::DIRECTION::BOTTOM:
-			center = coords + Block::BottomFaceVec;
+			center = blockCoords + Block::BottomFaceVec;
 			break;
 		default:
 			break;
@@ -39,73 +40,246 @@ namespace MyWorld
 		return glm::length2(center - Camera::getCameraCoords());
 	}
 
+	const bool Chunk::has(Block::DIRECTION face, const int& idx)
+	{
+		Block* block = blocks[idx];
+		Block::TYPE type = block->type;
+		glm::vec3 blockCoords = block->getCoords();
+
+		switch (face)
+		{
+		case MyWorld::Block::NORTH:
+			return 
+				(blockCoords.y == CHUNK_WIDTH - 1 || blocks[idx + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + Y_OFFSET]->type == Block::WATER))
+				&& (type == Block::WATER || showEdge || blockCoords.y != 0 + CHUNK_WIDTH - 1);
+		case MyWorld::Block::SOUTH:
+			return 
+				(blockCoords.y == 0 || blocks[idx - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - Y_OFFSET]->type == Block::WATER))
+				&& (type == Block::WATER || showEdge || blockCoords.y != 0);
+		case MyWorld::Block::WEST:
+			return 
+				(blockCoords.x == 0 || blocks[idx - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - X_OFFSET]->type == Block::WATER))
+				&& (type == Block::WATER || showEdge || blockCoords.x != 0);
+		case MyWorld::Block::EAST:
+			return 
+				(blockCoords.x == CHUNK_WIDTH - 1 || blocks[idx + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + X_OFFSET]->type == Block::WATER))
+				&& (type == Block::WATER || showEdge || blockCoords.x != CHUNK_WIDTH - 1);
+		case MyWorld::Block::TOP:
+			return 
+				(blockCoords.z == CHUNK_DEPTH - 1 || blocks[idx + Z_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + Z_OFFSET]->type == Block::WATER))
+				&& (showEdge || blockCoords.z != CHUNK_DEPTH - 1);
+		case MyWorld::Block::BOTTOM:
+			return 
+				(blockCoords.z == 0 || blocks[idx - Z_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - Z_OFFSET]->type == Block::WATER))
+				&& (showEdge || blockCoords.z != 0);
+		default:
+			return false;
+		}
+	}
+
+	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock)
+	{
+
+	}
+
+	// greedy meshing for faces
+	void Chunk::greedyMergeFaces(Block::DIRECTION face, const int& idx)
+	{
+		Block* block = blocks[idx];
+		const glm::vec3 blockCoords = block->getCoords();
+
+		int xOffset = 0, yOffset = 0, xCount = 0, yCount = 0, xLength = 0, yLength = 0;
+
+		switch (face)
+		{
+		case MyWorld::Block::NORTH:
+		case MyWorld::Block::SOUTH:
+			xOffset = X_OFFSET;
+			yOffset = Z_OFFSET;
+			xCount = (int)blockCoords.x + 1;
+			yCount = (int)blockCoords.z;
+			xLength = CHUNK_WIDTH;
+			yLength = CHUNK_DEPTH;
+			break;
+		case MyWorld::Block::WEST:
+		case MyWorld::Block::EAST:
+			xOffset = Y_OFFSET;
+			yOffset = Z_OFFSET;
+			xCount = (int)blockCoords.y + 1;
+			yCount = (int)blockCoords.z;
+			xLength = CHUNK_WIDTH;
+			yLength = CHUNK_DEPTH;
+			break;
+		case MyWorld::Block::TOP:
+		case MyWorld::Block::BOTTOM:
+			xOffset = X_OFFSET;
+			yOffset = Y_OFFSET;
+			xCount = (int)blockCoords.x + 1;
+			yCount = (int)blockCoords.y;
+			xLength = CHUNK_WIDTH;
+			yLength = CHUNK_WIDTH;
+			break;
+		default:
+			break;
+		}
+
+		block->faces |= face;
+		const int startingXCount = xCount - 1;
+		const int startingYCount = yCount;
+		int xIndex = xCount * xOffset;
+		int hitEdge = false;
+		while (yCount < yLength && !hitEdge)
+		{
+			if (yCount == startingYCount && xCount < xLength && blocks[xIndex]->type == block->type && has(face, xIndex))
+			{
+				blocks[xIndex]->faces |= face;
+				xCount++;
+				xIndex = xCount * xOffset;
+			}
+			else
+			{
+				if (yCount == startingYCount)
+				{
+					yCount++;
+					if (yCount == yLength)
+					{
+						// hitEdge = true; // not necessary?
+						break;
+					}
+				}
+				for (int i = startingXCount; i < xCount; i++)
+				{
+					const int yIndex = i * xOffset + yCount * yOffset;
+					if (blocks[yIndex]->type == block->type && has(face, yIndex))
+					{
+						blocks[yIndex]->faces |= face;
+					}
+					else if (i > startingXCount)
+					{
+						for (int j = i - 1; j >= startingXCount; j--)
+						{
+							blocks[j * xOffset + yCount * yOffset]->faces &= ~face;
+						}
+						hitEdge = true;
+						break;
+					}
+				}
+				if (!hitEdge) yCount++;
+			}
+		}
+
+		createBatchingOfFaces(block, blocks[(xCount - 1) * xOffset + (yCount - 1) * yOffset]);
+		if (face == Block::DIRECTION::BOTTOM)
+		{
+			std::cout << startingXCount << "-" << startingYCount << "-" << xCount << "-" << yCount << "-" << std::bitset<8>(face) << "\n";
+		}
+	}
+
 	// figure out which faces to be drawn, merge blocks, and put opaque and transparent blocks into different arrays
 	void Chunk::faceCullingAndSeparating()
 	{
+		// TODO: frustum culling
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			if (blocks[i]->type != Block::AIR)
 			{
 				Block* block = blocks[i];
 				Block::TYPE type = block->type;
-				glm::vec3 blockCoords = block->getCoords();
 
-				// TODO: frustum culling
-				// TODO: optimize it!
-				if (blockCoords.z == 0 || blocks[i - 1]->type == Block::AIR || (type != Block::WATER && blocks[i - 1]->type == Block::WATER))
+				if (has(Block::DIRECTION::BOTTOM, i))
 				{
-					if (showEdge || blockCoords.z != 0)
-						block->faces |= Block::DIRECTION::BOTTOM;
-				}
-				if (blockCoords.z == CHUNK_DEPTH - 1 || blocks[i + 1]->type == Block::AIR || (type != Block::WATER && blocks[i + 1]->type == Block::WATER))
-				{
-					if (showEdge || blockCoords.z != CHUNK_DEPTH - 1)
-						block->faces |= Block::DIRECTION::TOP;
-				}
-
-				if (blockCoords.x == coords.x || blocks[i - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - X_OFFSET]->type == Block::WATER))
-				{
-					if (type == Block::WATER || showEdge || blockCoords.x != coords.x)
-						block->faces |= Block::DIRECTION::WEST;
-				}
-				if (blockCoords.x == coords.x + CHUNK_WIDTH - 1 || blocks[i + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + X_OFFSET]->type == Block::WATER))
-				{
-					if (type == Block::WATER || showEdge || blockCoords.x != coords.x + CHUNK_WIDTH - 1)
-						block->faces |= Block::DIRECTION::EAST;
-				}
-
-				if (blockCoords.y == coords.y || blocks[i - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i - Y_OFFSET]->type == Block::WATER))
-				{
-					if (type == Block::WATER || showEdge || blockCoords.y != coords.y)
-						block->faces |= Block::DIRECTION::SOUTH;
-				}
-				if (blockCoords.y == coords.y + CHUNK_WIDTH - 1 || blocks[i + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[i + Y_OFFSET]->type == Block::WATER))
-				{
-					if (type == Block::WATER || showEdge || blockCoords.y != coords.y + CHUNK_WIDTH - 1)
-						block->faces |= Block::DIRECTION::NORTH;
-				}
-
-				// put transparent blocks into a separate array
-				if (type == Block::WATER)
-				{
-					if (block->faces != 0)
+					if (Texture::isArrayBufferSupported())
 					{
-						for (int i = 0; i < 6; i++)
+						if ((block->faces & Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::BOTTOM;
+					}
+				}
+				if (has(Block::DIRECTION::TOP, i))
+				{
+					if (Texture::isArrayBufferSupported())
+					{
+						if ((block->faces & Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::TOP;
+					}
+				}
+
+				if (has(Block::DIRECTION::WEST, i))
+				{
+					if (Texture::isArrayBufferSupported())
+					{
+						if ((block->faces & Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::WEST;
+					}
+				}
+				if (has(Block::DIRECTION::EAST, i))
+				{
+					if (Texture::isArrayBufferSupported())
+					{
+						if ((block->faces & Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::EAST;
+					}
+				}
+
+				if (has(Block::DIRECTION::SOUTH, i))
+				{
+					if (Texture::isArrayBufferSupported())
+					{
+						if ((block->faces & Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::SOUTH;
+					}
+				}
+				if (has(Block::DIRECTION::NORTH, i))
+				{
+					if (Texture::isArrayBufferSupported())
+					{
+						if ((block->faces & Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
+					}
+					else
+					{
+						block->faces |= Block::DIRECTION::NORTH;
+					}
+				}
+
+				// if array buffer is not supported, we don't use greedy meshing
+				if (Texture::isArrayBufferSupported())
+				{
+					// put transparent blocks into a separate array
+					if (type == Block::WATER)
+					{
+						if (block->faces != 0)
 						{
-							uint8_t face = 1 << i;
-							if (block->faces & face)
+							for (int i = 0; i < 6; i++)
 							{
-								Water* water = new Water(block->getCoords());
-								water->faces |= face;
-								transparent_blocks.push_back(water);
+								uint8_t face = 1 << i;
+								if (block->faces & face)
+								{
+									Water* water = new Water(block->getCoords(), coords);
+									water->faces |= face;
+									transparent_blocks.push_back(water);
+								}
 							}
 						}
 					}
-				}
-				// put opaque blocks into a separate array
-				else if (block->faces != 0)
-				{
-					opaque_blocks.push_back(block);
+					// put opaque blocks into a separate array
+					else if (block->faces != 0)
+					{
+						opaque_blocks.push_back(block);
+					}
 				}
 			}
 		}
@@ -164,20 +338,20 @@ namespace MyWorld
 					{
 						if (z == edge && z >= 192)
 						{
-							blocks.push_back(new Grass({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+							blocks.push_back(new Grass({ (float)x, (float)y, (float)z }, coords));
 						}
 						else
 						{
-							blocks.push_back(new Dirt({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+							blocks.push_back(new Dirt({ (float)x, (float)y, (float)z }, coords));
 						}
 					}
 					else if (z < 193)
 					{
-						blocks.push_back(new Water({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+						blocks.push_back(new Water({ (float)x, (float)y, (float)z }, coords));
 					}
 					else
 					{
-						blocks.push_back(new Air({ (float)x + coords.x, (float)y + coords.y, (float)z }));
+						blocks.push_back(new Air({ (float)x, (float)y, (float)z }, coords));
 					}
 				}
 			}

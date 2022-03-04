@@ -15,7 +15,7 @@ namespace MyWorld
 		static void Register();
 		static void Destroy();
 		Water();
-		Water(glm::vec3 coords);
+		Water(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Water();
 		void Draw(const uint8_t& faces) override;
 	};

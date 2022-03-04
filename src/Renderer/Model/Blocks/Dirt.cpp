@@ -4,7 +4,7 @@ namespace MyWorld
 {
 	Block::PosTextureArrayVertex* Dirt::cubeVertices_ta = nullptr;
 	Block::PosTextureVertex* Dirt::cubeVertices = nullptr;
-	bgfx::VertexBufferHandle Dirt::vbh;
+	bgfx::VertexBufferHandle Dirt::vbh = BGFX_INVALID_HANDLE;
 
 	void Dirt::Register()
 	{
@@ -34,7 +34,7 @@ namespace MyWorld
 	Dirt::Dirt()
 	{}
 
-	Dirt::Dirt(glm::vec3 coords) : Block(Block::DIRT, coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_program : Renderer::texture_program)
+	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::DIRT, coords, chunk_coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_program : Renderer::texture_program)
 	{
 	}
 

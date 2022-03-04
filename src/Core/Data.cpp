@@ -2,7 +2,7 @@
 
 namespace MyWorld
 {
-	const int Data::CHUNK_LENGTH = 2;
+	const int Data::CHUNK_WIDTH_NUM = 2;
 	std::vector<Chunk*> Data::chunks;
 
 	Data::Data()
@@ -12,9 +12,12 @@ namespace MyWorld
 	{
 		Chunk::Init();
 
-		for (int i = 0; i < CHUNK_LENGTH; i++)
+		for (int i = 0; i < CHUNK_WIDTH_NUM; i++)
 		{
-			chunks.push_back(new Chunk(glm::vec2{ 0.0f + (float)i * 16.0f, 0.0f + (float)i * 16.0f }));
+			for (int j = 0; j < CHUNK_WIDTH_NUM; j++)
+			{
+				chunks.push_back(new Chunk(glm::vec2{(float)i * 16.0f, (float)j * 16.0f }));
+			}
 		}
 	}
 

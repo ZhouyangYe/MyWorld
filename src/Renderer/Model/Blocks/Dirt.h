@@ -14,7 +14,7 @@ namespace MyWorld
 		static void Register();
 		static void Destroy();
 		Dirt();
-		Dirt(glm::vec3 coords);
+		Dirt(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Dirt();
 		void Draw(const uint8_t& faces) override;
 	};

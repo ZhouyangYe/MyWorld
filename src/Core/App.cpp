@@ -50,11 +50,11 @@ namespace MyWorld
 		Renderer::Begin();
 		Camera::Begin();
 
-		/*for (int i = 0; i < 2; i++)
+		for (int i = 0; i < Data::CHUNK_WIDTH_NUM * Data::CHUNK_WIDTH_NUM; i++)
 		{
-			Data::chunks[i].Draw();
-		}*/
-		Data::chunks[0]->Draw();
+			Data::chunks[i]->Draw();
+		}
+		// Data::chunks[0]->Draw();
 
 		Info::Update();
 		if (Cursor::hideCursor) Cursor::reset();

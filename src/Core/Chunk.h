@@ -10,7 +10,7 @@
 
 #define X_OFFSET CHUNK_DEPTH
 #define Y_OFFSET CHUNK_WIDTH * CHUNK_DEPTH
-#define Z_OFFSET 0
+#define Z_OFFSET 1
 
 namespace MyWorld
 {
@@ -22,6 +22,9 @@ namespace MyWorld
 		static const int CHUNK_WIDTH;
 		static const int CHUNK_DEPTH;
 		static float getLength(Block* block);
+		const bool has(Block::DIRECTION face, const int& idx);
+		void createBatchingOfFaces(Block* startBlock, Block* endBlock);
+		void greedyMergeFaces(Block::DIRECTION face, const int& idx);
 		void faceCullingAndSeparating();
 		glm::vec2 coords;
 		std::vector<Block*> blocks;

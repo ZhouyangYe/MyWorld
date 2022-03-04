@@ -4,7 +4,7 @@ namespace MyWorld
 {
 	Block::PosTextureArrayVertex* Grass::cubeVertices_ta = nullptr;
 	Block::PosTextureVertex* Grass::cubeVertices = nullptr;
-	bgfx::VertexBufferHandle Grass::vbh;
+	bgfx::VertexBufferHandle Grass::vbh = BGFX_INVALID_HANDLE;
 
 	void Grass::Register()
 	{
@@ -36,7 +36,7 @@ namespace MyWorld
 	Grass::Grass()
 	{}
 
-	Grass::Grass(glm::vec3 coords) : Block(Block::GRASS, coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_program : Renderer::texture_program)
+	Grass::Grass(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::GRASS, coords, chunk_coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_program : Renderer::texture_program)
 	{
 	}
 

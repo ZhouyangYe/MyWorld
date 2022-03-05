@@ -11,7 +11,7 @@ namespace MyWorld
 {
 	class Block
 	{
-	protected:
+	public:
 		struct PosTextureVertex
 		{
 			float x;
@@ -19,7 +19,7 @@ namespace MyWorld
 			float z;
 			float u;
 			float v;
-		}; 
+		};
 		struct PosTextureArrayVertex
 		{
 			float x;
@@ -48,53 +48,72 @@ namespace MyWorld
 			float v;
 			float d;
 		};
-		static PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
-		static PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
-		static PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
-		static PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
-		glm::vec3 coords;
-		glm::vec2 chunk_coords;
-	private:
-		static Texture* texture;
-		static bgfx::IndexBufferHandle ibh[];
-		static uint16_t* triListPointers[];
-		static void createIbh(const uint8_t& idx);
-		glm::vec3 calculated_coords;
-	public:
+		static const enum DIRECTION : uint8_t
+		{
+			NORTH = 1 << 0,
+			SOUTH = 1 << 1,
+			WEST = 1 << 2,
+			EAST = 1 << 3,
+			TOP = 1 << 4,
+			BOTTOM = 1 << 5
+		};
+		static const enum TYPE : uint64_t
+		{
+			INVALID = 1 << 0,
+			AIR = 1 << 1,
+			DIRT = 1 << 2,
+			GRASS = 1 << 3,
+			WATER = 1 << 4,
+		};
+		// the offsets of coordinate for each face of a block, used to calculate the distance of the faces to camera, useless when using greedy meshing
 		static const glm::vec3 NorthFaceVec;
 		static const glm::vec3 SouthFaceVec;
 		static const glm::vec3 WestFaceVec;
 		static const glm::vec3 EastFaceVec;
 		static const glm::vec3 TopFaceVec;
 		static const glm::vec3 BottomFaceVec;
-		static const enum DIRECTION : uint8_t
-		{
-			NORTH  = 1 << 0,
-			SOUTH  = 1 << 1,
-			WEST   = 1 << 2,
-			EAST   = 1 << 3,
-			TOP    = 1 << 4,
-			BOTTOM = 1 << 5
-		};
-		static const enum TYPE : uint8_t
-		{
-			INVALID = 0,
-			AIR     = 1,
-			DIRT    = 2,
-			GRASS   = 3,
-			WATER   = 4,
-		};
+
+		static const uint16_t faceIndex[6];
 		static const uint64_t default_state;
 		const Block::TYPE type;
+		// indicates the faces to be drawn for the block
 		uint8_t faces = 0;
 		Block();
-		Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords);
-		static bgfx::IndexBufferHandle& getIbh(const uint8_t &idx);
+		Block(Block::TYPE type, glm::vec3& coords, glm::vec2& chunk_coords);
+
+		// creating vbh and ibh for greedy meshing
+		static const int faceVerticesNum;
+		static Block::PosTextureArrayVertex* getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
+		static Block::PosColorTextureArrayVertex* getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction);
+
 		static void Register();
 		static void Destroy();
 		const glm::vec3& getCoords();
 		const glm::vec3& getCalculatedCoords();
-		void Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
+		// draw batched trangles created by greedy meshing
+		static void DrawTerrain(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
+		// draw faces for each block(when greedy meshing is not used)
 		virtual void Draw(const uint8_t& faces) = 0;
+	protected:
+		// used for getting vertices for each block when greedy meshing is not used
+		static PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
+		static PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		static PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
+		static PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
+		// coords of block, based on chunks
+		glm::vec3 coords;
+		// get ibh when exists, if not, create it and put into cache(when greedy meshing is not used)
+		static const bgfx::IndexBufferHandle& getIbh(const uint8_t& idx);
+	private:
+		static Texture* texture;
+		// cached ibh for blocks(when greedy meshing is not used)
+		static bgfx::IndexBufferHandle ibh[];
+		// cached list of index for creating ibh
+		static uint16_t* triListPointers[];
+		// create ibh and put into cache(when greedy meshing is not used)
+		static void createIbh(const uint8_t& idx);
+		// coords of block, based on the world coordinates
+		glm::vec3 calculated_coords;
 	};
 }

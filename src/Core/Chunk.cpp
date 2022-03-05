@@ -77,9 +77,72 @@ namespace MyWorld
 		}
 	}
 
-	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock)
+	void Chunk::batchFacesForType1(const Block::PosTextureArrayVertex* vertices)
 	{
+		for (int i = 0; i < Block::faceVerticesNum; i++)
+		{
+			batched_model_vertices_type1.push_back(vertices[i]);
+		}
 
+		for (int i = 0; i < Block::faceVerticesNum + 2; i++)
+		{
+			batched_model_index_type1.push_back(Block::faceIndex[i] + batching_index_type1 * Block::faceVerticesNum);
+		}
+
+		delete[] vertices;
+
+		batching_index_type1++;
+	}
+
+	void Chunk::batchFacesForType2(const Block::PosColorTextureArrayVertex* vertices)
+	{
+		for (int i = 0; i < Block::faceVerticesNum; i++)
+		{
+			batched_model_vertices_type2.push_back(vertices[i]);
+		}
+
+		for (int i = 0; i < Block::faceVerticesNum + 2; i++)
+		{
+			batched_model_index_type2.push_back(Block::faceIndex[i] + batching_index_type2 * Block::faceVerticesNum);
+		}
+
+		delete[] vertices;
+
+		batching_index_type2++;
+	}
+
+	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION direction)
+	{
+		if (direction == Block::DIRECTION::EAST)
+		{
+			glm::vec3 start = startBlock->getCoords();
+			glm::vec3 end = endBlock->getCoords();
+			std::cout << start.x << "-" << start.y << "-" << start.z << "  " << end.x << "-" << end.y << "-" << end.z << "\n";
+		}
+
+		switch (startBlock->type)
+		{
+		case Block::DIRT:
+		{
+			const Block::PosTextureArrayVertex* vertices_dirt = Dirt::getFaceVertices(startBlock, endBlock, direction);
+			batchFacesForType1(vertices_dirt);
+			break;
+		}
+		case Block::GRASS:
+		{
+			const Block::PosTextureArrayVertex* vertices_grass = Grass::getFaceVertices(startBlock, endBlock, direction);
+			batchFacesForType1(vertices_grass);
+			break;
+		}
+		case Block::WATER:
+		{
+			const Block::PosColorTextureArrayVertex* vertices_water = Water::getFaceVertices(startBlock, endBlock, direction);
+			batchFacesForType2(vertices_water);
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
 	// greedy meshing for faces
@@ -88,34 +151,40 @@ namespace MyWorld
 		Block* block = blocks[idx];
 		const glm::vec3 blockCoords = block->getCoords();
 
-		int xOffset = 0, yOffset = 0, xCount = 0, yCount = 0, xLength = 0, yLength = 0;
+		int xOffset = 0, yOffset = 0, zOffset = 0, xCount = 0, yCount = 0, zCount = 0, xLength = 0, yLength = 0;
 
 		switch (face)
 		{
-		case MyWorld::Block::NORTH:
-		case MyWorld::Block::SOUTH:
+		case Block::NORTH:
+		case Block::SOUTH:
 			xOffset = X_OFFSET;
 			yOffset = Z_OFFSET;
+			zOffset = Y_OFFSET;
 			xCount = (int)blockCoords.x + 1;
 			yCount = (int)blockCoords.z;
+			zCount = (int)blockCoords.y;
 			xLength = CHUNK_WIDTH;
 			yLength = CHUNK_DEPTH;
 			break;
-		case MyWorld::Block::WEST:
-		case MyWorld::Block::EAST:
+		case Block::WEST:
+		case Block::EAST:
 			xOffset = Y_OFFSET;
 			yOffset = Z_OFFSET;
+			zOffset = X_OFFSET;
 			xCount = (int)blockCoords.y + 1;
 			yCount = (int)blockCoords.z;
+			zCount = (int)blockCoords.x;
 			xLength = CHUNK_WIDTH;
 			yLength = CHUNK_DEPTH;
 			break;
-		case MyWorld::Block::TOP:
-		case MyWorld::Block::BOTTOM:
+		case Block::TOP:
+		case Block::BOTTOM:
 			xOffset = X_OFFSET;
 			yOffset = Y_OFFSET;
+			zOffset = Z_OFFSET;
 			xCount = (int)blockCoords.x + 1;
 			yCount = (int)blockCoords.y;
+			zCount = (int)blockCoords.z;
 			xLength = CHUNK_WIDTH;
 			yLength = CHUNK_WIDTH;
 			break;
@@ -126,15 +195,15 @@ namespace MyWorld
 		block->faces |= face;
 		const int startingXCount = xCount - 1;
 		const int startingYCount = yCount;
-		int xIndex = xCount * xOffset;
+		int xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 		int hitEdge = false;
 		while (yCount < yLength && !hitEdge)
 		{
-			if (yCount == startingYCount && xCount < xLength && blocks[xIndex]->type == block->type && has(face, xIndex))
+			if (yCount == startingYCount && xCount < xLength && (blocks[xIndex]->faces & face) == 0 && blocks[xIndex]->type == block->type && has(face, xIndex))
 			{
 				blocks[xIndex]->faces |= face;
 				xCount++;
-				xIndex = xCount * xOffset;
+				xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 			}
 			else
 			{
@@ -149,16 +218,19 @@ namespace MyWorld
 				}
 				for (int i = startingXCount; i < xCount; i++)
 				{
-					const int yIndex = i * xOffset + yCount * yOffset;
-					if (blocks[yIndex]->type == block->type && has(face, yIndex))
+					const int yIndex = zCount * zOffset + i * xOffset + yCount * yOffset;
+					if ((blocks[yIndex]->faces & face) == 0 && blocks[yIndex]->type == block->type && has(face, yIndex))
 					{
 						blocks[yIndex]->faces |= face;
 					}
-					else if (i > startingXCount)
+					else
 					{
-						for (int j = i - 1; j >= startingXCount; j--)
+						if (i > startingXCount)
 						{
-							blocks[j * xOffset + yCount * yOffset]->faces &= ~face;
+							for (int j = i - 1; j >= startingXCount; j--)
+							{
+								blocks[zCount * zOffset + j * xOffset + yCount * yOffset]->faces &= ~face;
+							}
 						}
 						hitEdge = true;
 						break;
@@ -168,11 +240,7 @@ namespace MyWorld
 			}
 		}
 
-		createBatchingOfFaces(block, blocks[(xCount - 1) * xOffset + (yCount - 1) * yOffset]);
-		if (face == Block::DIRECTION::BOTTOM)
-		{
-			std::cout << startingXCount << "-" << startingYCount << "-" << xCount << "-" << yCount << "-" << std::bitset<8>(face) << "\n";
-		}
+		createBatchingOfFaces(block, blocks[zCount * zOffset + (xCount - 1) * xOffset + (yCount - 1) * yOffset], face);
 	}
 
 	// figure out which faces to be drawn, merge blocks, and put opaque and transparent blocks into different arrays
@@ -256,7 +324,7 @@ namespace MyWorld
 				}
 
 				// if array buffer is not supported, we don't use greedy meshing
-				if (Texture::isArrayBufferSupported())
+				if (!Texture::isArrayBufferSupported())
 				{
 					// put transparent blocks into a separate array
 					if (type == Block::WATER)
@@ -321,7 +389,16 @@ namespace MyWorld
 	Chunk::Chunk()
 	{}
 
-	Chunk::Chunk(glm::vec2 coords = glm::vec2{ 0.0f, 0.0f }) : coords(coords)
+	Chunk::Chunk(glm::vec2 coords = glm::vec2{ 0.0f, 0.0f }) : 
+		coords(glm::vec3(coords, 0.0f)), 
+		vbh_type1(BGFX_INVALID_HANDLE),
+		ibh_type1(BGFX_INVALID_HANDLE),
+		vbh_type2(BGFX_INVALID_HANDLE),
+		ibh_type2(BGFX_INVALID_HANDLE),
+		program_type1(BGFX_INVALID_HANDLE),
+		program_type2(BGFX_INVALID_HANDLE),
+		batching_index_type1(0),
+		batching_index_type2(0)
 	{
 		// create all blocks in the chunk
 		for (int y = 0; y < CHUNK_WIDTH; y++)
@@ -358,6 +435,16 @@ namespace MyWorld
 		}
 
 		faceCullingAndSeparating();
+
+		if (Texture::isArrayBufferSupported())
+		{
+			program_type1 = Renderer::texture_array_program;
+			vbh_type1 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type1.data(), batched_model_vertices_type1.size() * sizeof(Block::PosTextureArrayVertex)), Renderer::getTextureArrayLayout());
+			ibh_type1 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type1.data(), batched_model_index_type1.size() * sizeof(uint16_t)));
+			program_type2 = Renderer::texture_array_color_program;
+			vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Block::PosColorTextureArrayVertex)), Renderer::getColorTextureArrayLayout());
+			ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
+		}
 	}
 
 	Chunk::~Chunk()
@@ -370,29 +457,44 @@ namespace MyWorld
 		{
 			delete *iter;
 		}
+
+		if (bgfx::isValid(vbh_type1)) bgfx::destroy(vbh_type1);
+		if (bgfx::isValid(ibh_type1)) bgfx::destroy(ibh_type1);
+		if (bgfx::isValid(program_type1)) bgfx::destroy(program_type1);
+
+		if (bgfx::isValid(vbh_type2)) bgfx::destroy(vbh_type2);
+		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
+		if (bgfx::isValid(program_type2)) bgfx::destroy(program_type2);
 	}
 
 	void Chunk::Draw()
 	{
-		// draw opaque blocks first
-		for (int i = 0; i < opaque_blocks.size(); i++)
+		if (!Texture::isArrayBufferSupported())
 		{
-			opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
-		}
-
-		// draw transparent blocks
-		int size = transparent_blocks.size();
-		if (size)
-		{
-			Block** sortedBlocks = transparent_blocks.data();
-			// draw far faces first
-			mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
-				return getLength(item1) - getLength(item2);
-			});
-			for (int i = size - 1; i >= 0; i--)
+			// draw opaque blocks first
+			for (int i = 0; i < opaque_blocks.size(); i++)
 			{
-				sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
+				opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
 			}
+
+			// draw transparent blocks
+			int size = transparent_blocks.size();
+			if (size)
+			{
+				Block** sortedBlocks = transparent_blocks.data();
+				// draw far faces first
+				mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
+					return getLength(item1) - getLength(item2);
+					});
+				for (int i = size - 1; i >= 0; i--)
+				{
+					sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
+				}
+			}
+		}
+		else
+		{
+			Block::DrawTerrain(vbh_type1, ibh_type1, program_type1, Block::default_state, coords);
 		}
 	}
 

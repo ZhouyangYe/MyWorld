@@ -12,6 +12,7 @@ namespace MyWorld
 		bgfx::TextureInfo info;
 	public:
 		static const bool& isArrayBufferSupported();
+		Texture(const char* name);
 		Texture(const char* name, Tools::TextureArrayParam taInfo);
 		~Texture();
 		void bind();

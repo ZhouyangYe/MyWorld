@@ -2,39 +2,40 @@
 
 namespace MyWorld
 {
-	Block::PosTextureArrayVertex* Dirt::cubeVertices_ta = nullptr;
 	Block::PosTextureVertex* Dirt::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Dirt::vbh = BGFX_INVALID_HANDLE;
+	bgfx::ProgramHandle Dirt::program = BGFX_INVALID_HANDLE;
+	const glm::vec2 Dirt::face = { 3.0f, 1.0f };
+
+	const Block::PosTextureArrayVertex* Dirt::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	{
+		return Block::getFaceVerticesType1(start, end, face, direction);
+	}
 
 	void Dirt::Register()
 	{
-		const glm::vec2 face{ 3.0f, 1.0f };
-
-		if (Texture::isArrayBufferSupported())
-		{
-			cubeVertices_ta = Block::getVerticesType3(face, face, face);
-			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices_ta, 16 * sizeof(Block::PosTextureArrayVertex)), Renderer::getTextureArrayLayout());
-		}
-		else
+		if (!Texture::isArrayBufferSupported())
 		{
 			cubeVertices = Block::getVerticesType1(face, face, face);
 			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Block::PosTextureVertex)), Renderer::getTextureLayout());
+			program = Renderer::texture_program;
 		}
 	}
 
 	void Dirt::Destroy()
 	{
-		bgfx::destroy(vbh);
-		delete[] cubeVertices;
-		cubeVertices = nullptr;
-		delete[] cubeVertices_ta;
-		cubeVertices_ta = nullptr;
+		if (bgfx::isValid(vbh)) bgfx::destroy(vbh);
+		if (cubeVertices != nullptr)
+		{
+			delete[] cubeVertices;
+			cubeVertices = nullptr;
+		}
 	}
 
 	Dirt::Dirt()
 	{}
 
-	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::DIRT, coords, chunk_coords), program(Texture::isArrayBufferSupported() ? Renderer::texture_array_program : Renderer::texture_program)
+	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::DIRT, coords, chunk_coords)
 	{
 	}
 

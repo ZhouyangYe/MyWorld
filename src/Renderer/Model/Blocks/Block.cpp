@@ -9,6 +9,13 @@ namespace MyWorld
     const glm::vec3 Block::TopFaceVec    = glm::vec3{ 0.5f, 0.5f, 1.0f };
     const glm::vec3 Block::BottomFaceVec = glm::vec3{ 0.5f, 0.5f, 0.0f };
 
+    const int Block::faceVerticesNum = 4;
+
+    const uint16_t Block::faceIndex[6] = {
+             0,  1,  2,
+             2,  3,  0,
+    };
+
     Texture* Block::texture = nullptr;
     bgfx::IndexBufferHandle Block::ibh[64];
     uint16_t* Block::triListPointers[64];
@@ -23,7 +30,7 @@ namespace MyWorld
 
     // --- Vertex and index buffer pair type 1 --- begin
     // three textures: side, top and bottom;
-    // vertices for texture
+    // block vertices for texture(atlas)
     Block::PosTextureVertex* Block::getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
@@ -64,7 +71,7 @@ namespace MyWorld
         return vertices;
     }
 
-    // vertices for texture color
+    // block vertices for texture(atlas) color
     Block::PosColorTextureVertex* Block::getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color)
     {
         glm::vec2 bottom_left = { (side.x - 1) * xUnit, side.y * yUnit };          // 0.0, 0.0
@@ -105,7 +112,7 @@ namespace MyWorld
         return vertices;
     }
 
-    // vetices for texture array
+    // block vetices for texture array
     Block::PosTextureArrayVertex* Block::getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom)
     {
         const float sideImageIdx = (side.y - 1) * WIDTH_NUM + side.x - 1;
@@ -135,7 +142,7 @@ namespace MyWorld
         return vertices;
     }
 
-    // vertices for texture array color
+    // block vertices for texture array color
     Block::PosColorTextureArrayVertex* Block::getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color)
     {
         const float sideImageIdx = (side.y - 1) * WIDTH_NUM + side.x - 1;
@@ -178,7 +185,7 @@ namespace MyWorld
 
         uint16_t* cubeTriList = new uint16_t[size];
 
-        const uint16_t cubeTriListTemplate[] =
+        const uint16_t cubeTriListTemplate[36] =
         {
              6,  5,  4, // North
              4,  7,  6,
@@ -211,7 +218,7 @@ namespace MyWorld
         ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, size * sizeof(uint16_t)));
     }
 
-    bgfx::IndexBufferHandle& Block::getIbh(const uint8_t &idx)
+    const bgfx::IndexBufferHandle& Block::getIbh(const uint8_t &idx)
     {
         if (idx == 0) return ibh[0];
 
@@ -219,6 +226,118 @@ namespace MyWorld
         return ibh[idx];
     }
     // --- Vertex and index buffer pair type 1 --- end
+
+    // --- Vertex and index buffer pair type 2 --- begin
+    // get vertices for faces with texture
+    Block::PosTextureArrayVertex* Block::getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction)
+    {
+        const float texIndex = (texCoord.y - 1) * WIDTH_NUM + texCoord.x - 1;
+
+        const glm::vec3 startCoords = start->getCoords();
+        const glm::vec3 endCoords = end->getCoords();
+
+        PosTextureArrayVertex* vertices = new PosTextureArrayVertex[4];
+
+        switch (direction)
+        {
+        case MyWorld::Block::NORTH:
+            vertices[0] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::SOUTH:
+            vertices[0] = PosTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::WEST:
+            vertices[0] = PosTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::EAST:
+            vertices[0] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::TOP:
+            vertices[0] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::BOTTOM:
+            vertices[0] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, 0.0f, 0.0f, texIndex };
+            break;
+        default:
+            break;
+        }
+
+        return vertices;
+    }
+
+    // get vertices for faces with texture and transparency
+    Block::PosColorTextureArrayVertex* Block::getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction)
+    {
+        const float texIndex = (texCoord.y - 1) * WIDTH_NUM + texCoord.x - 1;
+
+        const glm::vec3 startCoords = start->getCoords();
+        const glm::vec3 endCoords = end->getCoords();
+
+        PosColorTextureArrayVertex* vertices = new PosColorTextureArrayVertex[4];
+
+        switch (direction)
+        {
+        case MyWorld::Block::NORTH:
+            vertices[0] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::SOUTH:
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::WEST:
+            vertices[0] = PosColorTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::EAST:
+            vertices[0] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::TOP:
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            break;
+        case MyWorld::Block::BOTTOM:
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, color, 0.0f, 1.0f, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, color, 1.0f, 1.0f, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, color, 1.0f, 0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, color, 0.0f, 0.0f, texIndex };
+            break;
+        default:
+            break;
+        }
+
+        return vertices;
+    }
+    // --- Vertex and index buffer pair type 2 --- end
 
     const glm::vec3& Block::getCoords()
     {
@@ -249,14 +368,35 @@ namespace MyWorld
         texture = nullptr;
     }
 
-    Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), chunk_coords({0.0f, 0.0f}), type(TYPE::INVALID)
+    Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), type(TYPE::INVALID)
     {}
 
-    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), chunk_coords(chunk_coords), calculated_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
+    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), calculated_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
     {
     }
 
-	void Block::Draw(bgfx::VertexBufferHandle& vbh, bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)
+    void Block::DrawTerrain(bgfx::VertexBufferHandle & vbh, const bgfx::IndexBufferHandle & ibh, bgfx::ProgramHandle & program, uint64_t state, glm::vec3& coords)
+    {
+        glm::mat4 mtx(1.0f);
+        mtx = glm::translate(mtx, coords);
+
+        // Set model matrix for rendering.
+        bgfx::setTransform(&mtx);
+        bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
+
+        // Set vertex and index buffer.
+        bgfx::setVertexBuffer(0, vbh);
+        bgfx::setIndexBuffer(ibh);
+        texture->bind();
+
+        // Set render states.
+        bgfx::setState(state);
+
+        // Submit primitive for rendering to view 0.
+        bgfx::submit(0, program);
+    }
+
+	void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)
 	{
         if (ibh.idx == bgfx::kInvalidHandle) return;
 

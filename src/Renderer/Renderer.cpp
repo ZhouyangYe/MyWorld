@@ -105,6 +105,7 @@ namespace MyWorld
         bgfx::destroy(texture_program);
         bgfx::destroy(texture_color_program);
         bgfx::destroy(texture_array_program);
+        bgfx::destroy(texture_array_color_program);
         bgfx::shutdown();
     }
 

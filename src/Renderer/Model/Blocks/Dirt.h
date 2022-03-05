@@ -6,10 +6,10 @@ namespace MyWorld
 	class Dirt : public Block
 	{
 	private:
-		bgfx::ProgramHandle program;
-		static Block::PosTextureArrayVertex* cubeVertices_ta;
+		static bgfx::ProgramHandle program;
 		static Block::PosTextureVertex* cubeVertices;
 		static bgfx::VertexBufferHandle vbh;
+		static const glm::vec2 face;
 	public:
 		static void Register();
 		static void Destroy();
@@ -17,5 +17,6 @@ namespace MyWorld
 		Dirt(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Dirt();
 		void Draw(const uint8_t& faces) override;
+		static const Block::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, Block::DIRECTION direction);
 	};
 }

@@ -8,7 +8,7 @@ namespace MyWorld
 	bool Chunk::showEdge = true;
 	FastNoiseLite Chunk::noise;
 
-	// get block's faces' distance to camera
+	// get blocks' faces' distance to camera(when greedy meshing is not used)
 	float Chunk::getLength(Block* block)
 	{
 		const glm::vec3 blockCoords = block->getCalculatedCoords();
@@ -77,6 +77,7 @@ namespace MyWorld
 		}
 	}
 
+	// merge vertices of each face(opaque) into one array
 	void Chunk::batchFacesForType1(const Block::PosTextureArrayVertex* vertices)
 	{
 		for (int i = 0; i < Block::faceVerticesNum; i++)
@@ -94,6 +95,7 @@ namespace MyWorld
 		batching_index_type1++;
 	}
 
+	// store vertices of each face(transparent)
 	void Chunk::batchFacesForType2(const Block::PosColorTextureArrayVertex* vertices)
 	{
 		for (int i = 0; i < Block::faceVerticesNum; i++)
@@ -113,13 +115,6 @@ namespace MyWorld
 
 	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION direction)
 	{
-		if (direction == Block::DIRECTION::EAST)
-		{
-			glm::vec3 start = startBlock->getCoords();
-			glm::vec3 end = endBlock->getCoords();
-			std::cout << start.x << "-" << start.y << "-" << start.z << "  " << end.x << "-" << end.y << "-" << end.z << "\n";
-		}
-
 		switch (startBlock->type)
 		{
 		case Block::DIRT:
@@ -145,7 +140,7 @@ namespace MyWorld
 		}
 	}
 
-	// greedy meshing for faces
+	// greedy meshing for faces(main logic)
 	void Chunk::greedyMergeFaces(Block::DIRECTION face, const int& idx)
 	{
 		Block* block = blocks[idx];
@@ -438,9 +433,12 @@ namespace MyWorld
 
 		if (Texture::isArrayBufferSupported())
 		{
+			// opaque
 			program_type1 = Renderer::texture_array_program;
 			vbh_type1 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type1.data(), batched_model_vertices_type1.size() * sizeof(Block::PosTextureArrayVertex)), Renderer::getTextureArrayLayout());
 			ibh_type1 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type1.data(), batched_model_index_type1.size() * sizeof(uint16_t)));
+
+			// transparent
 			program_type2 = Renderer::texture_array_color_program;
 			vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Block::PosColorTextureArrayVertex)), Renderer::getColorTextureArrayLayout());
 			ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
@@ -449,6 +447,7 @@ namespace MyWorld
 
 	Chunk::~Chunk()
 	{
+		// destroy data(no greedy meshing)
 		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
 		{
 			delete *iter;
@@ -458,10 +457,12 @@ namespace MyWorld
 			delete *iter;
 		}
 
+		// destroy data(with greedy meshing)
+		// opaque
 		if (bgfx::isValid(vbh_type1)) bgfx::destroy(vbh_type1);
 		if (bgfx::isValid(ibh_type1)) bgfx::destroy(ibh_type1);
 		if (bgfx::isValid(program_type1)) bgfx::destroy(program_type1);
-
+		// transparent
 		if (bgfx::isValid(vbh_type2)) bgfx::destroy(vbh_type2);
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
 		if (bgfx::isValid(program_type2)) bgfx::destroy(program_type2);
@@ -469,6 +470,7 @@ namespace MyWorld
 
 	void Chunk::Draw()
 	{
+		// if greedy meshing is not used, draw blocks one by one
 		if (!Texture::isArrayBufferSupported())
 		{
 			// draw opaque blocks first
@@ -494,7 +496,10 @@ namespace MyWorld
 		}
 		else
 		{
+			// opaque
 			Block::DrawTerrain(vbh_type1, ibh_type1, program_type1, Block::default_state, coords);
+			// transparent
+			Block::DrawTerrain(vbh_type2, ibh_type2, program_type2, Block::default_state & (~BGFX_STATE_CULL_CW), coords);
 		}
 	}
 

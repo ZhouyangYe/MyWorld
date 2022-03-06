@@ -235,46 +235,49 @@ namespace MyWorld
 
         const glm::vec3 startCoords = start->getCoords();
         const glm::vec3 endCoords = end->getCoords();
+        const float xLength = endCoords.x - startCoords.x + 1;
+        const float yLength = endCoords.y - startCoords.y + 1;
+        const float zLength = endCoords.z - startCoords.z + 1;
 
         PosTextureArrayVertex* vertices = new PosTextureArrayVertex[4];
 
         switch (direction)
         {
         case MyWorld::Block::NORTH:
-            vertices[0] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z,    0.0f, zLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, xLength, zLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, xLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::SOUTH:
-            vertices[0] = PosTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z,    0.0f, zLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, xLength, zLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, xLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::WEST:
-            vertices[0] = PosTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z,    0.0f, zLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, yLength, zLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, yLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::EAST:
-            vertices[0] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z,    0.0f, zLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, yLength, zLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, yLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::TOP:
-            vertices[0] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f,    0.0f, yLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, xLength, yLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, xLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::BOTTOM:
-            vertices[0] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z,    0.0f, yLength, texIndex };
+            vertices[1] = PosTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, xLength, yLength, texIndex };
+            vertices[2] = PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, xLength,    0.0f, texIndex };
+            vertices[3] = PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z,    0.0f,    0.0f, texIndex };
             break;
         default:
             break;
@@ -290,46 +293,49 @@ namespace MyWorld
 
         const glm::vec3 startCoords = start->getCoords();
         const glm::vec3 endCoords = end->getCoords();
+        const float xLength = endCoords.x - startCoords.x + 1;
+        const float yLength = endCoords.y - startCoords.y + 1;
+        const float zLength = endCoords.z - startCoords.z + 1;
 
         PosColorTextureArrayVertex* vertices = new PosColorTextureArrayVertex[4];
 
         switch (direction)
         {
         case MyWorld::Block::NORTH:
-            vertices[0] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, color,    0.0f, zLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, color, xLength, zLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::SOUTH:
-            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, color,    0.0f, zLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, color, xLength, zLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::WEST:
-            vertices[0] = PosColorTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, color,    0.0f, zLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, color, yLength, zLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, color, yLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::EAST:
-            vertices[0] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, color,    0.0f, zLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, color, yLength, zLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, color, yLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::TOP:
-            vertices[0] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, color,    0.0f, yLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, color, xLength, yLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
             break;
         case MyWorld::Block::BOTTOM:
-            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, color, 0.0f, 1.0f, texIndex };
-            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, color, 1.0f, 1.0f, texIndex };
-            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, color, 1.0f, 0.0f, texIndex };
-            vertices[3] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, color, 0.0f, 0.0f, texIndex };
+            vertices[0] = PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, color,    0.0f, yLength, texIndex };
+            vertices[1] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, color, xLength, yLength, texIndex };
+            vertices[2] = PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, color, xLength,    0.0f, texIndex };
+            vertices[3] = PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, color,    0.0f,    0.0f, texIndex };
             break;
         default:
             break;

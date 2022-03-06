@@ -16,7 +16,7 @@ namespace MyWorld
 		{
 			for (int j = 0; j < CHUNK_WIDTH_NUM; j++)
 			{
-				chunks.push_back(new Chunk(glm::vec2{(float)i * 16.0f, (float)j * 16.0f }));
+				if (i == 0 && j == 0) chunks.push_back(new Chunk(glm::vec2{(float)i * 16.0f, (float)j * 16.0f }));
 			}
 		}
 	}

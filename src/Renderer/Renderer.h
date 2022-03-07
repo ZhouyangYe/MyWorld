@@ -11,13 +11,103 @@ namespace MyWorld
 		{
 			int width, height;
 		};
-		static bgfx::VertexLayout colorLayout;
-		static bgfx::VertexLayout textureLayout;
-		static bgfx::VertexLayout textureArrayLayout;
-		static bgfx::VertexLayout colorTextureLayout;
-		static bgfx::VertexLayout colorTextureArrayLayout;
 		static uint32_t debugMode;
 	public:
+		struct PosColorVertex
+		{
+			float x;
+			float y;
+			float z;
+			uint32_t abgr;
+
+			static bgfx::VertexLayout layout;
+			static void Init()
+			{
+				layout
+					.begin()
+					.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+					.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+					.end();
+			};
+		};
+		struct PosTextureVertex
+		{
+			float x;
+			float y;
+			float z;
+			float u;
+			float v;
+
+			static bgfx::VertexLayout layout;
+			static void Init()
+			{
+				layout
+					.begin()
+					.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+					.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+					.end();;
+			};
+		};
+		struct PosTextureArrayVertex
+		{
+			float x;
+			float y;
+			float z;
+			float u;
+			float v;
+			float d;
+
+			static bgfx::VertexLayout layout;
+			static void Init()
+			{
+				layout
+					.begin()
+					.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+					.add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
+					.end();
+			};
+		};
+		struct PosColorTextureVertex
+		{
+			float x;
+			float y;
+			float z;
+			uint32_t abgr;
+			float u;
+			float v;
+
+			static bgfx::VertexLayout layout;
+			static void Init()
+			{
+				layout
+					.begin()
+					.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+					.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+					.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+					.end();
+			};
+		};
+		struct PosColorTextureArrayVertex
+		{
+			float x;
+			float y;
+			float z;
+			uint32_t abgr;
+			float u;
+			float v;
+			float d;
+
+			static bgfx::VertexLayout layout;
+			static void Init()
+			{
+				layout
+					.begin()
+					.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+					.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+					.add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
+					.end();
+			};
+		};
 		struct RenderParam
 		{
 			void* window = nullptr;
@@ -33,11 +123,7 @@ namespace MyWorld
 		static void End();
 		static void switchRenderMode();
 		static bool toggleDebugText();
-		static const bgfx::VertexLayout& getColorLayout();
-		static const bgfx::VertexLayout& getTextureLayout();
-		static const bgfx::VertexLayout& getTextureArrayLayout();
-		static const bgfx::VertexLayout& getColorTextureLayout();
-		static const bgfx::VertexLayout& getColorTextureArrayLayout();
 		static const uint32_t& getDebugMode();
+		static void screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width = 1.0f, float _height = 1.0f);
 	};
 }

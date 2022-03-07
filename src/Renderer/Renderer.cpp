@@ -7,37 +7,12 @@ namespace MyWorld
     bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_color_program = BGFX_INVALID_HANDLE;
-    bgfx::VertexLayout Renderer::colorLayout;
-    bgfx::VertexLayout Renderer::textureLayout;
-    bgfx::VertexLayout Renderer::textureArrayLayout;
-    bgfx::VertexLayout Renderer::colorTextureLayout;
-    bgfx::VertexLayout Renderer::colorTextureArrayLayout;
+    bgfx::VertexLayout Renderer::PosColorVertex::layout;
+    bgfx::VertexLayout Renderer::PosTextureVertex::layout;
+    bgfx::VertexLayout Renderer::PosTextureArrayVertex::layout;
+    bgfx::VertexLayout Renderer::PosColorTextureVertex::layout;
+    bgfx::VertexLayout Renderer::PosColorTextureArrayVertex::layout;
     uint32_t Renderer::debugMode = BGFX_DEBUG_NONE;
-
-    const bgfx::VertexLayout& Renderer::getColorLayout()
-    {
-        return colorLayout;
-    }
-
-    const bgfx::VertexLayout& Renderer::getTextureLayout()
-    {
-        return textureLayout;
-    }
-
-    const bgfx::VertexLayout& Renderer::getTextureArrayLayout()
-    {
-        return textureArrayLayout;
-    }
-
-    const bgfx::VertexLayout& Renderer::getColorTextureLayout()
-    {
-        return colorTextureLayout;
-    }
-
-    const bgfx::VertexLayout& Renderer::getColorTextureArrayLayout()
-    {
-        return colorTextureArrayLayout;
-    }
 
     void Renderer::Init(RenderParam param)
     {
@@ -63,38 +38,27 @@ namespace MyWorld
 
         bgfxInit.platformData = pd;
         bgfx::init(bgfxInit);
-        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
-        bgfx::setViewRect(0, 0, 0, windowSize.width, windowSize.height);
+
+        // set view clear and rect for default view
+        bgfx::setViewClear(Tools::DEFAULT_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
+        bgfx::setViewRect(Tools::DEFAULT_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
+
+        // set view clear and rect for water view
+        bgfx::setViewClear(Tools::WATER_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
+        bgfx::setViewRect(Tools::WATER_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
 
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
         texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
         texture_array_color_program = Tools::createProgram("vs_texture_array_color", "fs_texture_array_color");
 
-        colorLayout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .end();
-        textureLayout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-            .end();
-        textureArrayLayout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
-            .end();
-        colorTextureLayout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-            .end();
-        colorTextureArrayLayout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
-            .end();
+        PosColorVertex::Init();
+        PosTextureVertex::Init();
+        PosTextureArrayVertex::Init();
+        PosColorTextureVertex::Init();
+        PosColorTextureArrayVertex::Init();
 
-        Texture::Init();
+        Texture::Init({ param.windowSize.width, param.windowSize.height });
     }
 
     void Renderer::Terminate()
@@ -154,5 +118,60 @@ namespace MyWorld
     const uint32_t& Renderer::getDebugMode()
     {
         return debugMode;
+    }
+
+    void Renderer::screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width, float _height)
+    {
+        if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTextureVertex::layout))
+        {
+            bgfx::TransientVertexBuffer vb;
+            bgfx::allocTransientVertexBuffer(&vb, 3, PosTextureVertex::layout);
+            PosTextureVertex* vertex = (PosTextureVertex*)vb.data;
+
+            const float minx = -_width;
+            const float maxx = _width;
+            const float miny = 0.0f;
+            const float maxy = _height * 2.0f;
+
+            const float texelHalfW = _texelHalf / _textureWidth;
+            const float texelHalfH = _texelHalf / _textureHeight;
+            const float minu = -1.0f + texelHalfW;
+            const float maxu = 1.0f + texelHalfH;
+
+            const float zz = 0.0f;
+
+            float minv = texelHalfH;
+            float maxv = 2.0f + texelHalfH;
+
+            if (_originBottomLeft)
+            {
+                float temp = minv;
+                minv = maxv;
+                maxv = temp;
+
+                minv -= 1.0f;
+                maxv -= 1.0f;
+            }
+
+            vertex[0].x = minx;
+            vertex[0].y = miny;
+            vertex[0].z = zz;
+            vertex[0].u = minu;
+            vertex[0].v = minv;
+
+            vertex[1].x = maxx;
+            vertex[1].y = miny;
+            vertex[1].z = zz;
+            vertex[1].u = maxu;
+            vertex[1].v = minv;
+
+            vertex[2].x = maxx;
+            vertex[2].y = maxy;
+            vertex[2].z = zz;
+            vertex[2].u = maxu;
+            vertex[2].v = maxv;
+
+            bgfx::setVertexBuffer(0, &vb);
+        }
     }
 }

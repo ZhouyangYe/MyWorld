@@ -2,14 +2,14 @@
 
 namespace MyWorld
 {
-	Block::PosColorTextureVertex* Water::cubeVertices = nullptr;
+	Renderer::PosColorTextureVertex* Water::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Water::vbh = BGFX_INVALID_HANDLE;
 	bgfx::ProgramHandle Water::program = BGFX_INVALID_HANDLE;
 	const glm::vec2 Water::face = { 1.0f, 16.0f };
 	const uint32_t Water::color = 0xaa000000;
 	const uint64_t Water::state = Block::default_state & (~BGFX_STATE_CULL_CW);
 
-	const Block::PosColorTextureArrayVertex* Water::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosColorTextureArrayVertex* Water::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
 	{
 		return Block::getFaceVerticesType2(start, end, face, color, direction);
 	}
@@ -19,9 +19,13 @@ namespace MyWorld
 		if (!Texture::isArrayBufferSupported())
 		{
 			cubeVertices = Block::getVerticesType2(face, face, face, color);
-			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Block::PosColorTextureVertex)), Renderer::getColorTextureLayout());
+			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosColorTextureVertex)), Renderer::PosColorTextureVertex::layout);
 			program = Renderer::texture_color_program;
 		}
+        else
+        {
+            bgfx::setViewFrameBuffer(Tools::WATER_VIEW_ID, Texture::getWaterFbh());
+        }
 	}
 
 	void Water::Destroy()

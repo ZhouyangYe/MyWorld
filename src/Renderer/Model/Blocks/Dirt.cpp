@@ -2,12 +2,12 @@
 
 namespace MyWorld
 {
-	Block::PosTextureVertex* Dirt::cubeVertices = nullptr;
+	Renderer::PosTextureVertex* Dirt::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Dirt::vbh = BGFX_INVALID_HANDLE;
 	bgfx::ProgramHandle Dirt::program = BGFX_INVALID_HANDLE;
 	const glm::vec2 Dirt::face = { 3.0f, 1.0f };
 
-	const Block::PosTextureArrayVertex* Dirt::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosTextureArrayVertex* Dirt::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
 	{
 		return Block::getFaceVerticesType1(start, end, face, direction);
 	}
@@ -17,7 +17,7 @@ namespace MyWorld
 		if (!Texture::isArrayBufferSupported())
 		{
 			cubeVertices = Block::getVerticesType1(face, face, face);
-			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Block::PosTextureVertex)), Renderer::getTextureLayout());
+			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureVertex)), Renderer::PosTextureVertex::layout);
 			program = Renderer::texture_program;
 		}
 	}

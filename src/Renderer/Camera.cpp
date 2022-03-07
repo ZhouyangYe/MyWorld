@@ -52,7 +52,8 @@ namespace MyWorld
 			MoveForward();
 		if (moveBackward)
 			MoveBackward();
-		bgfx::setViewTransform(0, &view, &proj);
+		bgfx::setViewTransform(Tools::DEFAULT_VIEW_ID, &view, &proj);
+		bgfx::setViewTransform(Tools::WATER_VIEW_ID, &view, &proj);
 	}
 
 	void Camera::End()

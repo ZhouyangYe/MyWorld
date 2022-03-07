@@ -12,42 +12,6 @@ namespace MyWorld
 	class Block
 	{
 	public:
-		struct PosTextureVertex
-		{
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
-		};
-		struct PosTextureArrayVertex
-		{
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
-			float d;
-		};
-		struct PosColorTextureVertex
-		{
-			float x;
-			float y;
-			float z;
-			uint32_t abgr;
-			float u;
-			float v;
-		};
-		struct PosColorTextureArrayVertex
-		{
-			float x;
-			float y;
-			float z;
-			uint32_t abgr;
-			float u;
-			float v;
-			float d;
-		};
 		static const enum DIRECTION : uint8_t
 		{
 			NORTH = 1 << 0,
@@ -83,23 +47,23 @@ namespace MyWorld
 
 		// creating vbh and ibh for greedy meshing
 		static const int faceVerticesNum;
-		static Block::PosTextureArrayVertex* getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
-		static Block::PosColorTextureArrayVertex* getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction);
+		static Renderer::PosTextureArrayVertex* getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
+		static Renderer::PosColorTextureArrayVertex* getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction);
 
 		static void Register();
 		static void Destroy();
 		const glm::vec3& getCoords();
 		const glm::vec3& getCalculatedCoords();
 		// draw batched trangles created by greedy meshing
-		static void DrawTerrain(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
+		static void DrawTerrain(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
 		// draw faces for each block(when greedy meshing is not used)
 		virtual void Draw(const uint8_t& faces) = 0;
 	protected:
 		// used for getting vertices for each block when greedy meshing is not used
-		static PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
-		static PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
-		static PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
-		static PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		static Renderer::PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
+		static Renderer::PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		static Renderer::PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
+		static Renderer::PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
 		// coords of block, based on chunks
 		glm::vec3 coords;

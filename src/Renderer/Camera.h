@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
 #include "Core/Time.h"
+#include "Tools.h"
 
 namespace MyWorld
 {

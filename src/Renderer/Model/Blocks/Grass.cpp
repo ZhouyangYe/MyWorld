@@ -2,14 +2,14 @@
 
 namespace MyWorld
 {
-	Block::PosTextureVertex* Grass::cubeVertices = nullptr;
+	Renderer::PosTextureVertex* Grass::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Grass::vbh = BGFX_INVALID_HANDLE;
 	bgfx::ProgramHandle Grass::program = BGFX_INVALID_HANDLE;
 	const glm::vec2 Grass::side = { 2.0f, 1.0f };
 	const glm::vec2 Grass::top = { 1.0f, 1.0f };
 	const glm::vec2 Grass::bottom = { 3.0f, 1.0f };
 
-	const Block::PosTextureArrayVertex* Grass::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosTextureArrayVertex* Grass::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
 	{
 		switch (direction)
 		{
@@ -32,7 +32,7 @@ namespace MyWorld
 		if (!Texture::isArrayBufferSupported())
 		{
 			cubeVertices = Block::getVerticesType1(side, top, bottom);
-			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Block::PosTextureVertex)), Renderer::getTextureLayout());
+			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureVertex)), Renderer::PosTextureVertex::layout);
 			program = Renderer::texture_program;
 		}
 	}

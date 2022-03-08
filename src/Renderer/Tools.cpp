@@ -3,7 +3,6 @@
 namespace MyWorld
 {
     const bgfx::ViewId Tools::DEFAULT_VIEW_ID = 0;
-    const bgfx::ViewId Tools::OIT_WATER_VIEW_ID = 1;
 
     static bx::DefaultAllocator s_allocator;
     static bx::AllocatorI* g_allocator = &s_allocator;

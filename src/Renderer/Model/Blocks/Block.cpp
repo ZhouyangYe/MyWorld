@@ -229,7 +229,7 @@ namespace MyWorld
 
     // --- Vertex and index buffer pair type 2 --- begin
     // get vertices for faces with texture
-    Renderer::PosTextureArrayVertex* Block::getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction)
+    Renderer::PosTextureArrayVertex* Block::getFaceVertices(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction)
     {
         const float texIndex = (texCoord.y - 1) * WIDTH_NUM + texCoord.x - 1;
 
@@ -278,64 +278,6 @@ namespace MyWorld
             vertices[1] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, xLength, yLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, xLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z,    0.0f,    0.0f, texIndex };
-            break;
-        default:
-            break;
-        }
-
-        return vertices;
-    }
-
-    // get vertices for faces with texture and transparency
-    Renderer::PosColorTextureArrayVertex* Block::getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction)
-    {
-        const float texIndex = (texCoord.y - 1) * WIDTH_NUM + texCoord.x - 1;
-
-        const glm::vec3 startCoords = start->getCoords();
-        const glm::vec3 endCoords = end->getCoords();
-        const float xLength = endCoords.x - startCoords.x + 1;
-        const float yLength = endCoords.y - startCoords.y + 1;
-        const float zLength = endCoords.z - startCoords.z + 1;
-
-        Renderer::PosColorTextureArrayVertex* vertices = new Renderer::PosColorTextureArrayVertex[4];
-
-        switch (direction)
-        {
-        case MyWorld::Block::NORTH:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z, color,    0.0f, zLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, color, xLength, zLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
-            break;
-        case MyWorld::Block::SOUTH:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z, color,    0.0f, zLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, color, xLength, zLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
-            break;
-        case MyWorld::Block::WEST:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z, color,    0.0f, zLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, color, yLength, zLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, color, yLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
-            break;
-        case MyWorld::Block::EAST:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z, color,    0.0f, zLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, color, yLength, zLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, color, yLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
-            break;
-        case MyWorld::Block::TOP:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f, color,    0.0f, yLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, color, xLength, yLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, color, xLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f, color,    0.0f,    0.0f, texIndex };
-            break;
-        case MyWorld::Block::BOTTOM:
-            vertices[0] = Renderer::PosColorTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z, color,    0.0f, yLength, texIndex };
-            vertices[1] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, color, xLength, yLength, texIndex };
-            vertices[2] = Renderer::PosColorTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, color, xLength,    0.0f, texIndex };
-            vertices[3] = Renderer::PosColorTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z, color,    0.0f,    0.0f, texIndex };
             break;
         default:
             break;
@@ -400,14 +342,6 @@ namespace MyWorld
 
         // Submit primitive for rendering to view 0.
         bgfx::submit(viewId, program);
-    }
-
-    void Block::DrawWaterOit(float width, float height, bgfx::ProgramHandle& program)
-    {
-        // draw water offscreen texture back to default view
-        Texture::bindOitWaterTexture();
-        Renderer::screenSpaceQuad(width, height, 0.0f, true);
-        bgfx::submit(Tools::DEFAULT_VIEW_ID, program);
     }
 
 	void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)

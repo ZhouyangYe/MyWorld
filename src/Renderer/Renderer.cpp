@@ -3,8 +3,8 @@
 
 namespace MyWorld
 {
+    bgfx::ProgramHandle Renderer::water_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_program = BGFX_INVALID_HANDLE;
-    bgfx::ProgramHandle Renderer::texture_screen_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_color_program = BGFX_INVALID_HANDLE;
@@ -44,12 +44,8 @@ namespace MyWorld
         bgfx::setViewClear(Tools::DEFAULT_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(Tools::DEFAULT_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
 
-        // set view clear and rect for 2d screen quad view
-        bgfx::setViewClear(Tools::OIT_WATER_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00000000, 1.0f, 0);
-        bgfx::setViewRect(Tools::OIT_WATER_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
-
+        water_program = Tools::createProgram("vs_water", "fs_water");
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
-        texture_screen_program = Tools::createProgram("vs_texture_screen_quad", "fs_texture_screen_quad");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
         texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
         texture_array_color_program = Tools::createProgram("vs_texture_array_color", "fs_texture_array_color");
@@ -60,7 +56,7 @@ namespace MyWorld
         PosColorTextureVertex::Init();
         PosColorTextureArrayVertex::Init();
 
-        Texture::Init({ param.windowSize.width, param.windowSize.height });
+        Texture::Init();
     }
 
     void Renderer::Terminate()
@@ -69,7 +65,6 @@ namespace MyWorld
         Tools::Terminate();
 
         bgfx::destroy(texture_program);
-        bgfx::destroy(texture_screen_program);
         bgfx::destroy(texture_color_program);
         bgfx::destroy(texture_array_program);
         bgfx::destroy(texture_array_color_program);
@@ -121,60 +116,5 @@ namespace MyWorld
     const uint32_t& Renderer::getDebugMode()
     {
         return debugMode;
-    }
-
-    void Renderer::screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width, float _height)
-    {
-        if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTextureVertex::layout))
-        {
-            bgfx::TransientVertexBuffer vb;
-            bgfx::allocTransientVertexBuffer(&vb, 3, PosTextureVertex::layout);
-            PosTextureVertex* vertex = (PosTextureVertex*)vb.data;
-
-            const float minx = -_width;
-            const float maxx = _width;
-            const float miny = 0.0f;
-            const float maxy = _height * 2.0f;
-
-            const float texelHalfW = _texelHalf / _textureWidth;
-            const float texelHalfH = _texelHalf / _textureHeight;
-            const float minu = -1.0f + texelHalfW;
-            const float maxu = 1.0f + texelHalfH;
-
-            const float zz = 0.0f;
-
-            float minv = texelHalfH;
-            float maxv = 2.0f + texelHalfH;
-
-            if (_originBottomLeft)
-            {
-                float temp = minv;
-                minv = maxv;
-                maxv = temp;
-
-                minv -= 1.0f;
-                maxv -= 1.0f;
-            }
-
-            vertex[0].x = minx;
-            vertex[0].y = miny;
-            vertex[0].z = zz;
-            vertex[0].u = minu;
-            vertex[0].v = minv;
-
-            vertex[1].x = maxx;
-            vertex[1].y = miny;
-            vertex[1].z = zz;
-            vertex[1].u = maxu;
-            vertex[1].v = minv;
-
-            vertex[2].x = maxx;
-            vertex[2].y = maxy;
-            vertex[2].z = zz;
-            vertex[2].u = maxu;
-            vertex[2].v = maxv;
-
-            bgfx::setVertexBuffer(0, &vb);
-        }
     }
 }

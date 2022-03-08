@@ -10,8 +10,6 @@ namespace MyWorld
 		bgfx::TextureHandle textureHandle;
 		bgfx::TextureInfo info;
 		static bool arrayBufferSupported;
-		static bgfx::TextureHandle oitWaterTextHandle;
-		static bgfx::FrameBufferHandle oitWaterFbh;
 	public:
 		struct TextureParam
 		{
@@ -24,8 +22,7 @@ namespace MyWorld
 		void bind();
 		const bgfx::TextureHandle& getTextureHandle();
 		const bgfx::TextureInfo& getInfo();
-		static void Init(TextureParam param);
+		static void Init();
 		static void Destroy();
-		static void bindOitWaterTexture();
 	};
 }

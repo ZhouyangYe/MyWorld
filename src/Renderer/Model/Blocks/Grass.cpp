@@ -17,11 +17,11 @@ namespace MyWorld
 		case MyWorld::Block::SOUTH:
 		case MyWorld::Block::WEST:
 		case MyWorld::Block::EAST:
-			return Block::getFaceVerticesType1(start, end, side, direction);
+			return Block::getFaceVertices(start, end, side, direction);
 		case MyWorld::Block::TOP:
-			return Block::getFaceVerticesType1(start, end, top, direction);
+			return Block::getFaceVertices(start, end, top, direction);
 		case MyWorld::Block::BOTTOM:
-			return Block::getFaceVerticesType1(start, end, bottom, direction);
+			return Block::getFaceVertices(start, end, bottom, direction);
 		default:
 			return nullptr;
 		}

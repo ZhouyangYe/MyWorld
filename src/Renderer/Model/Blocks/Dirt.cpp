@@ -9,7 +9,7 @@ namespace MyWorld
 
 	const Renderer::PosTextureArrayVertex* Dirt::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
 	{
-		return Block::getFaceVerticesType1(start, end, face, direction);
+		return Block::getFaceVertices(start, end, face, direction);
 	}
 
 	void Dirt::Register()

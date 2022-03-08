@@ -113,8 +113,8 @@ namespace MyWorld
 			void* window = nullptr;
 			WindowSize windowSize;
 		};
+		static bgfx::ProgramHandle water_program;
 		static bgfx::ProgramHandle texture_program;
-		static bgfx::ProgramHandle texture_screen_program;
 		static bgfx::ProgramHandle texture_color_program;
 		static bgfx::ProgramHandle texture_array_program;
 		static bgfx::ProgramHandle texture_array_color_program;
@@ -125,6 +125,5 @@ namespace MyWorld
 		static void switchRenderMode();
 		static bool toggleDebugText();
 		static const uint32_t& getDebugMode();
-		static void screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width = 1.0f, float _height = 1.0f);
 	};
 }

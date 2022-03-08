@@ -77,40 +77,22 @@ namespace MyWorld
 		}
 	}
 
-	// merge vertices of each face(opaque) into one array
-	void Chunk::batchFacesForType1(const Renderer::PosTextureArrayVertex* vertices)
+	// merge vertices of each face into one array
+	void Chunk::batchFaces(const Renderer::PosTextureArrayVertex* vertices, std::vector<Renderer::PosTextureArrayVertex>& batched_vertices, std::vector<uint16_t>& batched_index, int& count)
 	{
 		for (int i = 0; i < Block::faceVerticesNum; i++)
 		{
-			batched_model_vertices_type1.push_back(vertices[i]);
+			batched_vertices.push_back(vertices[i]);
 		}
 
 		for (int i = 0; i < Block::faceVerticesNum + 2; i++)
 		{
-			batched_model_index_type1.push_back(Block::faceIndex[i] + batching_index_type1 * Block::faceVerticesNum);
+			batched_index.push_back(Block::faceIndex[i] + count * Block::faceVerticesNum);
 		}
 
 		delete[] vertices;
 
-		batching_index_type1++;
-	}
-
-	// store vertices of each face(transparent)
-	void Chunk::batchFacesForType2(const Renderer::PosColorTextureArrayVertex* vertices)
-	{
-		for (int i = 0; i < Block::faceVerticesNum; i++)
-		{
-			batched_model_vertices_type2.push_back(vertices[i]);
-		}
-
-		for (int i = 0; i < Block::faceVerticesNum + 2; i++)
-		{
-			batched_model_index_type2.push_back(Block::faceIndex[i] + batching_index_type2 * Block::faceVerticesNum);
-		}
-
-		delete[] vertices;
-
-		batching_index_type2++;
+		count++;
 	}
 
 	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION direction)
@@ -118,21 +100,16 @@ namespace MyWorld
 		switch (startBlock->type)
 		{
 		case Block::DIRT:
-		{
-			const Renderer::PosTextureArrayVertex* vertices_dirt = Dirt::getFaceVertices(startBlock, endBlock, direction);
-			batchFacesForType1(vertices_dirt);
-			break;
-		}
 		case Block::GRASS:
 		{
-			const Renderer::PosTextureArrayVertex* vertices_grass = Grass::getFaceVertices(startBlock, endBlock, direction);
-			batchFacesForType1(vertices_grass);
+			const Renderer::PosTextureArrayVertex* vertices = Dirt::getFaceVertices(startBlock, endBlock, direction);
+			batchFaces(vertices, batched_model_vertices_type1, batched_model_index_type1, batching_index_type1);
 			break;
 		}
 		case Block::WATER:
 		{
-			const Renderer::PosColorTextureArrayVertex* vertices_water = Water::getFaceVertices(startBlock, endBlock, direction);
-			batchFacesForType2(vertices_water);
+			const Renderer::PosTextureArrayVertex* vertices = Water::getFaceVertices(startBlock, endBlock, direction);
+			batchFaces(vertices, batched_model_vertices_type2, batched_model_index_type2, batching_index_type2);
 			break;
 		}
 		default:
@@ -390,8 +367,6 @@ namespace MyWorld
 		ibh_type1(BGFX_INVALID_HANDLE),
 		vbh_type2(BGFX_INVALID_HANDLE),
 		ibh_type2(BGFX_INVALID_HANDLE),
-		program_type1(BGFX_INVALID_HANDLE),
-		program_type2(BGFX_INVALID_HANDLE),
 		batching_index_type1(0),
 		batching_index_type2(0)
 	{
@@ -434,13 +409,11 @@ namespace MyWorld
 		if (Texture::isArrayBufferSupported())
 		{
 			// opaque
-			program_type1 = Renderer::texture_array_program;
 			vbh_type1 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type1.data(), batched_model_vertices_type1.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
 			ibh_type1 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type1.data(), batched_model_index_type1.size() * sizeof(uint16_t)));
 
 			// transparent
-			program_type2 = Renderer::texture_array_color_program;
-			vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Renderer::PosColorTextureArrayVertex)), Renderer::PosColorTextureArrayVertex::layout);
+			vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
 			ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
 		}
 	}
@@ -461,11 +434,9 @@ namespace MyWorld
 		// opaque
 		if (bgfx::isValid(vbh_type1)) bgfx::destroy(vbh_type1);
 		if (bgfx::isValid(ibh_type1)) bgfx::destroy(ibh_type1);
-		if (bgfx::isValid(program_type1)) bgfx::destroy(program_type1);
 		// transparent
 		if (bgfx::isValid(vbh_type2)) bgfx::destroy(vbh_type2);
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
-		if (bgfx::isValid(program_type2)) bgfx::destroy(program_type2);
 	}
 
 	void Chunk::Draw()
@@ -496,12 +467,11 @@ namespace MyWorld
 		}
 		else
 		{
-			// draw opaque to default view(back buffer)
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, program_type1, Block::default_state, coords);
-			// draw water to offscreen buffer
-			Block::DrawTerrain(Tools::OIT_WATER_VIEW_ID, vbh_type2, ibh_type2, program_type2, Water::state, coords);
-			// draw water offscreen texture back to default view
-			Block::DrawWaterOit(Window::getWindowSize().width, Window::getWindowSize().height, Renderer::texture_screen_program);
+			// draw opaque terrain
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
+			// draw water
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
 		}
 	}
 

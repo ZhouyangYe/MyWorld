@@ -7,11 +7,12 @@ namespace MyWorld
 	bgfx::ProgramHandle Water::program = BGFX_INVALID_HANDLE;
 	const glm::vec2 Water::face = { 1.0f, 16.0f };
 	const uint32_t Water::color = 0xff000000;
-	const uint64_t Water::state = Block::default_state & (~BGFX_STATE_CULL_CW);
+	const uint64_t Water::state = Block::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL;
+	const uint64_t Water::placeholder_state = BGFX_STATE_WRITE_Z | BGFX_STATE_DEPTH_TEST_LESS;
 
-	const Renderer::PosColorTextureArrayVertex* Water::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosTextureArrayVertex* Water::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
 	{
-		return Block::getFaceVerticesType2(start, end, face, color, direction);
+		return Block::getFaceVertices(start, end, face, direction);
 	}
 
 	void Water::Register()

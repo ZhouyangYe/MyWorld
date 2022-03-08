@@ -14,12 +14,13 @@ namespace MyWorld
 		static const uint32_t color;
 	public:
 		static const uint64_t state;
+		static const uint64_t placeholder_state;
 		static void Register();
 		static void Destroy();
 		Water();
 		Water(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Water();
 		void Draw(const uint8_t& faces) override;
-		static const Renderer::PosColorTextureArrayVertex* getFaceVertices(Block* start, Block* end, Block::DIRECTION direction);
+		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, Block::DIRECTION direction);
 	};
 }

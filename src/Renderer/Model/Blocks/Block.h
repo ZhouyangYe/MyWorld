@@ -47,15 +47,12 @@ namespace MyWorld
 		// creating vbh and ibh for greedy meshing
 		static const int faceVerticesNum;
 		static const uint16_t faceIndex[6];
-		static Renderer::PosTextureArrayVertex* getFaceVerticesType1(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
-		static Renderer::PosColorTextureArrayVertex* getFaceVerticesType2(Block* start, Block* end, const glm::vec2& texCoord, const uint32_t color, DIRECTION direction);
+		static Renderer::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
 
 		static void Register();
 		static void Destroy();
 		const glm::vec3& getCoords();
 		const glm::vec3& getCalculatedCoords();
-		// draw oit water
-		static void DrawWaterOit(float width, float height, bgfx::ProgramHandle& program);
 		// draw batched trangles created by greedy meshing
 		static void DrawTerrain(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
 		// draw faces for each block(when greedy meshing is not used)

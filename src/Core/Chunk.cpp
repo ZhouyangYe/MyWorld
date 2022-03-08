@@ -496,15 +496,12 @@ namespace MyWorld
 		}
 		else
 		{
-			// opaque
+			// draw opaque to default view(back buffer)
 			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, program_type1, Block::default_state, coords);
-			// water
-			Block::DrawTerrain(Tools::WATER_VIEW_ID, vbh_type2, ibh_type2, program_type2, Water::state, coords);
-			// draw water frame buffer texture to default view
-			bgfx::setTexture(0, Texture::getTexColorSampler(), Texture::getWaterTextureHandle());
-			bgfx::setState(Block::default_state);
-			Renderer::screenSpaceQuad(Window::getWindowSize().width, Window::getWindowSize().height, 0.0f, false);
-			bgfx::submit(Tools::DEFAULT_VIEW_ID, Renderer::texture_color_program);
+			// draw water to offscreen buffer
+			Block::DrawTerrain(Tools::OIT_WATER_VIEW_ID, vbh_type2, ibh_type2, program_type2, Water::state, coords);
+			// draw water offscreen texture back to default view
+			Block::DrawWaterOit(Window::getWindowSize().width, Window::getWindowSize().height, Renderer::texture_screen_program);
 		}
 	}
 

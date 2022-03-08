@@ -10,8 +10,8 @@ namespace MyWorld
 		bgfx::TextureHandle textureHandle;
 		bgfx::TextureInfo info;
 		static bool arrayBufferSupported;
-		static bgfx::TextureHandle fBufferTexture_water;
-		static bgfx::FrameBufferHandle fbh_water;
+		static bgfx::TextureHandle oitWaterTextHandle;
+		static bgfx::FrameBufferHandle oitWaterFbh;
 	public:
 		struct TextureParam
 		{
@@ -19,7 +19,6 @@ namespace MyWorld
 			int window_height;
 		};
 		static const bool& isArrayBufferSupported();
-		Texture(const char* name);
 		Texture(const char* name, Tools::TextureArrayParam taInfo);
 		~Texture();
 		void bind();
@@ -27,8 +26,6 @@ namespace MyWorld
 		const bgfx::TextureInfo& getInfo();
 		static void Init(TextureParam param);
 		static void Destroy();
-		static const bgfx::UniformHandle& getTexColorSampler();
-		static const bgfx::TextureHandle& getWaterTextureHandle();
-		static const bgfx::FrameBufferHandle& getWaterFbh();
+		static void bindOitWaterTexture();
 	};
 }

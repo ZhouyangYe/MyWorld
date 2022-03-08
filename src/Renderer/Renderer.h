@@ -114,6 +114,7 @@ namespace MyWorld
 			WindowSize windowSize;
 		};
 		static bgfx::ProgramHandle texture_program;
+		static bgfx::ProgramHandle texture_screen_program;
 		static bgfx::ProgramHandle texture_color_program;
 		static bgfx::ProgramHandle texture_array_program;
 		static bgfx::ProgramHandle texture_array_color_program;

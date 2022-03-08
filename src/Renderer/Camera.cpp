@@ -53,7 +53,7 @@ namespace MyWorld
 		if (moveBackward)
 			MoveBackward();
 		bgfx::setViewTransform(Tools::DEFAULT_VIEW_ID, &view, &proj);
-		bgfx::setViewTransform(Tools::WATER_VIEW_ID, &view, &proj);
+		bgfx::setViewTransform(Tools::OIT_WATER_VIEW_ID, &view, &proj);
 	}
 
 	void Camera::End()

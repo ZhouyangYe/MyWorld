@@ -4,6 +4,7 @@
 namespace MyWorld
 {
     bgfx::ProgramHandle Renderer::texture_program = BGFX_INVALID_HANDLE;
+    bgfx::ProgramHandle Renderer::texture_screen_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_color_program = BGFX_INVALID_HANDLE;
@@ -43,11 +44,12 @@ namespace MyWorld
         bgfx::setViewClear(Tools::DEFAULT_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(Tools::DEFAULT_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
 
-        // set view clear and rect for water view
-        bgfx::setViewClear(Tools::WATER_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
-        bgfx::setViewRect(Tools::WATER_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
+        // set view clear and rect for 2d screen quad view
+        bgfx::setViewClear(Tools::OIT_WATER_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00000000, 1.0f, 0);
+        bgfx::setViewRect(Tools::OIT_WATER_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
 
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
+        texture_screen_program = Tools::createProgram("vs_texture_screen_quad", "fs_texture_screen_quad");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
         texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
         texture_array_color_program = Tools::createProgram("vs_texture_array_color", "fs_texture_array_color");
@@ -67,6 +69,7 @@ namespace MyWorld
         Tools::Terminate();
 
         bgfx::destroy(texture_program);
+        bgfx::destroy(texture_screen_program);
         bgfx::destroy(texture_color_program);
         bgfx::destroy(texture_array_program);
         bgfx::destroy(texture_array_color_program);

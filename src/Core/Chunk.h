@@ -48,6 +48,7 @@ namespace MyWorld
 		static float getLength(Block* block);
 
 		glm::vec3 coords;
+		// data of blocks
 		std::vector<Block*> blocks;
 		// opaque and transparent blocks to be renderred
 		std::vector<Block*> opaque_blocks;

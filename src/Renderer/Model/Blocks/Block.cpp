@@ -9,8 +9,8 @@ namespace MyWorld
     const glm::vec3 Block::TopFaceVec    = glm::vec3{ 0.5f, 0.5f, 1.0f };
     const glm::vec3 Block::BottomFaceVec = glm::vec3{ 0.5f, 0.5f, 0.0f };
 
+    // used for vertex and index buffer type 2
     const int Block::faceVerticesNum = 4;
-
     const uint16_t Block::faceIndex[6] = {
              0,  1,  2,
              2,  3,  0,
@@ -400,6 +400,14 @@ namespace MyWorld
 
         // Submit primitive for rendering to view 0.
         bgfx::submit(viewId, program);
+    }
+
+    void Block::DrawWaterOit(float width, float height, bgfx::ProgramHandle& program)
+    {
+        // draw water offscreen texture back to default view
+        Texture::bindOitWaterTexture();
+        Renderer::screenSpaceQuad(width, height, 0.0f, true);
+        bgfx::submit(Tools::DEFAULT_VIEW_ID, program);
     }
 
 	void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)

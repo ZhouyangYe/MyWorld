@@ -23,7 +23,6 @@ namespace MyWorld
 		// initialize chunk
 		Chunk::Init();
 
-
 		// initialize world
 		World::Generate();
 

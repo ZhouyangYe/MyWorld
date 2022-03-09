@@ -13,6 +13,8 @@ namespace MyWorld
     bgfx::VertexLayout Renderer::PosTextureArrayVertex::layout;
     bgfx::VertexLayout Renderer::PosColorTextureVertex::layout;
     bgfx::VertexLayout Renderer::PosColorTextureArrayVertex::layout;
+    const bgfx::Caps* Renderer::caps;
+    const bgfx::Stats* Renderer::stats;
     uint32_t Renderer::debugMode = BGFX_DEBUG_NONE;
 
     void Renderer::Init(RenderParam param)
@@ -57,6 +59,9 @@ namespace MyWorld
         PosColorTextureArrayVertex::Init();
 
         Texture::Init();
+
+        caps = bgfx::getCaps();
+        stats = bgfx::getStats();
     }
 
     void Renderer::Terminate()

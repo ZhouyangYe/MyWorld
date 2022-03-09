@@ -325,6 +325,8 @@ namespace MyWorld
 
     void Block::DrawTerrain(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords)
     {
+        if (!bgfx::isValid(ibh)) return;
+
         glm::mat4 mtx(1.0f);
         mtx = glm::translate(mtx, coords);
 

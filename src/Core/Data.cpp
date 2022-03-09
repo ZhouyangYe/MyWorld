@@ -2,7 +2,7 @@
 
 namespace MyWorld
 {
-	const int Data::CHUNK_WIDTH_NUM = 3;
+	const int Data::CHUNK_WIDTH_NUM = 8;
 	std::vector<Chunk*> Data::chunks;
 
 	Data::Data()

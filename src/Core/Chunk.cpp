@@ -11,7 +11,7 @@ namespace MyWorld
 	// get blocks' faces' distance to camera(when greedy meshing is not used)
 	float Chunk::getLength(Block* block)
 	{
-		const glm::vec3 blockCoords = block->getCalculatedCoords();
+		const glm::vec3 blockCoords = block->getWorldCoords();
 		glm::vec3 center;
 		switch (block->faces)
 		{
@@ -95,14 +95,19 @@ namespace MyWorld
 		count++;
 	}
 
-	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION direction)
+	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction)
 	{
 		switch (startBlock->type)
 		{
 		case Block::DIRT:
-		case Block::GRASS:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Dirt::getFaceVertices(startBlock, endBlock, direction);
+			batchFaces(vertices, batched_model_vertices_type1, batched_model_index_type1, batching_index_type1);
+			break;
+		}
+		case Block::GRASS:
+		{
+			const Renderer::PosTextureArrayVertex* vertices = Grass::getFaceVertices(startBlock, endBlock, direction);
 			batchFaces(vertices, batched_model_vertices_type1, batched_model_index_type1, batching_index_type1);
 			break;
 		}
@@ -118,7 +123,7 @@ namespace MyWorld
 	}
 
 	// greedy meshing for faces(main logic)
-	void Chunk::greedyMergeFaces(Block::DIRECTION face, const int& idx)
+	void Chunk::greedyMergeFaces(Block::DIRECTION&& face, const int& idx)
 	{
 		Block* block = blocks[idx];
 		const glm::vec3 blockCoords = block->getCoords();
@@ -332,12 +337,6 @@ namespace MyWorld
 
 	void Chunk::Init()
 	{
-		// register blocks
-		Block::Register();
-		Grass::Register();
-		Dirt::Register();
-		Water::Register();
-
 		noise.SetSeed(666666);
 		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 		noise.SetFrequency(0.003f);
@@ -350,13 +349,7 @@ namespace MyWorld
 	}
 
 	void Chunk::Destroy()
-	{
-		// destroy blocks
-		Block::Destroy();
-		Grass::Destroy();
-		Dirt::Destroy();
-		Water::Destroy();
-	}
+	{}
 
 	Chunk::Chunk()
 	{}
@@ -378,12 +371,13 @@ namespace MyWorld
 				const float data = (noise.GetNoise((float)x + coords.x, (float)y + coords.y) + 1) / 2;
 				const int surface = (int)(CHUNK_DEPTH * data);
 				const int edge = surface - 1;
+				const int waterLine = 190;
 
 				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
 					if (z < surface)
 					{
-						if (z == edge && z >= 192)
+						if (z == edge && z >= waterLine)
 						{
 							blocks.push_back(new Grass({ (float)x, (float)y, (float)z }, coords));
 						}
@@ -392,7 +386,7 @@ namespace MyWorld
 							blocks.push_back(new Dirt({ (float)x, (float)y, (float)z }, coords));
 						}
 					}
-					else if (z < 193)
+					else if (z <= waterLine)
 					{
 						blocks.push_back(new Water({ (float)x, (float)y, (float)z }, coords));
 					}
@@ -412,7 +406,7 @@ namespace MyWorld
 			vbh_type1 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type1.data(), batched_model_vertices_type1.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
 			ibh_type1 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type1.data(), batched_model_index_type1.size() * sizeof(uint16_t)));
 
-			// transparent
+			// water
 			vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
 			ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
 		}
@@ -434,12 +428,12 @@ namespace MyWorld
 		// opaque
 		if (bgfx::isValid(vbh_type1)) bgfx::destroy(vbh_type1);
 		if (bgfx::isValid(ibh_type1)) bgfx::destroy(ibh_type1);
-		// transparent
+		// water
 		if (bgfx::isValid(vbh_type2)) bgfx::destroy(vbh_type2);
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
 	}
 
-	void Chunk::Draw()
+	void Chunk::Draw(Phase&& phase)
 	{
 		// if greedy meshing is not used, draw blocks one by one
 		if (!Texture::isArrayBufferSupported())
@@ -467,23 +461,23 @@ namespace MyWorld
 		}
 		else
 		{
-			// draw opaque terrain
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
-			// draw water
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
+			switch (phase)
+			{
+			case Phase::OPAQUE_P:
+				// draw opaque terrain
+				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
+				break;
+			case Phase::WATER_PLACEHOLDER_P:
+				// draw water placeholder(depth buffer)
+				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
+				break;
+			case Phase::WATER_P:
+				// draw water
+				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
+				break;
+			default:
+				break;
+			}
 		}
-	}
-
-	void Chunk::toggleEdge()
-	{
-		transparent_blocks.clear();
-		opaque_blocks.clear();
-		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
-		{
-			(*iter)->faces = 0;
-		}
-
-		faceCullingAndSeparating();
 	}
 }

@@ -14,8 +14,18 @@ namespace MyWorld
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
 		Camera::Init({ { windowSize.width, windowSize.height } });
 
-		// initialize app data
-		Data::Init();
+		// register blocks
+		Block::Register();
+		Grass::Register();
+		Dirt::Register();
+		Water::Register();
+
+		// initialize chunk
+		Chunk::Init();
+
+
+		// initialize world
+		World::Generate();
 
 		Window::setEventCallback([](Event& event)
 			{
@@ -34,8 +44,18 @@ namespace MyWorld
 	}
 
 	void App::Terminate()
-	{		
-		Data::Destroy();
+	{
+		// destroy blocks
+		Block::Destroy();
+		Grass::Destroy();
+		Dirt::Destroy();
+		Water::Destroy();
+
+		// destroy chunk
+		Chunk::Destroy();
+
+		// destroy world
+		World::Destroy();
 		Renderer::Terminate();
 		Camera::Terminate();
 
@@ -50,11 +70,8 @@ namespace MyWorld
 		Renderer::Begin();
 		Camera::Begin();
 
-		/*for (int i = 0; i < Data::CHUNK_WIDTH_NUM * Data::CHUNK_WIDTH_NUM; i++)
-		{
-			Data::chunks[i]->Draw();
-		}*/
-		Data::chunks[0]->Draw();
+		// main game logic
+		World::Update();
 
 		Info::Update();
 		if (Cursor::hideCursor) Cursor::reset();

@@ -35,8 +35,8 @@ namespace MyWorld
 		bgfx::IndexBufferHandle ibh_type2;
 
 		// greedy meshing
-		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION direction);
-		void greedyMergeFaces(Block::DIRECTION face, const int& idx);
+		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction);
+		void greedyMergeFaces(Block::DIRECTION&& face, const int& idx);
 		void faceCullingAndSeparating();
 		const bool has(Block::DIRECTION face, const int& idx);
 
@@ -53,13 +53,18 @@ namespace MyWorld
 		std::vector<Block*> opaque_blocks;
 		std::vector<Block*> transparent_blocks;
 	public:
+		static const enum Phase : uint8_t
+		{
+			OPAQUE_P            = 1 << 0,
+			WATER_P             = 1 << 1,
+			WATER_PLACEHOLDER_P = 1 << 2
+		};
 		Chunk();
 		Chunk(glm::vec2 coords);
 		~Chunk();
 		static void toggleFaceCulling();
 		static void Init();
 		static void Destroy();
-		void Draw();
-		void toggleEdge();
+		void Draw(Phase&& phase = Phase::OPAQUE_P);
 	};
 }

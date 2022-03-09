@@ -19,7 +19,7 @@ namespace MyWorld
 
 	Texture::~Texture()
 	{
-		bgfx::destroy(textureHandle);
+		if (bgfx::isValid(textureHandle)) bgfx::destroy(textureHandle);
 	}
 
 	const bgfx::TextureInfo& Texture::getInfo()

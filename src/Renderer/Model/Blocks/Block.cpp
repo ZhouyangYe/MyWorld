@@ -292,9 +292,9 @@ namespace MyWorld
         return coords;
     }
 
-    const glm::vec3& Block::getCalculatedCoords()
+    const glm::vec3& Block::getWorldCoords()
     {
-        return calculated_coords;
+        return world_coords;
     }
 
     void Block::Register()
@@ -319,7 +319,7 @@ namespace MyWorld
     Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), type(TYPE::INVALID)
     {}
 
-    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), calculated_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
+    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), world_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
     {
     }
 
@@ -344,12 +344,12 @@ namespace MyWorld
         bgfx::submit(viewId, program);
     }
 
-	void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state)
+	void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state)
 	{
         if (ibh.idx == bgfx::kInvalidHandle) return;
 
         glm::mat4 mtx(1.0f);
-        mtx = glm::translate(mtx, calculated_coords);
+        mtx = glm::translate(mtx, world_coords);
 
         // Set model matrix for rendering.
         bgfx::setTransform(&mtx);

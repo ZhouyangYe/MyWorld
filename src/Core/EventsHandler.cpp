@@ -58,10 +58,8 @@ namespace MyWorld
 			if (event.action == KeyPressEvent::KEY_PRESS)
 			{
 				Chunk::toggleFaceCulling();
-				for (std::vector<Chunk*>::iterator iter = Data::chunks.begin(); iter != Data::chunks.end(); ++iter)
-				{
-					(*iter)->toggleEdge();
-				}
+				Data::Destroy();
+				Data::Init();
 			}
 			break;
 		case Key::I:

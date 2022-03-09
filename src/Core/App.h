@@ -7,8 +7,8 @@
 #include "Renderer/Camera.h"
 #include "Window/Window.h"
 #include "EventsHandler.h"
+#include "World.h"
 #include "Time.h"
-#include "Data.h"
 #include "Info.h"
 
 namespace MyWorld

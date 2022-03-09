@@ -4,7 +4,6 @@ namespace MyWorld
 {
 	Renderer::PosColorTextureVertex* Water::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Water::vbh = BGFX_INVALID_HANDLE;
-	bgfx::ProgramHandle Water::program = BGFX_INVALID_HANDLE;
 	const glm::vec2 Water::face = { 1.0f, 16.0f };
 	const uint32_t Water::color = 0xff000000;
 	const uint64_t Water::state = Block::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL;
@@ -21,7 +20,6 @@ namespace MyWorld
 		{
 			cubeVertices = Block::getVerticesType2(face, face, face, color);
 			vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosColorTextureVertex)), Renderer::PosColorTextureVertex::layout);
-			program = Renderer::texture_color_program;
 		}
 	}
 
@@ -47,6 +45,6 @@ namespace MyWorld
 
 	void Water::Draw(const uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(faces), program, state);
+		Block::Draw(vbh, Block::getIbh(faces), Renderer::texture_color_program, state);
 	}
 }

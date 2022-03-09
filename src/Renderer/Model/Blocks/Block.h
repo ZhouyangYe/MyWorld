@@ -14,20 +14,20 @@ namespace MyWorld
 	public:
 		static const enum DIRECTION : uint8_t
 		{
-			NORTH = 1 << 0,
-			SOUTH = 1 << 1,
-			WEST = 1 << 2,
-			EAST = 1 << 3,
-			TOP = 1 << 4,
+			NORTH =  1 << 0,
+			SOUTH =  1 << 1,
+			WEST =   1 << 2,
+			EAST =   1 << 3,
+			TOP =    1 << 4,
 			BOTTOM = 1 << 5
 		};
-		static const enum TYPE : uint64_t
+		static const enum TYPE : uint8_t
 		{
-			INVALID = 1 << 0,
-			AIR = 1 << 1,
-			DIRT = 1 << 2,
-			GRASS = 1 << 3,
-			WATER = 1 << 4,
+			INVALID = 0,
+			AIR     = 1,
+			DIRT    = 2,
+			GRASS   = 3,
+			WATER   = 4
 		};
 		// the offsets of coordinate for each face of a block, used to calculate the distance of the faces to camera, useless when using greedy meshing
 		static const glm::vec3 NorthFaceVec;
@@ -52,7 +52,7 @@ namespace MyWorld
 		static void Register();
 		static void Destroy();
 		const glm::vec3& getCoords();
-		const glm::vec3& getCalculatedCoords();
+		const glm::vec3& getWorldCoords();
 		// draw batched trangles created by greedy meshing
 		static void DrawTerrain(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
 		// draw faces for each block(when greedy meshing is not used)
@@ -63,7 +63,7 @@ namespace MyWorld
 		static Renderer::PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		static Renderer::PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
 		static Renderer::PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
-		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program = Renderer::texture_program, uint64_t state = default_state);
+		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state = default_state);
 		// coords of block, based on chunks
 		glm::vec3 coords;
 		// get ibh when exists, if not, create it and put into cache(when greedy meshing is not used)
@@ -77,6 +77,6 @@ namespace MyWorld
 		// create ibh and put into cache(when greedy meshing is not used)
 		static void createIbh(const uint8_t& idx);
 		// coords of block, based on the world coordinates
-		glm::vec3 calculated_coords;
+		glm::vec3 world_coords;
 	};
 }

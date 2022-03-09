@@ -48,6 +48,8 @@ add_executable(${PROJECT_NAME}
   src/Core/Data.cpp
   src/Core/Info.h
   src/Core/Info.cpp
+  src/Core/World.h
+  src/Core/World.cpp
 )
 
 # add glfw

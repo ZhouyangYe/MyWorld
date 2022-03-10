@@ -38,11 +38,6 @@ namespace MyWorld
 		static const glm::vec3 BottomFaceVec;
 
 		static const uint64_t default_state;
-		const Block::TYPE type;
-		// indicates the faces to be drawn for the block
-		uint8_t faces = 0;
-		Block();
-		Block(Block::TYPE type, glm::vec3& coords, glm::vec2& chunk_coords);
 
 		// creating vbh and ibh for greedy meshing
 		static const int faceVerticesNum;
@@ -51,21 +46,14 @@ namespace MyWorld
 
 		static void Register();
 		static void Destroy();
-		const glm::vec3& getCoords();
-		const glm::vec3& getWorldCoords();
 		// draw batched trangles created by greedy meshing
 		static void DrawTerrain(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
-		// draw faces for each block(when greedy meshing is not used)
-		virtual void Draw(const uint8_t& faces) = 0;
 	protected:
 		// used for getting vertices for each block when greedy meshing is not used
 		static Renderer::PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
 		static Renderer::PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		static Renderer::PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom);
 		static Renderer::PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
-		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state = default_state);
-		// coords of block, based on chunks
-		glm::vec3 coords;
 		// get ibh when exists, if not, create it and put into cache(when greedy meshing is not used)
 		static const bgfx::IndexBufferHandle& getIbh(const uint8_t& idx);
 	private:
@@ -76,6 +64,20 @@ namespace MyWorld
 		static uint16_t* triListPointers[];
 		// create ibh and put into cache(when greedy meshing is not used)
 		static void createIbh(const uint8_t& idx);
+	public:
+		const Block::TYPE type;
+		// indicates the faces to be drawn for the block
+		uint8_t faces = 0;
+		Block();
+		Block(Block::TYPE type, glm::vec3& coords, glm::vec2& chunk_coords);
+		const glm::vec3& getCoords();
+		const glm::vec3& getWorldCoords();
+		// draw faces for each block(when greedy meshing is not used)
+		virtual void Draw(const uint8_t& faces) = 0;
+	protected:
+		// coords of block, based on chunks
+		glm::vec3 coords;
+		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state = default_state);
 		// coords of block, based on the world coordinates
 		glm::vec3 world_coords;
 	};

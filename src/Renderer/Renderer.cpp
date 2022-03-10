@@ -13,14 +13,10 @@ namespace MyWorld
     bgfx::VertexLayout Renderer::PosTextureArrayVertex::layout;
     bgfx::VertexLayout Renderer::PosColorTextureVertex::layout;
     bgfx::VertexLayout Renderer::PosColorTextureArrayVertex::layout;
-    const bgfx::Caps* Renderer::caps;
-    const bgfx::Stats* Renderer::stats;
     uint32_t Renderer::debugMode = BGFX_DEBUG_NONE;
 
     void Renderer::Init(RenderParam param)
     {
-        Tools::Init();
-
         bgfx::PlatformData pd;
         pd.ndt = NULL;
         pd.nwh = param.window;
@@ -42,6 +38,8 @@ namespace MyWorld
         bgfxInit.platformData = pd;
         bgfx::init(bgfxInit);
 
+        Tools::Init();
+
         // set view clear and rect for default view
         bgfx::setViewClear(Tools::DEFAULT_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(Tools::DEFAULT_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
@@ -57,11 +55,7 @@ namespace MyWorld
         PosTextureArrayVertex::Init();
         PosColorTextureVertex::Init();
         PosColorTextureArrayVertex::Init();
-
         Texture::Init();
-
-        caps = bgfx::getCaps();
-        stats = bgfx::getStats();
     }
 
     void Renderer::Terminate()

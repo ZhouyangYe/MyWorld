@@ -7,6 +7,7 @@ namespace MyWorld
 	Data::Data()
 	{}
 
+	// TODO: do this in a separate thread
 	void Data::Init()
 	{
 		for (int y = 0; y < Chunk::WORLD_CHUNK_NUM; y++)

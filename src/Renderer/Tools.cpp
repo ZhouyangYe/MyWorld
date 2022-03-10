@@ -7,6 +7,8 @@ namespace MyWorld
     static bx::DefaultAllocator s_allocator;
     static bx::AllocatorI* g_allocator = &s_allocator;
     typedef bx::StringT<&g_allocator> String;
+    const bgfx::Caps* Tools::caps;
+    const bgfx::Stats* Tools::stats;
 
     static String s_currentDir;
 
@@ -286,6 +288,8 @@ namespace MyWorld
     {
         _reader = BX_NEW(g_allocator, FileReader);
 
+        caps = bgfx::getCaps();
+        stats = bgfx::getStats();
     }
 
     void Tools::Terminate()

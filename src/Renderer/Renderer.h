@@ -125,8 +125,5 @@ namespace MyWorld
 		static void switchRenderMode();
 		static bool toggleDebugText();
 		static const uint32_t& getDebugMode();
-		// capabilities info
-		static const bgfx::Caps* caps;
-		static const bgfx::Stats* stats;
 	};
 }

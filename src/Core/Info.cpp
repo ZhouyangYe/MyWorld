@@ -1,5 +1,6 @@
 #include "Info.h"
 
+// display game info
 namespace MyWorld
 {
 	bool Info::showInfo = false;

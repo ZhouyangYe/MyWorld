@@ -269,7 +269,7 @@ namespace MyWorld
 		createBatchingOfFaces(block, blocks[zCount * zOffset + (xCount - 1) * xOffset + (yCount - 1) * yOffset], face);
 	}
 
-	// figure out which faces to be drawn, merge blocks, and put opaque and transparent blocks into different arrays
+	// figure out which faces to be drawn, merge faces, and put opaque and transparent blocks into different arrays
 	void Chunk::faceCullingAndSeparating()
 	{
 		// TODO: 1. frustum culling 2. do this in a separate thread

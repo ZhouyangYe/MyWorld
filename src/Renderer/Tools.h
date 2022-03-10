@@ -46,6 +46,9 @@ namespace MyWorld
 		static void Terminate();
 		// view id
 		static const bgfx::ViewId DEFAULT_VIEW_ID;
+		// capabilities info
+		static const bgfx::Caps* caps;
+		static const bgfx::Stats* stats;
 	private:
 		static bx::FileReaderI* _reader;
 		static bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation, TextureArrayParam* taInfo);

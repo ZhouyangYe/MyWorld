@@ -57,7 +57,7 @@ namespace MyWorld
 		case Key::O:
 			if (event.action == KeyPressEvent::KEY_PRESS)
 			{
-				Chunk::toggleFaceCulling();
+				Chunk::toggleFaceCullingMode();
 				Data::Destroy();
 				Data::Init();
 			}

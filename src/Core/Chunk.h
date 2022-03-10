@@ -8,10 +8,6 @@
 #include "Renderer/Model/Blocks/Dirt.h"
 #include "Renderer/Model/Blocks/Water.h"
 
-#define X_OFFSET CHUNK_DEPTH
-#define Y_OFFSET CHUNK_WIDTH * CHUNK_DEPTH
-#define Z_OFFSET 1
-
 namespace MyWorld
 {
 	class Chunk
@@ -39,11 +35,18 @@ namespace MyWorld
 		void greedyMergeFaces(Block::DIRECTION&& face, const int& idx);
 		void faceCullingAndSeparating();
 		const bool has(Block::DIRECTION face, const int& idx);
+		// world chunk info
+		const std::vector<Chunk*> *world_chunks;
 
-		static bool showEdge;
+		// the index of chunk in the world space
+		const int index;
+		static bool showWorldBorder;
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
 		static const int CHUNK_DEPTH;
+		static const int X_OFFSET;
+		static const int Y_OFFSET;
+		static const int Z_OFFSET;
 		static float getLength(Block* block);
 
 		glm::vec3 coords;
@@ -59,12 +62,15 @@ namespace MyWorld
 			WATER_P             = 1 << 1,
 			WATER_PLACEHOLDER_P = 1 << 2
 		};
+		// how many chunks the world has for each side
+		static const int WORLD_CHUNK_NUM;
 		Chunk();
-		Chunk(glm::vec2 coords);
+		Chunk(glm::vec2 coords, int idx);
 		~Chunk();
-		static void toggleFaceCulling();
+		static void toggleFaceCullingMode();
 		static void Init();
 		static void Destroy();
 		void Draw(Phase&& phase = Phase::OPAQUE_P);
+		void Build(std::vector<Chunk*>* chunks);
 	};
 }

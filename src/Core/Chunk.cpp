@@ -3,12 +3,16 @@
 
 namespace MyWorld
 {
+	const int Chunk::WORLD_CHUNK_NUM = 8;
 	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
-	bool Chunk::showEdge = true;
+	const int Chunk::X_OFFSET = CHUNK_DEPTH;
+	const int Chunk::Y_OFFSET = CHUNK_WIDTH * CHUNK_DEPTH;
+	const int Chunk::Z_OFFSET = 1;
+	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
 
-	// get blocks' faces' distance to camera(when greedy meshing is not used)
+	// get unit blocks' faces' distance to camera(when greedy meshing is not used)
 	float Chunk::getLength(Block* block)
 	{
 		const glm::vec3 blockCoords = block->getWorldCoords();
@@ -40,38 +44,83 @@ namespace MyWorld
 		return glm::length2(center - Camera::getCameraCoords());
 	}
 
+	// check if we should show the face of certain direction for the block
 	const bool Chunk::has(Block::DIRECTION face, const int& idx)
 	{
 		Block* block = blocks[idx];
 		Block::TYPE type = block->type;
 		glm::vec3 blockCoords = block->getCoords();
 
+		bool isChunkBorder = false;
+		bool isWorldBorder;
+		std::function<bool()> adjacentIsAir;
+		std::function<bool()> adjacentIsWater;
+
+		const Chunk* west = index % WORLD_CHUNK_NUM == 0 ? nullptr : (*world_chunks)[index - 1];
+		const Chunk* east = index % WORLD_CHUNK_NUM == WORLD_CHUNK_NUM - 1 ? nullptr : (*world_chunks)[index + 1];
+		const Chunk* north = index >= WORLD_CHUNK_NUM * (WORLD_CHUNK_NUM - 1) ? nullptr : (*world_chunks)[index + WORLD_CHUNK_NUM];
+		const Chunk* south = index < WORLD_CHUNK_NUM ? nullptr : (*world_chunks)[index - WORLD_CHUNK_NUM];
+
 		switch (face)
 		{
 		case MyWorld::Block::NORTH:
-			return 
-				(blockCoords.y == CHUNK_WIDTH - 1 || blocks[idx + Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + Y_OFFSET]->type == Block::WATER))
-				&& (type == Block::WATER || showEdge || blockCoords.y != 0 + CHUNK_WIDTH - 1);
+			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
+			isWorldBorder = isChunkBorder && north == nullptr;
+			adjacentIsAir = [&] {
+				return (isChunkBorder && north->blocks[(int)blockCoords.x * X_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
+				(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::AIR);
+			};
+			adjacentIsWater = [&] {
+				return type != Block::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::WATER) ||
+				(isChunkBorder && north->blocks[(int)blockCoords.x * X_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+			};
+			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::SOUTH:
-			return 
-				(blockCoords.y == 0 || blocks[idx - Y_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - Y_OFFSET]->type == Block::WATER))
-				&& (type == Block::WATER || showEdge || blockCoords.y != 0);
+			isChunkBorder = blockCoords.y == 0;
+			isWorldBorder = isChunkBorder && south == nullptr;
+			adjacentIsAir = [&] {
+				return (isChunkBorder && south->blocks[(int)blockCoords.x * X_OFFSET + (CHUNK_WIDTH - 1) * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
+				(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::AIR);
+			};
+			adjacentIsWater = [&] {
+				return type != Block::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::WATER) ||
+				(isChunkBorder && south->blocks[(int)blockCoords.x * X_OFFSET + (CHUNK_WIDTH - 1) * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+			};
+			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::WEST:
-			return 
-				(blockCoords.x == 0 || blocks[idx - X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - X_OFFSET]->type == Block::WATER))
-				&& (type == Block::WATER || showEdge || blockCoords.x != 0);
+			isChunkBorder = blockCoords.x == 0;
+			isWorldBorder = isChunkBorder && west == nullptr;
+			adjacentIsAir = [&] {
+				return (isChunkBorder && west->blocks[(CHUNK_WIDTH - 1) * X_OFFSET + (int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
+				(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::AIR);
+			};
+			adjacentIsWater = [&] {
+				return type != Block::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::WATER) ||
+				(isChunkBorder && west->blocks[(CHUNK_WIDTH - 1) * X_OFFSET + (int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+			};
+			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::EAST:
-			return 
-				(blockCoords.x == CHUNK_WIDTH - 1 || blocks[idx + X_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + X_OFFSET]->type == Block::WATER))
-				&& (type == Block::WATER || showEdge || blockCoords.x != CHUNK_WIDTH - 1);
+			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
+			isWorldBorder = isChunkBorder && east == nullptr;
+			adjacentIsAir = [&] {
+				return (isChunkBorder && east->blocks[(int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
+				(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::AIR);
+			};
+			adjacentIsWater = [&] {
+				return type != Block::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::WATER) ||
+				(isChunkBorder && east->blocks[(int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+			};
+			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::TOP:
-			return 
-				(blockCoords.z == CHUNK_DEPTH - 1 || blocks[idx + Z_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx + Z_OFFSET]->type == Block::WATER))
-				&& (showEdge || blockCoords.z != CHUNK_DEPTH - 1);
+			isWorldBorder = blockCoords.z == CHUNK_DEPTH - 1;
+			adjacentIsAir = [&] { return blocks[idx + Z_OFFSET]->type == Block::AIR; };
+			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx + Z_OFFSET]->type == Block::WATER; };
+			return isWorldBorder || adjacentIsAir() || adjacentIsWater();
 		case MyWorld::Block::BOTTOM:
-			return 
-				(blockCoords.z == 0 || blocks[idx - Z_OFFSET]->type == Block::AIR || (type != Block::WATER && blocks[idx - Z_OFFSET]->type == Block::WATER))
-				&& (showEdge || blockCoords.z != 0);
+			isWorldBorder = blockCoords.z == 0;
+			adjacentIsAir = [&] { return blocks[idx - Z_OFFSET]->type == Block::AIR; };
+			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx - Z_OFFSET]->type == Block::WATER; };
+			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (showWorldBorder || !isChunkBorder);
 		default:
 			return false;
 		}
@@ -223,7 +272,7 @@ namespace MyWorld
 	// figure out which faces to be drawn, merge blocks, and put opaque and transparent blocks into different arrays
 	void Chunk::faceCullingAndSeparating()
 	{
-		// TODO: frustum culling
+		// TODO: 1. frustum culling 2. do this in a separate thread
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			if (blocks[i]->type != Block::AIR)
@@ -330,9 +379,9 @@ namespace MyWorld
 		}
 	}
 
-	void Chunk::toggleFaceCulling()
+	void Chunk::toggleFaceCullingMode()
 	{
-		showEdge = !showEdge;
+		showWorldBorder = !showWorldBorder;
 	}
 
 	void Chunk::Init()
@@ -351,10 +400,12 @@ namespace MyWorld
 	void Chunk::Destroy()
 	{}
 
-	Chunk::Chunk()
+	Chunk::Chunk() : index(0)
 	{}
 
-	Chunk::Chunk(glm::vec2 coords = glm::vec2{ 0.0f, 0.0f }) : 
+	Chunk::Chunk(glm::vec2 coords, int index) :
+		index(index),
+		world_chunks(nullptr),
 		coords(glm::vec3(coords, 0.0f)), 
 		vbh_type1(BGFX_INVALID_HANDLE),
 		ibh_type1(BGFX_INVALID_HANDLE),
@@ -397,6 +448,11 @@ namespace MyWorld
 				}
 			}
 		}
+	}
+
+	void Chunk::Build(std::vector<Chunk*> *chunks)
+	{
+		world_chunks = chunks;
 
 		faceCullingAndSeparating();
 
@@ -423,11 +479,11 @@ namespace MyWorld
 		// destroy data(no greedy meshing)
 		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
 		{
-			delete *iter;
+			delete (*iter);
 		}
 		for (std::vector<Block*>::iterator iter = transparent_blocks.begin(); iter != transparent_blocks.end(); ++iter)
 		{
-			delete *iter;
+			delete (*iter);
 		}
 
 		// destroy data(with greedy meshing)

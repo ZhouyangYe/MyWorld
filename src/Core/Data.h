@@ -8,7 +8,6 @@ namespace MyWorld
 	private:
 	public:
 		static std::vector<Chunk*> chunks;
-		static const int CHUNK_WIDTH_NUM;
 		Data();
 		static void Init();
 		static void Destroy();

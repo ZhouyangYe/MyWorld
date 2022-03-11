@@ -3,14 +3,19 @@
 
 namespace MyWorld
 {
-	const int Chunk::WORLD_CHUNK_NUM = 8;
+	// WORLD_CHUNK_NUM * WORLD_CHUNK_NUM chunks to be rendered
+	int Chunk::WORLD_CHUNK_NUM = 2;
+	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
+
 	const int Chunk::X_OFFSET = CHUNK_DEPTH;
 	const int Chunk::Y_OFFSET = CHUNK_WIDTH * CHUNK_DEPTH;
 	const int Chunk::Z_OFFSET = 1;
+
 	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
+	std::vector<Block*> Chunk::transparent_blocks;
 
 	// get unit blocks' faces' distance to camera(when greedy meshing is not used)
 	float Chunk::getLength(Block* block)
@@ -362,7 +367,7 @@ namespace MyWorld
 								uint8_t face = 1 << i;
 								if (block->faces & face)
 								{
-									Water* water = new Water(block->getCoords(), coords);
+									Water* water = new Water(block->getCoords(), coords, index);
 									water->faces |= face;
 									transparent_blocks.push_back(water);
 								}
@@ -386,7 +391,7 @@ namespace MyWorld
 
 	void Chunk::Init()
 	{
-		noise.SetSeed(666666);
+		noise.SetSeed(66666);
 		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 		noise.SetFrequency(0.003f);
 		noise.SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -439,7 +444,7 @@ namespace MyWorld
 					}
 					else if (z <= waterLine)
 					{
-						blocks.push_back(new Water({ (float)x, (float)y, (float)z }, coords));
+						blocks.push_back(new Water({ (float)x, (float)y, (float)z }, coords, index));
 					}
 					else
 					{
@@ -476,12 +481,21 @@ namespace MyWorld
 
 	Chunk::~Chunk()
 	{
+		// remove transparent blocks data for this chunk
+		std::vector<Block*> temp = transparent_blocks;
+		transparent_blocks.clear();
+		for (std::vector<Block*>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
+		{
+			if ((*iter)->type == Block::WATER && ((Water*)(*iter))->chunk_id == index)
+			{
+				delete (*iter);
+				continue;
+			}
+			transparent_blocks.push_back(*iter);
+		}
+
 		// destroy data(no greedy meshing)
 		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
-		{
-			delete (*iter);
-		}
-		for (std::vector<Block*>::iterator iter = transparent_blocks.begin(); iter != transparent_blocks.end(); ++iter)
 		{
 			delete (*iter);
 		}
@@ -495,51 +509,63 @@ namespace MyWorld
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
 	}
 
+	// draw blocks one by one
+	void Chunk::Draw()
+	{
+		// draw opaque blocks first
+		for (int i = 0; i < opaque_blocks.size(); i++)
+		{
+			opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
+		}
+	}
+
+	// draw transparent blocks
+	void Chunk::DrawTransparent()
+	{
+		int size = transparent_blocks.size();
+		if (size)
+		{
+			Block** sortedBlocks = transparent_blocks.data();
+			// draw far faces first
+			mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
+				return getLength(item1) - getLength(item2);
+			});
+			for (int i = 0; i < size; i++)
+			{
+				sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
+			}
+		}
+	}
+
+	// draw batched terrain
 	void Chunk::Draw(Phase&& phase)
 	{
-		// if greedy meshing is not used, draw blocks one by one
-		if (!Texture::isArrayBufferSupported())
+		switch (phase)
 		{
-			// draw opaque blocks first
-			for (int i = 0; i < opaque_blocks.size(); i++)
-			{
-				opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
-			}
+		case Phase::OPAQUE_P:
+			// draw opaque terrain
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
+			break;
+		case Phase::WATER_PLACEHOLDER_P:
+			// draw water placeholder(depth buffer)
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
+			break;
+		case Phase::WATER_P:
+			// draw water
+			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
+			break;
+		default:
+			break;
+		}
+	}
 
-			// draw transparent blocks
-			int size = transparent_blocks.size();
-			if (size)
-			{
-				Block** sortedBlocks = transparent_blocks.data();
-				// draw far faces first
-				mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
-					return getLength(item1) - getLength(item2);
-					});
-				for (int i = size - 1; i >= 0; i--)
-				{
-					sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
-				}
-			}
-		}
-		else
-		{
-			switch (phase)
-			{
-			case Phase::OPAQUE_P:
-				// draw opaque terrain
-				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
-				break;
-			case Phase::WATER_PLACEHOLDER_P:
-				// draw water placeholder(depth buffer)
-				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
-				break;
-			case Phase::WATER_P:
-				// draw water
-				Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
-				break;
-			default:
-				break;
-			}
-		}
+	const int& Chunk::getWorldChunkNum()
+	{
+		return WORLD_CHUNK_NUM;
+	}
+
+	void Chunk::setWorldChunkNum(int num)
+	{
+		WORLD_CHUNK_NUM = num;
 	}
 }

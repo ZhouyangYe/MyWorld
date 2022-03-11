@@ -13,7 +13,8 @@ namespace MyWorld
 	class Chunk
 	{
 	private:
-
+		// how many chunks the world has for each side
+		static int WORLD_CHUNK_NUM;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
@@ -22,6 +23,8 @@ namespace MyWorld
 		static const int Y_OFFSET;
 		static const int Z_OFFSET;
 		static float getLength(Block* block);
+		// transparent blocks to be rendered
+		static std::vector<Block*> transparent_blocks;
 	public:
 		static const enum Phase : uint8_t
 		{
@@ -29,11 +32,12 @@ namespace MyWorld
 			WATER_P             = 1 << 1,
 			WATER_PLACEHOLDER_P = 1 << 2
 		};
-		// how many chunks the world has for each side
-		static const int WORLD_CHUNK_NUM;
 		static void toggleFaceCullingMode();
 		static void Init();
 		static void Destroy();
+		static const int& getWorldChunkNum();
+		static void setWorldChunkNum(int num);
+		static void DrawTransparent();
 	private:
 		// the index of chunk in the world space
 		const int index;
@@ -42,9 +46,8 @@ namespace MyWorld
 		glm::vec3 coords;
 		// data of blocks
 		std::vector<Block*> blocks;
-		// opaque and transparent blocks to be renderred
+		// opaque blocks to be renderred
 		std::vector<Block*> opaque_blocks;
-		std::vector<Block*> transparent_blocks;
 
 		// greedy meshing
 		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction);
@@ -72,7 +75,8 @@ namespace MyWorld
 		Chunk();
 		Chunk(glm::vec2 coords, int idx);
 		~Chunk();
-		void Draw(Phase&& phase = Phase::OPAQUE_P);
+		void Draw(Phase&& phase);
+		void Draw();
 		void Build(std::vector<Chunk*>* chunks);
 	};
 }

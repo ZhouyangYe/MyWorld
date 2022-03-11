@@ -2,27 +2,47 @@
 
 namespace MyWorld
 {
+	int World::chunk_num;
+
 	void World::Generate()
 	{
 		Data::Init();
+
+		const int num = Chunk::getWorldChunkNum();
+		World::chunk_num = num * num;
 	}
 
 	void World::Update()
 	{
-		for (int i = 0; i < Chunk::WORLD_CHUNK_NUM * Chunk::WORLD_CHUNK_NUM; i++)
+		// TODO: optimize this
+		// if greedy meshing is not used, draw blocks one by one
+		if (!Texture::isArrayBufferSupported())
 		{
-			Data::chunks[i]->Draw();
+			for (int i = 0; i < chunk_num; i++)
+			{
+				Data::chunks[i]->Draw();
+			}
+		}
+		// draw chunks of greedy meshed and batched vertices
+		else
+		{
+			for (int i = 0; i < chunk_num; i++)
+			{
+				Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
+			}
+
+			for (int i = 0; i < chunk_num; i++)
+			{
+				Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
+			}
+
+			for (int i = 0; i < chunk_num; i++)
+			{
+				Data::chunks[i]->Draw(Chunk::Phase::WATER_P);
+			}
 		}
 
-		for (int i = 0; i < Chunk::WORLD_CHUNK_NUM * Chunk::WORLD_CHUNK_NUM; i++)
-		{
-			Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
-		}
-
-		for (int i = 0; i < Chunk::WORLD_CHUNK_NUM * Chunk::WORLD_CHUNK_NUM; i++)
-		{
-			Data::chunks[i]->Draw(Chunk::Phase::WATER_P);
-		}
+		Chunk::DrawTransparent();
 	}
 
 	void World::Destroy()

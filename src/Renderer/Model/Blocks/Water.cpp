@@ -5,7 +5,7 @@ namespace MyWorld
 	Renderer::PosColorTextureVertex* Water::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Water::vbh = BGFX_INVALID_HANDLE;
 	const glm::vec2 Water::face = { 1.0f, 16.0f };
-	const uint32_t Water::color = 0xff000000;
+	const uint32_t Water::color = 0x88000000;
 	const uint64_t Water::state = Block::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL;
 	const uint64_t Water::placeholder_state = BGFX_STATE_WRITE_Z | BGFX_STATE_DEPTH_TEST_LESS;
 
@@ -33,10 +33,10 @@ namespace MyWorld
 		}
 	}
 
-	Water::Water()
+	Water::Water() : chunk_id(0)
 	{}
 
-	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::WATER, coords, chunk_coords)
+	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id) : Block(Block::WATER, coords, chunk_coords), chunk_id(chunk_id)
 	{
 	}
 

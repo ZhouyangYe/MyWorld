@@ -10,11 +10,12 @@ namespace MyWorld
 	// TODO: do this in a separate thread
 	void Data::Init()
 	{
-		for (int y = 0; y < Chunk::WORLD_CHUNK_NUM; y++)
+		const int chunkNum = Chunk::getWorldChunkNum();
+		for (int y = 0; y < chunkNum; y++)
 		{
-			for (int x = 0; x < Chunk::WORLD_CHUNK_NUM; x++)
+			for (int x = 0; x < chunkNum; x++)
 			{
-				chunks.push_back(new Chunk(glm::vec2{(float)x * 16.0f, (float)y * 16.0f }, y * Chunk::WORLD_CHUNK_NUM + x));
+				chunks.push_back(new Chunk(glm::vec2{(float)x * 16.0f, (float)y * 16.0f }, y * chunkNum + x));
 			}
 		}
 

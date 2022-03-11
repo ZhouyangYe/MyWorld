@@ -43,7 +43,7 @@ namespace MyWorld
 
 	void Texture::Init()
 	{
-		arrayBufferSupported = 0 != (BGFX_CAPS_TEXTURE_2D_ARRAY & Tools::caps->supported);
+		arrayBufferSupported = 0 == (BGFX_CAPS_TEXTURE_2D_ARRAY & Tools::caps->supported);
 		s_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
 	}
 

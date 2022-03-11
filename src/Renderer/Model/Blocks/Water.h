@@ -18,8 +18,9 @@ namespace MyWorld
 		static void Destroy();
 		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, Block::DIRECTION direction);
 	public:
+		const int chunk_id;
 		Water();
-		Water(glm::vec3 coords, glm::vec2 chunk_coords);
+		Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id);
 		~Water();
 		void Draw(const uint8_t& faces) override;
 	};

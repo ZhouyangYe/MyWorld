@@ -13,7 +13,7 @@ namespace MyWorld
 	class Chunk
 	{
 	private:
-		// how many chunks the world has for each side
+		// how many num of chunks the world has for each side
 		static int WORLD_CHUNK_NUM;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
@@ -41,13 +41,14 @@ namespace MyWorld
 	private:
 		// the index of chunk in the world space
 		const int index;
-		// world chunk info
-		const std::vector<Chunk*>* world_chunks;
 		glm::vec3 coords;
 		// data of blocks
 		std::vector<Block*> blocks;
 		// opaque blocks to be renderred
 		std::vector<Block*> opaque_blocks;
+
+		// get the type of a block
+		static const Block::TYPE getType(float& x, float& y, float& z);
 
 		// greedy meshing
 		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction);
@@ -77,6 +78,6 @@ namespace MyWorld
 		~Chunk();
 		void Draw(Phase&& phase);
 		void Draw();
-		void Build(std::vector<Chunk*>* chunks);
+		void Build();
 	};
 }

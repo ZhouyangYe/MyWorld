@@ -4,7 +4,7 @@
 namespace MyWorld
 {
 	// WORLD_CHUNK_NUM * WORLD_CHUNK_NUM chunks to be rendered
-	int Chunk::WORLD_CHUNK_NUM = 2;
+	int Chunk::WORLD_CHUNK_NUM = 8;
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
@@ -57,63 +57,98 @@ namespace MyWorld
 		glm::vec3 blockCoords = block->getCoords();
 
 		bool isChunkBorder = false;
-		bool isWorldBorder;
+		bool isWorldBorder = false;
 		std::function<bool()> adjacentIsAir;
 		std::function<bool()> adjacentIsWater;
 
-		const Chunk* west = index % WORLD_CHUNK_NUM == 0 ? nullptr : (*world_chunks)[index - 1];
-		const Chunk* east = index % WORLD_CHUNK_NUM == WORLD_CHUNK_NUM - 1 ? nullptr : (*world_chunks)[index + 1];
-		const Chunk* north = index >= WORLD_CHUNK_NUM * (WORLD_CHUNK_NUM - 1) ? nullptr : (*world_chunks)[index + WORLD_CHUNK_NUM];
-		const Chunk* south = index < WORLD_CHUNK_NUM ? nullptr : (*world_chunks)[index - WORLD_CHUNK_NUM];
+		bool noAdjacent = false;
+		float offset = 0.0f;
+		Block::TYPE adjacentType = Block::INVALID;
 
 		switch (face)
 		{
 		case MyWorld::Block::NORTH:
+			noAdjacent = index >= WORLD_CHUNK_NUM * (WORLD_CHUNK_NUM - 1);
 			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
-			isWorldBorder = isChunkBorder && north == nullptr;
+			isWorldBorder = isChunkBorder && noAdjacent;
+			if (!isWorldBorder)
+			{
+				offset = blockCoords.y + coords.y + 1.0f;
+				float worldX = blockCoords.x + coords.x;
+				adjacentType = getType(worldX, offset, blockCoords.z);
+			}
 			adjacentIsAir = [&] {
-				return (isChunkBorder && north->blocks[(int)blockCoords.x * X_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
-				(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::AIR);
+				return
+					(isChunkBorder && adjacentType == Block::AIR) ||
+					(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::AIR);
 			};
 			adjacentIsWater = [&] {
-				return type != Block::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::WATER) ||
-				(isChunkBorder && north->blocks[(int)blockCoords.x * X_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+				return 
+					type != Block::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::WATER) ||
+					(isChunkBorder && adjacentType == Block::WATER));
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::SOUTH:
+			noAdjacent = index < WORLD_CHUNK_NUM;
 			isChunkBorder = blockCoords.y == 0;
-			isWorldBorder = isChunkBorder && south == nullptr;
+			isWorldBorder = isChunkBorder && noAdjacent;
+			if (!isWorldBorder)
+			{
+				offset = blockCoords.y + coords.y + - 1.0f;
+				float worldX = blockCoords.x + coords.x;
+				adjacentType = getType(worldX, offset, blockCoords.z);
+			}
 			adjacentIsAir = [&] {
-				return (isChunkBorder && south->blocks[(int)blockCoords.x * X_OFFSET + (CHUNK_WIDTH - 1) * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
-				(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::AIR);
+				return 
+					(isChunkBorder && adjacentType == Block::AIR) ||
+					(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::AIR);
 			};
 			adjacentIsWater = [&] {
-				return type != Block::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::WATER) ||
-				(isChunkBorder && south->blocks[(int)blockCoords.x * X_OFFSET + (CHUNK_WIDTH - 1) * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+				return 
+					type != Block::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::WATER) ||
+					(isChunkBorder && adjacentType == Block::WATER));
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::WEST:
+			noAdjacent = index % WORLD_CHUNK_NUM == 0;
 			isChunkBorder = blockCoords.x == 0;
-			isWorldBorder = isChunkBorder && west == nullptr;
+			isWorldBorder = isChunkBorder && noAdjacent;
+			if (!isWorldBorder)
+			{
+				offset = blockCoords.x + coords.x - 1.0f;
+				float worldY = blockCoords.y + coords.y;
+				adjacentType = getType(offset, worldY, blockCoords.z);
+			}
 			adjacentIsAir = [&] {
-				return (isChunkBorder && west->blocks[(CHUNK_WIDTH - 1) * X_OFFSET + (int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
-				(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::AIR);
+				return 
+					(isChunkBorder && adjacentType == Block::AIR) ||
+					(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::AIR);
 			};
 			adjacentIsWater = [&] {
-				return type != Block::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::WATER) ||
-				(isChunkBorder && west->blocks[(CHUNK_WIDTH - 1) * X_OFFSET + (int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+				return 
+					type != Block::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::WATER) ||
+					(isChunkBorder && adjacentType == Block::WATER));
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::EAST:
+			noAdjacent = index % WORLD_CHUNK_NUM == WORLD_CHUNK_NUM - 1;
 			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
-			isWorldBorder = isChunkBorder && east == nullptr;
+			isWorldBorder = isChunkBorder && noAdjacent;
+			if (!isWorldBorder)
+			{
+				offset = blockCoords.x + coords.x + 1.0f;
+				float worldY = blockCoords.y + coords.y;
+				adjacentType = getType(offset, worldY, blockCoords.z);
+			}
 			adjacentIsAir = [&] {
-				return (isChunkBorder && east->blocks[(int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::AIR) ||
-				(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::AIR);
+				return 
+					(isChunkBorder && adjacentType == Block::AIR) ||
+					(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::AIR);
 			};
 			adjacentIsWater = [&] {
-				return type != Block::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::WATER) ||
-				(isChunkBorder && east->blocks[(int)blockCoords.y * Y_OFFSET + (int)blockCoords.z]->type == Block::WATER));
+				return 
+					type != Block::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::WATER) ||
+					(isChunkBorder && adjacentType == Block::WATER));
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::TOP:
@@ -391,11 +426,11 @@ namespace MyWorld
 
 	void Chunk::Init()
 	{
-		noise.SetSeed(66666);
+		noise.SetSeed(666);
 		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 		noise.SetFrequency(0.003f);
 		noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-		noise.SetFractalOctaves(4);
+		noise.SetFractalOctaves(6);
 		noise.SetFractalLacunarity(1.5f);
 		noise.SetFractalGain(1.4f);
 		noise.SetFractalWeightedStrength(0.4f);
@@ -410,7 +445,6 @@ namespace MyWorld
 
 	Chunk::Chunk(glm::vec2 coords, int index) :
 		index(index),
-		world_chunks(nullptr),
 		coords(glm::vec3(coords, 0.0f)), 
 		vbh_type1(BGFX_INVALID_HANDLE),
 		ibh_type1(BGFX_INVALID_HANDLE),
@@ -420,45 +454,41 @@ namespace MyWorld
 		batching_index_type2(0)
 	{
 		// create all blocks in the chunk
-		for (int y = 0; y < CHUNK_WIDTH; y++)
+		for (float y = 0; y < CHUNK_WIDTH; y++)
 		{
-			for (int x = 0; x < CHUNK_WIDTH; x++)
+			for (float x = 0; x < CHUNK_WIDTH; x++)
 			{
-				const float data = (noise.GetNoise((float)x + coords.x, (float)y + coords.y) + 1) / 2;
-				const int surface = (int)(CHUNK_DEPTH * data);
-				const int edge = surface - 1;
-				const int waterLine = 190;
-
-				for (int z = 0; z < CHUNK_DEPTH; z++)
+				for (float z = 0; z < CHUNK_DEPTH; z++)
 				{
-					if (z < surface)
+					float worldX = x + coords.x, wolrdY = y + coords.y;
+					const Block::TYPE type = getType(worldX, wolrdY, z);
+
+					switch (type)
 					{
-						if (z == edge && z >= waterLine)
-						{
-							blocks.push_back(new Grass({ (float)x, (float)y, (float)z }, coords));
-						}
-						else
-						{
-							blocks.push_back(new Dirt({ (float)x, (float)y, (float)z }, coords));
-						}
-					}
-					else if (z <= waterLine)
-					{
-						blocks.push_back(new Water({ (float)x, (float)y, (float)z }, coords, index));
-					}
-					else
-					{
-						blocks.push_back(new Air({ (float)x, (float)y, (float)z }, coords));
+					case Block::AIR:
+						blocks.push_back(new Air({ x, y, z }, coords));
+						break;
+					case Block::WATER:
+						blocks.push_back(new Water({ x, y, z }, coords, index));
+						break;
+					case Block::DIRT:
+						blocks.push_back(new Dirt({ x, y, z }, coords));
+						break;
+					case Block::GRASS:
+						blocks.push_back(new Grass({ x, y, z }, coords));
+						break;
+					default:
+						break;
 					}
 				}
 			}
 		}
+
+		Build();
 	}
 
-	void Chunk::Build(std::vector<Chunk*> *chunks)
+	void Chunk::Build()
 	{
-		world_chunks = chunks;
-
 		faceCullingAndSeparating();
 
 		if (Texture::isArrayBufferSupported())
@@ -476,6 +506,42 @@ namespace MyWorld
 				vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
 				ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
 			}
+
+			// remove blocks when chunk builds are done
+			for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
+			{
+				delete (*iter);
+			}
+			blocks.clear();
+		}
+	}
+
+	// TODO: implement more interesting terrain
+	const Block::TYPE Chunk::getType(float& x, float& y, float& z)
+	{
+		const float data = (noise.GetNoise(x, y) + 1) / 2;
+		const int surface = (int)(CHUNK_DEPTH * data);
+		const int edge = surface - 1;
+		const int waterLine = 190;
+
+		if (z < surface)
+		{
+			if (z == edge && z >= waterLine)
+			{
+				return Block::GRASS;
+			}
+			else
+			{
+				return Block::DIRT;
+			}
+		}
+		else if (z <= waterLine)
+		{
+			return Block::WATER;
+		}
+		else
+		{
+			return Block::AIR;
 		}
 	}
 
@@ -512,7 +578,7 @@ namespace MyWorld
 	// draw blocks one by one
 	void Chunk::Draw()
 	{
-		// draw opaque blocks first
+		// draw opaque blocks
 		for (int i = 0; i < opaque_blocks.size(); i++)
 		{
 			opaque_blocks[i]->Draw(opaque_blocks[i]->faces);

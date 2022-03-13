@@ -12,7 +12,6 @@ namespace MyWorld
 
 		WindowSize windowSize = MyWorld::Window::getWindowSize();
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
-		Camera::Init({ { windowSize.width, windowSize.height } });
 
 		// register blocks
 		Block::Register();
@@ -25,6 +24,8 @@ namespace MyWorld
 
 		// initialize world
 		World::Generate();
+
+		Camera::Init({ { windowSize.width, windowSize.height }, (float)Chunk::getChunkRenderDistanceNum() * 16, Chunk::getSpawnLocation() });
 
 		Window::setEventCallback([](Event& event)
 			{

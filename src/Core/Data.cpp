@@ -10,12 +10,14 @@ namespace MyWorld
 	// TODO: do this in a separate thread
 	void Data::Init()
 	{
-		const int chunkNum = Chunk::getWorldChunkNum();
-		for (float y = 0; y < chunkNum; y++)
+		const int chunkNum = Chunk::getChunkRenderDistanceNum();
+		int index = 0;
+		for (int y = -chunkNum; y < chunkNum; y++)
 		{
-			for (float x = 0; x < chunkNum; x++)
+			for (int x = -chunkNum; x < chunkNum; x++)
 			{
-				chunks.push_back(new Chunk(glm::vec2{x * 16.0f, y * 16.0f }, y * chunkNum + x));
+				chunks.push_back(new Chunk(glm::vec2{ (float)x * 16.0f, (float)y * 16.0f }, index));
+				index++;
 			}
 		}
 	}

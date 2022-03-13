@@ -8,8 +8,8 @@ namespace MyWorld
 	{
 		Data::Init();
 
-		const int num = Chunk::getWorldChunkNum();
-		World::chunk_num = num * num;
+		const int num = Chunk::getChunkRenderDistanceNum();
+		World::chunk_num = num * num * 4;
 	}
 
 	void World::Update()

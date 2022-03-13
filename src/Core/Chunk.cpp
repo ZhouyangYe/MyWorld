@@ -1,10 +1,10 @@
 #include "Chunk.h"
-#include <bitset>
 
 namespace MyWorld
 {
-	// WORLD_CHUNK_NUM * WORLD_CHUNK_NUM chunks to be rendered
-	int Chunk::WORLD_CHUNK_NUM = 8;
+	// numbers of chunks to be rendered based on the player
+	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 6;
+	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
@@ -16,6 +16,11 @@ namespace MyWorld
 	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
 	std::vector<Block*> Chunk::transparent_blocks;
+
+	const glm::vec3& Chunk::getSpawnLocation()
+	{
+		return spawn_location;
+	}
 
 	// get unit blocks' faces' distance to camera(when greedy meshing is not used)
 	float Chunk::getLength(Block* block)
@@ -61,6 +66,7 @@ namespace MyWorld
 		std::function<bool()> adjacentIsAir;
 		std::function<bool()> adjacentIsWater;
 
+		const int chunkNum = WORLD_CHUNK_RENDER_DISTANCE * 2;
 		bool noAdjacent = false;
 		float offset = 0.0f;
 		Block::TYPE adjacentType = Block::INVALID;
@@ -68,7 +74,7 @@ namespace MyWorld
 		switch (face)
 		{
 		case MyWorld::Block::NORTH:
-			noAdjacent = index >= WORLD_CHUNK_NUM * (WORLD_CHUNK_NUM - 1);
+			noAdjacent = index >= chunkNum * (chunkNum - 1);
 			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
@@ -89,7 +95,7 @@ namespace MyWorld
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::SOUTH:
-			noAdjacent = index < WORLD_CHUNK_NUM;
+			noAdjacent = index < chunkNum;
 			isChunkBorder = blockCoords.y == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
@@ -110,7 +116,7 @@ namespace MyWorld
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::WEST:
-			noAdjacent = index % WORLD_CHUNK_NUM == 0;
+			noAdjacent = index % chunkNum == 0;
 			isChunkBorder = blockCoords.x == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
@@ -131,7 +137,7 @@ namespace MyWorld
 			};
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
 		case MyWorld::Block::EAST:
-			noAdjacent = index % WORLD_CHUNK_NUM == WORLD_CHUNK_NUM - 1;
+			noAdjacent = index % chunkNum == chunkNum - 1;
 			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
@@ -454,14 +460,20 @@ namespace MyWorld
 		batching_index_type2(0)
 	{
 		// create all blocks in the chunk
-		for (float y = 0; y < CHUNK_WIDTH; y++)
+		for (int y = 0; y < CHUNK_WIDTH; y++)
 		{
-			for (float x = 0; x < CHUNK_WIDTH; x++)
+			for (int x = 0; x < CHUNK_WIDTH; x++)
 			{
-				for (float z = 0; z < CHUNK_DEPTH; z++)
+				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
-					float worldX = x + coords.x, wolrdY = y + coords.y;
-					const Block::TYPE type = getType(worldX, wolrdY, z);
+					float worldX = x + coords.x, wolrdY = y + coords.y, worldZ = z;
+					const Block::TYPE type = getType(worldX, wolrdY, worldZ);
+
+					// set spawn location
+					if (spawn_location.z == -1.0f && type == Block::AIR && coords.x == 0.0f && coords.y == 0.0f)
+					{
+						spawn_location = glm::vec3{ 0.0f, 0.0f, z + 3.0f };
+					}
 
 					switch (type)
 					{
@@ -625,13 +637,13 @@ namespace MyWorld
 		}
 	}
 
-	const int& Chunk::getWorldChunkNum()
+	const int& Chunk::getChunkRenderDistanceNum()
 	{
-		return WORLD_CHUNK_NUM;
+		return WORLD_CHUNK_RENDER_DISTANCE;
 	}
 
-	void Chunk::setWorldChunkNum(int num)
+	void Chunk::setChunkRenderDistanceNum(int num)
 	{
-		WORLD_CHUNK_NUM = num;
+		WORLD_CHUNK_RENDER_DISTANCE = num;
 	}
 }

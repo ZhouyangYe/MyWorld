@@ -13,8 +13,9 @@ namespace MyWorld
 	class Chunk
 	{
 	private:
-		// how many num of chunks the world has for each side
-		static int WORLD_CHUNK_NUM;
+		// how many num of chunks to be rendered base on player
+		static int WORLD_CHUNK_RENDER_DISTANCE;
+		static glm::vec3 spawn_location;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
@@ -35,9 +36,10 @@ namespace MyWorld
 		static void toggleFaceCullingMode();
 		static void Init();
 		static void Destroy();
-		static const int& getWorldChunkNum();
-		static void setWorldChunkNum(int num);
+		static const int& getChunkRenderDistanceNum();
+		static void setChunkRenderDistanceNum(int num);
 		static void DrawTransparent();
+		static const glm::vec3& getSpawnLocation();
 	private:
 		// the index of chunk in the world space
 		const int index;

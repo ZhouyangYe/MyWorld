@@ -22,6 +22,8 @@ namespace MyWorld
 		struct CameraParam
 		{
 			WindowSize windowSize;
+			float view_distance;
+			glm::vec3 spawnLocation;
 		};
 		static const glm::vec3 WORLD_UP;
 		static bool moveUp;

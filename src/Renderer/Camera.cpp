@@ -10,7 +10,7 @@ namespace MyWorld
 
 	glm::mat4 Camera::view;
 	glm::mat4 Camera::proj;
-	glm::vec3 Camera::eye = { -6.0f, 0.0f, 200.0f };
+	glm::vec3 Camera::eye;
 	glm::vec3 Camera::forward = { 1.0f, 0.0f, 0.0f };
 	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
 	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));
@@ -29,8 +29,9 @@ namespace MyWorld
 
 	void Camera::Init(CameraParam param)
 	{
+		eye = param.spawnLocation;
 		view = glm::lookAt(eye, eye + forward, up);
-		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.01f, 128.0f);
+		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.01f, param.view_distance);
 	}
 
 	void Camera::Terminate()

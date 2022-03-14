@@ -3,7 +3,7 @@
 namespace MyWorld
 {
 	// numbers of chunks to be rendered based on the player
-	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 6;
+	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 3;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
@@ -73,7 +73,7 @@ namespace MyWorld
 
 		switch (face)
 		{
-		case MyWorld::Block::NORTH:
+		case Block::NORTH:
 			noAdjacent = index >= chunkNum * (chunkNum - 1);
 			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -93,8 +93,8 @@ namespace MyWorld
 					type != Block::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::WATER) ||
 					(isChunkBorder && adjacentType == Block::WATER));
 			};
-			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
-		case MyWorld::Block::SOUTH:
+			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::SOUTH:
 			noAdjacent = index < chunkNum;
 			isChunkBorder = blockCoords.y == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -114,8 +114,8 @@ namespace MyWorld
 					type != Block::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::WATER) ||
 					(isChunkBorder && adjacentType == Block::WATER));
 			};
-			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
-		case MyWorld::Block::WEST:
+			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::WEST:
 			noAdjacent = index % chunkNum == 0;
 			isChunkBorder = blockCoords.x == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -135,8 +135,8 @@ namespace MyWorld
 					type != Block::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::WATER) ||
 					(isChunkBorder && adjacentType == Block::WATER));
 			};
-			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
-		case MyWorld::Block::EAST:
+			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::EAST:
 			noAdjacent = index % chunkNum == chunkNum - 1;
 			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -156,13 +156,13 @@ namespace MyWorld
 					type != Block::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::WATER) ||
 					(isChunkBorder && adjacentType == Block::WATER));
 			};
-			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (type == Block::WATER || showWorldBorder || !isWorldBorder);
-		case MyWorld::Block::TOP:
+			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::TOP:
 			isWorldBorder = blockCoords.z == CHUNK_DEPTH - 1;
 			adjacentIsAir = [&] { return blocks[idx + Z_OFFSET]->type == Block::AIR; };
 			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx + Z_OFFSET]->type == Block::WATER; };
 			return isWorldBorder || adjacentIsAir() || adjacentIsWater();
-		case MyWorld::Block::BOTTOM:
+		case Block::BOTTOM:
 			isWorldBorder = blockCoords.z == 0;
 			adjacentIsAir = [&] { return blocks[idx - Z_OFFSET]->type == Block::AIR; };
 			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx - Z_OFFSET]->type == Block::WATER; };

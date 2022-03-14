@@ -27,6 +27,11 @@ namespace MyWorld
 		return eye;
 	}
 
+	const glm::vec3& Camera::getForwardVec()
+	{
+		return forward;
+	}
+
 	void Camera::Init(CameraParam param)
 	{
 		eye = param.spawnLocation;
@@ -35,9 +40,7 @@ namespace MyWorld
 	}
 
 	void Camera::Terminate()
-	{
-
-	}
+	{}
 
 	void Camera::Begin()
 	{

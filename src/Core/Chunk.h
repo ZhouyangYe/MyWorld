@@ -26,6 +26,8 @@ namespace MyWorld
 		static float getLength(Block* block);
 		// transparent blocks to be rendered
 		static std::vector<Block*> transparent_blocks;
+		// get the type of a block
+		static const Block::TYPE getType(float& x, float& y, float& z);
 	public:
 		static const enum Phase : uint8_t
 		{
@@ -48,9 +50,6 @@ namespace MyWorld
 		std::vector<Block*> blocks;
 		// opaque blocks to be renderred
 		std::vector<Block*> opaque_blocks;
-
-		// get the type of a block
-		static const Block::TYPE getType(float& x, float& y, float& z);
 
 		// greedy meshing
 		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction);

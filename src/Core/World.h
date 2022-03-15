@@ -7,6 +7,7 @@ namespace MyWorld
 	{
 	private:
 		static int chunk_num;
+		static Wireframe* wireframe;
 	public:
 		static void Generate();
 		static void Update();

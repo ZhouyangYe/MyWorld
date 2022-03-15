@@ -1,3 +1,6 @@
+out\Debug\bin\shaderc -f ./resource/shaders/color/vs_color.sc -o ./resource/shaders/bin/vs_color.bin --type v --platform windows -p vs_5_0 -O 3
+out\Debug\bin\shaderc -f ./resource/shaders/color/fs_color.sc -o ./resource/shaders/bin/fs_color.bin --type f --platform windows -p ps_5_0 -O 3
+
 out\Debug\bin\shaderc -f ./resource/shaders/texture/vs_texture.sc -o ./resource/shaders/bin/vs_texture.bin --type v --platform windows -p vs_5_0 -O 3
 out\Debug\bin\shaderc -f ./resource/shaders/texture/fs_texture.sc -o ./resource/shaders/bin/fs_texture.bin --type f --platform windows -p ps_5_0 -O 3
 

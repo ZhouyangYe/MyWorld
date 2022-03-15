@@ -17,8 +17,8 @@ namespace MyWorld
 			int window_height;
 		};
 		static const bool& isArrayBufferSupported();
-		Texture(const char* name);
-		Texture(const char* name, Tools::TextureArrayParam taInfo);
+		Texture(const char* path);
+		Texture(const char* path, Tools::TextureArrayParam taInfo);
 		~Texture();
 		void bind();
 		const bgfx::TextureHandle& getTextureHandle();

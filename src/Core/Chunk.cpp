@@ -3,7 +3,7 @@
 namespace MyWorld
 {
 	// numbers of chunks to be rendered based on the player
-	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 8;
+	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 1;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;

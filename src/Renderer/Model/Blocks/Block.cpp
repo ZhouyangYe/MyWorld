@@ -29,6 +29,23 @@ namespace MyWorld
         | BGFX_STATE_BLEND_ALPHA;
 
     // --- Vertex and index buffer pair type 1 --- begin
+    // block vertices for color
+    Renderer::PosColorVertex* Block::getVerticesType0(const uint32_t color, const float offset)
+    {
+        Renderer::PosColorVertex* vertices = new Renderer::PosColorVertex[8]{
+            {       -offset,       -offset,       -offset, color }, // 0 --- 0,0,0
+            { 1.0f + offset,       -offset,       -offset, color }, // 1 --- 1,0,0
+            { 1.0f + offset,       -offset, 1.0f + offset, color }, // 2 --- 1,0,1
+            {       -offset,       -offset, 1.0f + offset, color }, // 3 --- 0,0,1
+            {       -offset, 1.0f + offset, 1.0f + offset, color }, // 4 --- 0,1,1
+            {       -offset, 1.0f + offset,       -offset, color }, // 5 --- 0,1,0
+            { 1.0f + offset, 1.0f + offset,       -offset, color }, // 6 --- 1,1,0
+            { 1.0f + offset, 1.0f + offset, 1.0f + offset, color }, // 7 --- 1,1,1
+        };
+
+        return vertices;
+    }
+    
     // three textures: side, top and bottom;
     // block vertices for texture(atlas)
     Renderer::PosTextureVertex* Block::getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom)
@@ -113,30 +130,30 @@ namespace MyWorld
     }
 
     // block vetices for texture array
-    Renderer::PosTextureArrayVertex* Block::getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom)
+    Renderer::PosTextureArrayVertex* Block::getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const float offset)
     {
         const float sideImageIdx = (side.y - 1) * WIDTH_NUM + side.x - 1;
         const float topImageIdx = (top.y - 1) * WIDTH_NUM + top.x - 1;
         const float bottomIdx = (bottom.y - 1) * WIDTH_NUM + bottom.x - 1;
 
         Renderer::PosTextureArrayVertex* vertices = new Renderer::PosTextureArrayVertex[16]{
-            { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, sideImageIdx }, // 0 --- 0,0,0
-            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, sideImageIdx }, // 1 --- 1,0,0
-            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, sideImageIdx }, // 2 --- 1,0,1
-            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, sideImageIdx }, // 3 --- 0,0,1
-            { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, sideImageIdx }, // 4 --- 0,1,1
-            { 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, sideImageIdx }, // 5 --- 0,1,0
-            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, sideImageIdx }, // 6 --- 1,1,0
-            { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, sideImageIdx }, // 7 --- 1,1,1
+            {       -offset,       -offset,       -offset, 0.0f, 1.0f, sideImageIdx }, // 0 --- 0,0,0
+            { 1.0f + offset,       -offset,       -offset, 1.0f, 1.0f, sideImageIdx }, // 1 --- 1,0,0
+            { 1.0f + offset,       -offset, 1.0f + offset, 1.0f, 0.0f, sideImageIdx }, // 2 --- 1,0,1
+            {       -offset,       -offset, 1.0f + offset, 0.0f, 0.0f, sideImageIdx }, // 3 --- 0,0,1
+            {       -offset, 1.0f + offset, 1.0f + offset, 1.0f, 0.0f, sideImageIdx }, // 4 --- 0,1,1
+            {       -offset, 1.0f + offset,       -offset, 1.0f, 1.0f, sideImageIdx }, // 5 --- 0,1,0
+            { 1.0f + offset, 1.0f + offset,       -offset, 0.0f, 1.0f, sideImageIdx }, // 6 --- 1,1,0
+            { 1.0f + offset, 1.0f + offset, 1.0f + offset, 0.0f, 0.0f, sideImageIdx }, // 7 --- 1,1,1
 
-            { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, bottomIdx }, // 0 + 8 --- 0,0,0
-            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, bottomIdx }, // 1 + 8 --- 1,0,0
-            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, topImageIdx }, // 2 + 8 --- 1,0,1 --- top
-            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, topImageIdx }, // 3 + 8 --- 0,0,1 --- top
-            { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, topImageIdx }, // 4 + 8 --- 0,1,1 --- top
-            { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, bottomIdx }, // 5 + 8 --- 0,1,0
-            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, bottomIdx }, // 6 + 8 --- 1,1,0
-            { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, topImageIdx }  // 7 + 8 --- 1,1,1 --- top
+            {       -offset,       -offset,       -offset, 1.0f, 0.0f, bottomIdx }, // 0 + 8 --- 0,0,0
+            { 1.0f + offset,       -offset,       -offset, 1.0f, 1.0f, bottomIdx }, // 1 + 8 --- 1,0,0
+            { 1.0f + offset,       -offset, 1.0f + offset, 1.0f, 0.0f, topImageIdx }, // 2 + 8 --- 1,0,1 --- top
+            {       -offset,       -offset, 1.0f + offset, 0.0f, 0.0f, topImageIdx }, // 3 + 8 --- 0,0,1 --- top
+            {       -offset, 1.0f + offset, 1.0f + offset, 0.0f, 1.0f, topImageIdx }, // 4 + 8 --- 0,1,1 --- top
+            {       -offset, 1.0f + offset,       -offset, 0.0f, 0.0f, bottomIdx }, // 5 + 8 --- 0,1,0
+            { 1.0f + offset, 1.0f + offset,       -offset, 0.0f, 1.0f, bottomIdx }, // 6 + 8 --- 1,1,0
+            { 1.0f + offset, 1.0f + offset, 1.0f + offset, 1.0f, 1.0f, topImageIdx }  // 7 + 8 --- 1,1,1 --- top
         };
 
         return vertices;
@@ -175,6 +192,20 @@ namespace MyWorld
     // create cache for static index buffer
     void Block::createIbh(const uint8_t& idx)
     {
+        if (idx == 0)
+        {
+            triListPointers[idx] = new uint16_t[18]{
+                0, 1, 2,
+                3, 0, 5,
+                4, 3, 2,
+                7, 4, 5,
+                6, 7, 2,
+                1, 6, 5
+            };
+            ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(triListPointers[idx], 18 * sizeof(uint16_t)));
+            return;
+        }
+
         uint8_t counter = 0;
         for (uint8_t i = 0; i < 6 ; i++)
         {
@@ -220,8 +251,6 @@ namespace MyWorld
 
     const bgfx::IndexBufferHandle& Block::getIbh(const uint8_t &idx)
     {
-        if (idx == 0) return ibh[0];
-
         if (ibh[idx].idx == bgfx::kInvalidHandle) createIbh(idx);
         return ibh[idx];
     }
@@ -320,8 +349,7 @@ namespace MyWorld
     {}
 
     Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords) : coords(coords), world_coords(coords + glm::vec3(chunk_coords, 0)), type(type)
-    {
-    }
+    {}
 
     void Block::DrawTerrain(bgfx::ViewId viewId, bgfx::DynamicVertexBufferHandle& vbh, const bgfx::DynamicIndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords)
     {

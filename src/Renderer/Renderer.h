@@ -113,6 +113,7 @@ namespace MyWorld
 			void* window = nullptr;
 			WindowSize windowSize;
 		};
+		static bgfx::ProgramHandle color_program;
 		static bgfx::ProgramHandle water_program;
 		static bgfx::ProgramHandle texture_program;
 		static bgfx::ProgramHandle texture_color_program;

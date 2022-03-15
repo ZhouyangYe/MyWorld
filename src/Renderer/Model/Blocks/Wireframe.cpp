@@ -2,15 +2,15 @@
 
 namespace MyWorld
 {
-	Renderer::PosTextureArrayVertex* Wireframe::cubeVertices = nullptr;
+	Renderer::PosColorVertex* Wireframe::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Wireframe::vbh = BGFX_INVALID_HANDLE;
-	const glm::vec2 Wireframe::face = { 3.0f, 1.0f };
-	const uint8_t Wireframe::faces = Block::DIRECTION::NORTH | Block::DIRECTION::SOUTH | Block::DIRECTION::EAST | Block::DIRECTION::WEST | Block::DIRECTION::TOP | Block::DIRECTION::BOTTOM;
+	const uint64_t Wireframe::state = Block::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_PT_LINESTRIP;
+	const uint8_t Wireframe::faces = 0;
 
 	void Wireframe::Register()
 	{
-		cubeVertices = Block::getVerticesType3(face, face, face);
-		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		cubeVertices = Block::getVerticesType0(0xff000000);
+		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 8 * sizeof(Renderer::PosColorVertex)), Renderer::PosColorVertex::layout);
 	}
 
 	void Wireframe::Destroy()
@@ -25,7 +25,7 @@ namespace MyWorld
 
 	void Wireframe::setCoords(glm::vec3& coords)
 	{
-		this->coords = coords;
+		this->world_coords = coords;
 	}
 
 	Wireframe::Wireframe()
@@ -39,6 +39,6 @@ namespace MyWorld
 
 	void Wireframe::Draw(const uint8_t& faces)
 	{
-		Block::Draw(vbh, Block::getIbh(faces), Renderer::texture_array_program);
+		Block::Draw(vbh, Block::getIbh(faces), Renderer::color_program, state);
 	}
 }

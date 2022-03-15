@@ -5,14 +5,14 @@ namespace MyWorld
 	bool Texture::arrayBufferSupported = false;
 	bgfx::UniformHandle Texture::s_texColor = BGFX_INVALID_HANDLE;
 
-	Texture::Texture(const char* name) : textureHandle(BGFX_INVALID_HANDLE)
+	Texture::Texture(const char* path) : textureHandle(BGFX_INVALID_HANDLE)
 	{
-		textureHandle = Tools::loadTexture(name, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info);
+		textureHandle = Tools::loadTexture(path, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info);
 	}
 
-	Texture::Texture(const char* name, Tools::TextureArrayParam taInfo) : textureHandle(BGFX_INVALID_HANDLE)
+	Texture::Texture(const char* path, Tools::TextureArrayParam taInfo) : textureHandle(BGFX_INVALID_HANDLE)
 	{
-		textureHandle = Tools::loadTexture(name, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info, NULL, &taInfo);
+		textureHandle = Tools::loadTexture(path, BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, 0, &info, NULL, &taInfo);
 	}
 
 	Texture::~Texture()

@@ -3,6 +3,7 @@
 
 namespace MyWorld
 {
+    bgfx::ProgramHandle Renderer::color_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::water_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
@@ -44,6 +45,8 @@ namespace MyWorld
         bgfx::setViewClear(Tools::DEFAULT_VIEW_ID, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f, 0);
         bgfx::setViewRect(Tools::DEFAULT_VIEW_ID, 0, 0, windowSize.width, windowSize.height);
 
+
+        color_program = Tools::createProgram("vs_color", "fs_color");
         water_program = Tools::createProgram("vs_water", "fs_water");
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
@@ -63,6 +66,8 @@ namespace MyWorld
         Texture::Destroy();
         Tools::Terminate();
 
+        bgfx::destroy(color_program);
+        bgfx::destroy(water_program);
         bgfx::destroy(texture_program);
         bgfx::destroy(texture_color_program);
         bgfx::destroy(texture_array_program);

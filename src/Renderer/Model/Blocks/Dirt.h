@@ -6,8 +6,6 @@ namespace MyWorld
 	class Dirt : public Block
 	{
 	private:
-		static Renderer::PosTextureVertex* cubeVertices;
-		static bgfx::VertexBufferHandle vbh;
 		static const glm::vec2 face;
 	public:
 		static void Register();

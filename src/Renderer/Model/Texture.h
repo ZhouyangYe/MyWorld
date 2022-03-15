@@ -17,6 +17,7 @@ namespace MyWorld
 			int window_height;
 		};
 		static const bool& isArrayBufferSupported();
+		Texture(const char* name);
 		Texture(const char* name, Tools::TextureArrayParam taInfo);
 		~Texture();
 		void bind();

@@ -6,8 +6,6 @@ namespace MyWorld
 	class Grass : public Block
 	{
 	private:
-		static Renderer::PosTextureVertex* cubeVertices;
-		static bgfx::VertexBufferHandle vbh;
 		static const glm::vec2 side;
 		static const glm::vec2 top;
 		static const glm::vec2 bottom;

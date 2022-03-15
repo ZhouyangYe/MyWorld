@@ -7,10 +7,7 @@ namespace MyWorld
 	class Water : public Block
 	{
 	private:
-		static Renderer::PosColorTextureVertex* cubeVertices;
-		static bgfx::VertexBufferHandle vbh;
 		static const glm::vec2 face;
-		static const uint32_t color;
 	public:
 		static const uint64_t state;
 		static const uint64_t placeholder_state;

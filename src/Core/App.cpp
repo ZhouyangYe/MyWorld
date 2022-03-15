@@ -18,6 +18,7 @@ namespace MyWorld
 		Grass::Register();
 		Dirt::Register();
 		Water::Register();
+		Wireframe::Register();
 
 		// initialize chunk
 		Chunk::Init();
@@ -50,6 +51,7 @@ namespace MyWorld
 		Grass::Destroy();
 		Dirt::Destroy();
 		Water::Destroy();
+		Wireframe::Destroy();
 
 		// destroy chunk
 		Chunk::Destroy();

@@ -3,7 +3,7 @@
 namespace MyWorld
 {
 	// numbers of chunks to be rendered based on the player
-	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 3;
+	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 8;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
@@ -197,19 +197,19 @@ namespace MyWorld
 		case Block::DIRT:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Dirt::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, batched_model_vertices_type1, batched_model_index_type1, batching_index_type1);
+			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
 			break;
 		}
 		case Block::GRASS:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Grass::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, batched_model_vertices_type1, batched_model_index_type1, batching_index_type1);
+			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
 			break;
 		}
 		case Block::WATER:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Water::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, batched_model_vertices_type2, batched_model_index_type2, batching_index_type2);
+			batchFaces(vertices, vList_type2_current, iList_type2_current, batching_index_type2);
 			break;
 		}
 		default:
@@ -328,98 +328,29 @@ namespace MyWorld
 
 				if (has(Block::DIRECTION::BOTTOM, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::BOTTOM;
-					}
+					if ((block->faces & Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
 				}
 				if (has(Block::DIRECTION::TOP, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::TOP;
-					}
+					if ((block->faces & Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
 				}
 
 				if (has(Block::DIRECTION::WEST, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::WEST;
-					}
+					if ((block->faces & Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
 				}
 				if (has(Block::DIRECTION::EAST, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::EAST;
-					}
+					if ((block->faces & Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
 				}
 
 				if (has(Block::DIRECTION::SOUTH, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::SOUTH;
-					}
+					if ((block->faces & Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
 				}
 				if (has(Block::DIRECTION::NORTH, i))
 				{
-					if (Texture::isArrayBufferSupported())
-					{
-						if ((block->faces & Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
-					}
-					else
-					{
-						block->faces |= Block::DIRECTION::NORTH;
-					}
-				}
-
-				// if array buffer is not supported, we don't use greedy meshing
-				if (!Texture::isArrayBufferSupported())
-				{
-					// put transparent blocks into a separate array
-					if (type == Block::WATER)
-					{
-						if (block->faces != 0)
-						{
-							for (int i = 0; i < 6; i++)
-							{
-								uint8_t face = 1 << i;
-								if (block->faces & face)
-								{
-									Water* water = new Water(block->getCoords(), coords, index);
-									water->faces |= face;
-									transparent_blocks.push_back(water);
-								}
-							}
-						}
-					}
-					// put opaque blocks into a separate array
-					else if (block->faces != 0)
-					{
-						opaque_blocks.push_back(block);
-					}
+					if ((block->faces & Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
 				}
 			}
 		}
@@ -459,6 +390,27 @@ namespace MyWorld
 		batching_index_type1(0),
 		batching_index_type2(0)
 	{
+		GenBlocks();
+		Build();
+
+		// create model buffer for the chunk terrain
+		// opaque
+		if (vList_type1_current.size())
+		{
+		  vbh_type1 = bgfx::createDynamicVertexBuffer(bgfx::makeRef(vList_type1_current.data(), vList_type1_current.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		  ibh_type1 = bgfx::createDynamicIndexBuffer(bgfx::makeRef(iList_type1_current.data(), iList_type1_current.size() * sizeof(uint16_t)));
+		}
+
+		// water
+		if (vList_type2_current.size())
+		{
+		  vbh_type2 = bgfx::createDynamicVertexBuffer(bgfx::makeRef(vList_type2_current.data(), vList_type2_current.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		  ibh_type2 = bgfx::createDynamicIndexBuffer(bgfx::makeRef(iList_type2_current.data(), iList_type2_current.size() * sizeof(uint16_t)));
+		}
+	}
+
+	void Chunk::GenBlocks()
+	{
 		// create all blocks in the chunk
 		for (int y = 0; y < CHUNK_WIDTH; y++)
 		{
@@ -495,37 +447,24 @@ namespace MyWorld
 				}
 			}
 		}
-
-		Build();
 	}
 
 	void Chunk::Build()
 	{
+		// switch working data to be calculated
+		vList_type1_current = getModelData(batched_model_vertices_type1_one, batched_model_vertices_type1_two);
+		iList_type1_current = getModelData(batched_model_index_type1_one, batched_model_index_type1_two);
+		vList_type2_current = getModelData(batched_model_vertices_type2_one, batched_model_vertices_type2_two);
+		iList_type2_current = getModelData(batched_model_index_type2_one, batched_model_index_type2_two);
+
 		faceCullingAndSeparating();
 
-		if (Texture::isArrayBufferSupported())
+		// remove blocks when chunk builds are done
+		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
 		{
-			// opaque
-			if (batched_model_vertices_type1.size())
-			{
-				vbh_type1 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type1.data(), batched_model_vertices_type1.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
-				ibh_type1 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type1.data(), batched_model_index_type1.size() * sizeof(uint16_t)));
-			}
-
-			// water
-			if (batched_model_vertices_type2.size())
-			{
-				vbh_type2 = bgfx::createVertexBuffer(bgfx::makeRef(batched_model_vertices_type2.data(), batched_model_vertices_type2.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
-				ibh_type2 = bgfx::createIndexBuffer(bgfx::makeRef(batched_model_index_type2.data(), batched_model_index_type2.size() * sizeof(uint16_t)));
-			}
-
-			// remove blocks when chunk builds are done
-			for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
-			{
-				delete (*iter);
-			}
-			blocks.clear();
+		  delete (*iter);
 		}
+		blocks.clear();
 	}
 
 	// TODO: implement more interesting terrain
@@ -585,16 +524,6 @@ namespace MyWorld
 		// water
 		if (bgfx::isValid(vbh_type2)) bgfx::destroy(vbh_type2);
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
-	}
-
-	// draw blocks one by one
-	void Chunk::Draw()
-	{
-		// draw opaque blocks
-		for (int i = 0; i < opaque_blocks.size(); i++)
-		{
-			opaque_blocks[i]->Draw(opaque_blocks[i]->faces);
-		}
 	}
 
 	// draw transparent blocks

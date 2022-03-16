@@ -21,8 +21,6 @@ namespace MyWorld
 		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
 		}
 
-		wireframe->Draw();
-
 		for (int i = 0; i < chunk_num; i++)
 		{
 		  Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
@@ -34,6 +32,8 @@ namespace MyWorld
 		}
 
 		Chunk::DrawTransparent();
+
+		wireframe->Draw();
 	}
 
 	void World::Destroy()

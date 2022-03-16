@@ -50,7 +50,7 @@ namespace MyWorld
 		static void DrawTerrain(bgfx::ViewId viewId, bgfx::DynamicVertexBufferHandle& vbh, const bgfx::DynamicIndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
 	protected:
 		// used for getting vertices for each block when greedy meshing is not used
-		static Renderer::PosColorVertex* getVerticesType0(const uint32_t color, const float offset = 0.0f);
+		static Renderer::PosColorVertex* getVerticesType0(const uint32_t color);
 		static Renderer::PosTextureVertex* getVerticesType1(const glm::vec2 &side, const glm::vec2 &top, const glm::vec2 &bottom);
 		static Renderer::PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		static Renderer::PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const float offset = 0.0f);

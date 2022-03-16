@@ -30,17 +30,26 @@ namespace MyWorld
 
     // --- Vertex and index buffer pair type 1 --- begin
     // block vertices for color
-    Renderer::PosColorVertex* Block::getVerticesType0(const uint32_t color, const float offset)
+    Renderer::PosColorVertex* Block::getVerticesType0(const uint32_t color)
     {
-        Renderer::PosColorVertex* vertices = new Renderer::PosColorVertex[8]{
-            {       -offset,       -offset,       -offset, color }, // 0 --- 0,0,0
-            { 1.0f + offset,       -offset,       -offset, color }, // 1 --- 1,0,0
-            { 1.0f + offset,       -offset, 1.0f + offset, color }, // 2 --- 1,0,1
-            {       -offset,       -offset, 1.0f + offset, color }, // 3 --- 0,0,1
-            {       -offset, 1.0f + offset, 1.0f + offset, color }, // 4 --- 0,1,1
-            {       -offset, 1.0f + offset,       -offset, color }, // 5 --- 0,1,0
-            { 1.0f + offset, 1.0f + offset,       -offset, color }, // 6 --- 1,1,0
-            { 1.0f + offset, 1.0f + offset, 1.0f + offset, color }, // 7 --- 1,1,1
+        Renderer::PosColorVertex* vertices = new Renderer::PosColorVertex[16]{
+            { 0.0f, 0.0f, 0.0f, color, }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color, }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color, }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, color, }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, color, }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, color, }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color, }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color, }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, color, }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, color, }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, color, }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, color, }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, color, }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, color, }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, color, }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, color  }  // 7 + 8 --- 1,1,1 --- top
         };
 
         return vertices;
@@ -192,20 +201,6 @@ namespace MyWorld
     // create cache for static index buffer
     void Block::createIbh(const uint8_t& idx)
     {
-        if (idx == 0)
-        {
-            triListPointers[idx] = new uint16_t[18]{
-                0, 1, 2,
-                3, 0, 5,
-                4, 3, 2,
-                7, 4, 5,
-                6, 7, 2,
-                1, 6, 5
-            };
-            ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(triListPointers[idx], 18 * sizeof(uint16_t)));
-            return;
-        }
-
         uint8_t counter = 0;
         for (uint8_t i = 0; i < 6 ; i++)
         {
@@ -251,6 +246,8 @@ namespace MyWorld
 
     const bgfx::IndexBufferHandle& Block::getIbh(const uint8_t &idx)
     {
+        if (idx == 0) return ibh[idx];
+
         if (ibh[idx].idx == bgfx::kInvalidHandle) createIbh(idx);
         return ibh[idx];
     }

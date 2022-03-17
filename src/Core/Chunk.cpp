@@ -68,8 +68,8 @@ namespace MyWorld
 
 		const int chunkNum = WORLD_CHUNK_RENDER_DISTANCE * 2;
 		bool noAdjacent = false;
-		float offset = 0.0f;
 		Block::TYPE adjacentType = Block::INVALID;
+		glm::vec3 pos;
 
 		switch (face)
 		{
@@ -79,9 +79,9 @@ namespace MyWorld
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
 			{
-				offset = blockCoords.y + coords.y + 1.0f;
 				float worldX = blockCoords.x + coords.x;
-				adjacentType = getType(worldX, offset, blockCoords.z);
+				pos = { blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z };
+				adjacentType = getType(pos);
 			}
 			adjacentIsAir = [&] {
 				return
@@ -100,9 +100,8 @@ namespace MyWorld
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
 			{
-				offset = blockCoords.y + coords.y + - 1.0f;
-				float worldX = blockCoords.x + coords.x;
-				adjacentType = getType(worldX, offset, blockCoords.z);
+				pos = { blockCoords.x + coords.x, blockCoords.y + coords.y + -1.0f, blockCoords.z };
+				adjacentType = getType(pos);
 			}
 			adjacentIsAir = [&] {
 				return 
@@ -121,9 +120,8 @@ namespace MyWorld
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
 			{
-				offset = blockCoords.x + coords.x - 1.0f;
-				float worldY = blockCoords.y + coords.y;
-				adjacentType = getType(offset, worldY, blockCoords.z);
+				pos = { blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z };
+				adjacentType = getType(pos);
 			}
 			adjacentIsAir = [&] {
 				return 
@@ -142,9 +140,8 @@ namespace MyWorld
 			isWorldBorder = isChunkBorder && noAdjacent;
 			if (!isWorldBorder)
 			{
-				offset = blockCoords.x + coords.x + 1.0f;
-				float worldY = blockCoords.y + coords.y;
-				adjacentType = getType(offset, worldY, blockCoords.z);
+				pos = { blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z };
+				adjacentType = getType(pos);
 			}
 			adjacentIsAir = [&] {
 				return 
@@ -418,8 +415,8 @@ namespace MyWorld
 			{
 				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
-					float worldX = x + coords.x, wolrdY = y + coords.y, worldZ = z;
-					const Block::TYPE type = getType(worldX, wolrdY, worldZ);
+					glm::vec3 pos = { x + coords.x, y + coords.y, z };
+					const Block::TYPE type = getType(pos);
 
 					// set spawn location
 					if (spawn_location.z == -1.0f && type == Block::AIR && coords.x == 0.0f && coords.y == 0.0f)
@@ -468,16 +465,16 @@ namespace MyWorld
 	}
 
 	// TODO: implement more interesting terrain
-	const Block::TYPE Chunk::getType(float& x, float& y, float& z)
+	const Block::TYPE Chunk::getType(glm::vec3& pos)
 	{
-		const float data = (noise.GetNoise(x, y) + 1) / 2;
+		const float data = (noise.GetNoise(pos.x, pos.y) + 1) / 2;
 		const int surface = (int)(CHUNK_DEPTH * data);
 		const int edge = surface - 1;
 		const int waterLine = 190;
 
-		if (z < surface)
+		if (pos.z < surface)
 		{
-			if (z == edge && z >= waterLine)
+			if (pos.z == edge && pos.z >= waterLine)
 			{
 				return Block::GRASS;
 			}
@@ -486,7 +483,7 @@ namespace MyWorld
 				return Block::DIRT;
 			}
 		}
-		else if (z <= waterLine)
+		else if (pos.z <= waterLine)
 		{
 			return Block::WATER;
 		}
@@ -534,7 +531,7 @@ namespace MyWorld
 		{
 			Block** sortedBlocks = transparent_blocks.data();
 			// draw far faces first
-			mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
+			Util::mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
 				return getLength(item1) - getLength(item2);
 			});
 			for (int i = 0; i < size; i++)

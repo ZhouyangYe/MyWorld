@@ -10,6 +10,11 @@ namespace MyWorld
 		showInfo = visible;
 	}
 
+	const bool& Info::shouldShowInfo()
+	{
+		return showInfo;
+	}
+
 	void Info::Update()
 	{
 		// print fps

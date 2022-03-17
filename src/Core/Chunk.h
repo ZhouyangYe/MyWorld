@@ -32,8 +32,6 @@ namespace MyWorld
 		static float getLength(Block* block);
 		// transparent blocks to be rendered
 		static std::vector<Block*> transparent_blocks;
-		// get the type of a block
-		static const Block::TYPE getType(float& x, float& y, float& z);
 	public:
 		static const enum Phase : uint8_t
 		{
@@ -48,6 +46,8 @@ namespace MyWorld
 		static void setChunkRenderDistanceNum(int num);
 		static void DrawTransparent();
 		static const glm::vec3& getSpawnLocation();
+		// get the type of the specific block
+		static const Block::TYPE getType(glm::vec3& pos);
 	private:
 		// the index of chunk in the world space
 		const int index;

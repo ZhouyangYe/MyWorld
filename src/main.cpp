@@ -6,7 +6,7 @@ int main(void)
 
     while (!MyWorld::Window::shouldWindowTerminate())
     {
-        MyWorld::App::Run();
+        MyWorld::App::Update();
     }
 
     MyWorld::App::Terminate();

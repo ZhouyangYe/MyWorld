@@ -11,5 +11,6 @@ namespace MyWorld
 	public:
 		static void Update();
 		static void setVisible(bool visible);
+		static const bool& shouldShowInfo();
 	};
 }

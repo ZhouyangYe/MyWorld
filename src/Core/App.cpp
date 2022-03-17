@@ -64,9 +64,10 @@ namespace MyWorld
 		Window::Terminate();
 	}
 
-	void App::Run()
+	void App::Update()
 	{
 		Time::updateTime();
+		if (Info::shouldShowInfo()) Time::updateFps();
 
 		Window::Begin();
 		Renderer::Begin();

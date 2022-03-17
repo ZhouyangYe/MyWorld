@@ -15,8 +15,12 @@ namespace MyWorld
 	{
 		double currentTime = Window::getCurrentTime();
 		deltaTime = currentTime - prevTime;
-		fps = (int)(1 / deltaTime);
 		prevTime = currentTime;
+	}
+
+	void Time::updateFps()
+	{
+		fps = round(1 / deltaTime);
 	}
 
 	const int& Time::getFps()

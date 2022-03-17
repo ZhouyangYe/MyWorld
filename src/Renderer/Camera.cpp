@@ -22,6 +22,9 @@ namespace MyWorld
 	bool Camera::moveForward = false;
 	bool Camera::moveBackward = false;
 
+	bool Camera::isCameraMoved = false;
+	bool Camera::isCameraRotated = false;
+
 	const glm::vec3& Camera::getCameraCoords()
 	{
 		return eye;
@@ -30,6 +33,16 @@ namespace MyWorld
 	const glm::vec3& Camera::getForwardVec()
 	{
 		return forward;
+	}
+
+	const bool& Camera::cameraMoved()
+	{
+		return isCameraMoved;
+	}
+
+	const bool& Camera::cameraRotated()
+	{
+		return isCameraRotated;
 	}
 
 	void Camera::Init(CameraParam param)
@@ -44,6 +57,8 @@ namespace MyWorld
 
 	void Camera::Begin()
 	{
+		isCameraMoved = moveUp || moveDown || moveLeft || moveRight || moveForward || moveBackward;
+
 		if (moveUp)
 			MoveUp();
 		if (moveDown)
@@ -56,12 +71,14 @@ namespace MyWorld
 			MoveForward();
 		if (moveBackward)
 			MoveBackward();
+
 		bgfx::setViewTransform(Tools::DEFAULT_VIEW_ID, &view, &proj);
 	}
 
 	void Camera::End()
 	{
-
+		isCameraMoved = false;
+		isCameraRotated = false;
 	}
 
 	void Camera::MoveUp()
@@ -106,6 +123,7 @@ namespace MyWorld
 
 	void Camera::Rotate(glm::vec2 delta)
 	{
+		isCameraRotated = true;
 		forward = glm::mat3(
 			glm::rotate(-delta.x * (float)Time::getDeltaTime(), WORLD_UP) *
 			glm::rotate(-delta.y * (float)Time::getDeltaTime(), right)

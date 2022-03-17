@@ -1,8 +1,4 @@
 #pragma once
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
-
 #include "Renderer/Renderer.h"
 #include "Renderer/Camera.h"
 #include "Window/Window.h"
@@ -19,6 +15,6 @@ namespace MyWorld
 		App();
 		static void Init();
 		static void Terminate();
-		static void Run();
+		static void Update();
 	};
 }

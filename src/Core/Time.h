@@ -13,6 +13,7 @@ namespace MyWorld
 	public:
 		static const double& getDeltaTime();
 		static void updateTime();
+		static void updateFps();
 		static const int& getFps();
 	};
 }

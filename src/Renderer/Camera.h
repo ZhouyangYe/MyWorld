@@ -18,6 +18,8 @@ namespace MyWorld
 		static glm::vec3 forward;
 		static glm::vec3 up;
 		static glm::vec3 right;
+		static bool isCameraMoved;
+		static bool isCameraRotated;
 	public:
 		struct CameraParam
 		{
@@ -45,5 +47,7 @@ namespace MyWorld
 		static void MoveForward();
 		static void MoveBackward();
 		static void Rotate(glm::vec2 delta);
+		static const bool& cameraMoved();
+		static const bool& cameraRotated();
 	};
 }

@@ -8,8 +8,9 @@ namespace MyWorld
 	{}
 
 	// TODO: do this in a separate thread
-	void Data::Init()
+	void Data::Init(bool& infiniteWorldEnabled)
 	{
+		Chunk::setShowWorldBorder(!infiniteWorldEnabled);
 		const int chunkNum = Chunk::getChunkRenderDistanceNum();
 		int index = 0;
 		for (int y = -chunkNum; y < chunkNum; y++)

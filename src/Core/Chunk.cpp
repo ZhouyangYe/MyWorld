@@ -17,6 +17,11 @@ namespace MyWorld
 	FastNoiseLite Chunk::noise;
 	std::vector<Block*> Chunk::transparent_blocks;
 
+	void Chunk::setShowWorldBorder(bool show)
+	{
+		showWorldBorder = show;
+	}
+
 	const glm::vec3& Chunk::getSpawnLocation()
 	{
 		return spawn_location;
@@ -62,111 +67,39 @@ namespace MyWorld
 		glm::vec3 blockCoords = block->getCoords();
 
 		bool isChunkBorder = false;
-		bool isWorldBorder = false;
-		std::function<bool()> adjacentIsAir;
-		std::function<bool()> adjacentIsWater;
-
-		const int chunkNum = WORLD_CHUNK_RENDER_DISTANCE * 2;
-		bool noAdjacent = false;
 		Block::TYPE adjacentType = Block::TYPE::INVALID;
-		glm::vec3 pos;
 
 		switch (face)
 		{
 		case Block::DIRECTION::NORTH:
-			noAdjacent = index >= chunkNum * (chunkNum - 1);
-			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
-			isWorldBorder = isChunkBorder && noAdjacent;
-			if (!isWorldBorder)
-			{
-				float worldX = blockCoords.x + coords.x;
-				pos = { blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z };
-				adjacentType = getType(pos);
-			}
-			adjacentIsAir = [&] {
-				return
-					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
-					(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::TYPE::AIR);
-			};
-			adjacentIsWater = [&] {
-				return 
-					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::TYPE::WATER) ||
-					(isChunkBorder && adjacentType == Block::TYPE::WATER));
-			};
-			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+			isChunkBorder = (int)blockCoords.y == CHUNK_WIDTH - 1;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z }) : blocks[idx + Y_OFFSET]->type;
+			break;
 		case Block::DIRECTION::SOUTH:
-			noAdjacent = index < chunkNum;
-			isChunkBorder = blockCoords.y == 0;
-			isWorldBorder = isChunkBorder && noAdjacent;
-			if (!isWorldBorder)
-			{
-				pos = { blockCoords.x + coords.x, blockCoords.y + coords.y + -1.0f, blockCoords.z };
-				adjacentType = getType(pos);
-			}
-			adjacentIsAir = [&] {
-				return 
-					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
-					(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::TYPE::AIR);
-			};
-			adjacentIsWater = [&] {
-				return 
-					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::TYPE::WATER) ||
-					(isChunkBorder && adjacentType == Block::TYPE::WATER));
-			};
-			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+			isChunkBorder = (int)blockCoords.y == 0;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y - 1.0f, blockCoords.z }) : blocks[idx - Y_OFFSET]->type;
+			break;
 		case Block::DIRECTION::WEST:
-			noAdjacent = index % chunkNum == 0;
-			isChunkBorder = blockCoords.x == 0;
-			isWorldBorder = isChunkBorder && noAdjacent;
-			if (!isWorldBorder)
-			{
-				pos = { blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z };
-				adjacentType = getType(pos);
-			}
-			adjacentIsAir = [&] {
-				return 
-					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
-					(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::TYPE::AIR);
-			};
-			adjacentIsWater = [&] {
-				return 
-					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::TYPE::WATER) ||
-					(isChunkBorder && adjacentType == Block::TYPE::WATER));
-			};
-			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+			isChunkBorder = (int)blockCoords.x == 0;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx - X_OFFSET]->type;
+			break;
 		case Block::DIRECTION::EAST:
-			noAdjacent = index % chunkNum == chunkNum - 1;
-			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
-			isWorldBorder = isChunkBorder && noAdjacent;
-			if (!isWorldBorder)
-			{
-				pos = { blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z };
-				adjacentType = getType(pos);
-			}
-			adjacentIsAir = [&] {
-				return 
-					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
-					(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::TYPE::AIR);
-			};
-			adjacentIsWater = [&] {
-				return 
-					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::TYPE::WATER) ||
-					(isChunkBorder && adjacentType == Block::TYPE::WATER));
-			};
-			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+			isChunkBorder = (int)blockCoords.x == CHUNK_WIDTH - 1;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx + X_OFFSET]->type;
+			break;
 		case Block::DIRECTION::TOP:
-			isWorldBorder = blockCoords.z == CHUNK_DEPTH - 1;
-			adjacentIsAir = [&] { return blocks[idx + Z_OFFSET]->type == Block::TYPE::AIR; };
-			adjacentIsWater = [&] { return type != Block::TYPE::WATER && blocks[idx + Z_OFFSET]->type == Block::TYPE::WATER; };
-			return isWorldBorder || adjacentIsAir() || adjacentIsWater();
+			isChunkBorder = blockCoords.z == CHUNK_DEPTH - 1;
+			adjacentType = isChunkBorder ? Block::TYPE::AIR : blocks[idx + Z_OFFSET]->type;
+			break;
 		case Block::DIRECTION::BOTTOM:
-			isWorldBorder = blockCoords.z == 0;
-			adjacentIsAir = [&] { return blocks[idx - Z_OFFSET]->type == Block::TYPE::AIR; };
-			adjacentIsWater = [&] { return type != Block::TYPE::WATER && blocks[idx - Z_OFFSET]->type == Block::TYPE::WATER; };
-			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (showWorldBorder || !isChunkBorder);
+			isChunkBorder = blockCoords.z == 0;
+			adjacentType = isChunkBorder ? (showWorldBorder ? Block::TYPE::AIR : Block::TYPE::INVALID) : blocks[idx - Z_OFFSET]->type;
+			break;
 		default:
-			return false;
+			break;
 		}
+
+		return adjacentType == Block::TYPE::AIR || (type != Block::TYPE::WATER && adjacentType == Block::TYPE::WATER);
 	}
 
 	// merge vertices of each face into one array
@@ -353,11 +286,6 @@ namespace MyWorld
 		}
 	}
 
-	void Chunk::toggleFaceCullingMode()
-	{
-		showWorldBorder = !showWorldBorder;
-	}
-
 	void Chunk::Init()
 	{
 		noise.SetSeed(666);
@@ -415,8 +343,7 @@ namespace MyWorld
 			{
 				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
-					glm::vec3 pos = { x + coords.x, y + coords.y, z };
-					const Block::TYPE type = getType(pos);
+					const Block::TYPE type = getType(glm::vec3{ x + coords.x, y + coords.y, z });
 
 					// set spawn location
 					if (spawn_location.z == -1.0f && type == Block::TYPE::AIR && coords.x == 0.0f && coords.y == 0.0f)
@@ -467,6 +394,22 @@ namespace MyWorld
 	// TODO: implement more interesting terrain
 	const Block::TYPE Chunk::getType(glm::vec3& pos)
 	{
+		if (showWorldBorder)
+		{
+			int width = WORLD_CHUNK_RENDER_DISTANCE * CHUNK_WIDTH;
+			if (
+				pos.x > width - 1 ||
+				pos.x < -width ||
+				pos.y > width - 1 ||
+				pos.y < -width ||
+				pos.z > CHUNK_DEPTH - 1 ||
+				pos.z < 0
+			)
+			{
+				return Block::TYPE::AIR;
+			}
+		}
+
 		const float data = (noise.GetNoise(pos.x, pos.y) + 1) / 2;
 		const int surface = (int)(CHUNK_DEPTH * data);
 		const int edge = surface - 1;

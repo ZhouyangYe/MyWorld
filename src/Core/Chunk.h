@@ -39,7 +39,6 @@ namespace MyWorld
 			WATER_P             = 1 << 1,
 			WATER_PLACEHOLDER_P = 1 << 2
 		};
-		static void toggleFaceCullingMode();
 		static void Init();
 		static void Destroy();
 		static const int& getChunkRenderDistanceNum();
@@ -48,6 +47,7 @@ namespace MyWorld
 		static const glm::vec3& getSpawnLocation();
 		// get the type of the specific block
 		static const Block::TYPE getType(glm::vec3& pos);
+		static void setShowWorldBorder(bool show);
 	private:
 		// the index of chunk in the world space
 		const int index;

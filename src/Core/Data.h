@@ -9,7 +9,7 @@ namespace MyWorld
 	public:
 		static std::vector<Chunk*> chunks;
 		Data();
-		static void Init();
+		static void Init(bool& infiniteWorldEnabled);
 		static void Destroy();
 	};
 }

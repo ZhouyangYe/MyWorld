@@ -2,6 +2,9 @@
 
 namespace MyWorld
 {
+	bool World::selectionEnabled = true;
+	bool World::collisionEnabled = true;
+	bool World::infiniteWorldEnabled = false;
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;
@@ -12,11 +15,26 @@ namespace MyWorld
 
 	void World::Generate()
 	{
-		Data::Init();
+		Data::Init(infiniteWorldEnabled);
 		wireframe = new Wireframe(NOT_SELECTED, glm::vec3{0.0f, 0.0f, 0.0f});
 
 		const int num = Chunk::getChunkRenderDistanceNum();
 		World::chunk_num = num * num * 4;
+	}
+
+	void World::setSelectionEnabled(bool enabled)
+	{
+		selectionEnabled = enabled;
+	}
+
+	void World::setCollisionEnabled(bool enabled)
+	{
+		collisionEnabled = enabled;
+	}
+
+	void World::setInfiniteWorldEnabled(bool enabled)
+	{
+		infiniteWorldEnabled = enabled;
 	}
 
 	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength)
@@ -170,7 +188,10 @@ namespace MyWorld
 			if (blockFound)
 				wireframe->setCoords(selectedPos);
 			else
+			{
 				selectedPos = NOT_SELECTED;
+				selectedFace = Block::DIRECTION::INVALID;
+			}
 		}
 	}
 
@@ -203,8 +224,11 @@ namespace MyWorld
 
 		Chunk::DrawTransparent();
 
-		selectBlock();
-		if (selectedPos.z != -1.0f) wireframe->Draw();
+		if (selectionEnabled)
+		{
+			selectBlock();
+			if (selectedPos.z != -1.0f) wireframe->Draw();
+		}
 	}
 
 	void World::Destroy()

@@ -6,6 +6,9 @@ namespace MyWorld
 	class World
 	{
 	private:
+		static bool selectionEnabled;
+		static bool collisionEnabled;
+		static bool infiniteWorldEnabled;
 		static float distance_blocks;
 		static float distance_blocks_square;
 		static int chunk_num;
@@ -23,5 +26,8 @@ namespace MyWorld
 		static void selectBlock();
 		static const glm::vec3& getSelectedBlockPos();
 		static const Block::DIRECTION& getSelectedFace();
+		static void setSelectionEnabled(bool enabled);
+		static void setCollisionEnabled(bool enabled);
+		static void setInfiniteWorldEnabled(bool enabled);
 	};
 }

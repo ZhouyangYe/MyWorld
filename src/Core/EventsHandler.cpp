@@ -54,14 +54,6 @@ namespace MyWorld
 		case Key::T:
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN) Renderer::switchRenderMode();
 			break;
-		case Key::O:
-			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
-			{
-				Chunk::toggleFaceCullingMode();
-				Data::Destroy();
-				Data::Init();
-			}
-			break;
 		case Key::I:
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{

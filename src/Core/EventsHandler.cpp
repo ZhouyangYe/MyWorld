@@ -7,43 +7,43 @@ namespace MyWorld
 		switch (event.keyCode)
 		{
 		case Key::Space:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveUp = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveUp = false;
 			break;
 		case Key::Z:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveDown = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveDown = false;
 			break;
 		case Key::A:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveLeft = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveLeft = false;
 			break;
 		case Key::D:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveRight = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveRight = false;
 			break;
 		case Key::W:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveForward = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveForward = false;
 			break;
 		case Key::S:
-			if (event.action == KeyPressEvent::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveBackward = true;
-			else if (event.action == KeyPressEvent::KEY_UP)
+			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveBackward = false;
 			break;
 		case Key::H:
-			if (event.action != KeyPressEvent::KEY_PRESS)
+			if (event.action != KeyPressEvent::ACTION::KEY_DOWN)
 				return;
 			if (Cursor::hideCursor)
 				Cursor::show();
@@ -52,10 +52,10 @@ namespace MyWorld
 			Cursor::hideCursor = !Cursor::hideCursor;
 			break;
 		case Key::T:
-			if (event.action == KeyPressEvent::KEY_PRESS) Renderer::switchRenderMode();
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN) Renderer::switchRenderMode();
 			break;
 		case Key::O:
-			if (event.action == KeyPressEvent::KEY_PRESS)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{
 				Chunk::toggleFaceCullingMode();
 				Data::Destroy();
@@ -63,7 +63,7 @@ namespace MyWorld
 			}
 			break;
 		case Key::I:
-			if (event.action == KeyPressEvent::KEY_PRESS)
+			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{
 				const bool showInfo = Renderer::toggleDebugText();
 				Info::setVisible(showInfo);

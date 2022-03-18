@@ -6,7 +6,7 @@ namespace MyWorld {
 	class MousePressEvent: public Event
 	{
 	public:
-		const enum ACTION : int
+		const enum class ACTION : int
 		{
 			MOUSE_DOWN = 0,
 			MOUSE_UP = 1,
@@ -14,7 +14,7 @@ namespace MyWorld {
 		};
 		const MouseCode mouseCode;
 		const ACTION action;
-		MousePressEvent(TYPE type, MouseCode mouseCode, ACTION action)
+		MousePressEvent(Event::TYPE type, MouseCode mouseCode, ACTION action)
 			: Event(type), mouseCode(mouseCode), action(action)
 		{
 
@@ -25,7 +25,7 @@ namespace MyWorld {
 	{
 	public:
 		const float xOffset, yOffset;
-		MouseWheelEvent(TYPE type, float xOffset, float yOffset)
+		MouseWheelEvent(Event::TYPE type, float xOffset, float yOffset)
 			: Event(type), xOffset(xOffset), yOffset(yOffset)
 		{
 
@@ -37,7 +37,7 @@ namespace MyWorld {
 	public:
 		const float xPos;
 		const float yPos;
-		MouseMoveEvent(TYPE type, const float xPos, const float yPos)
+		MouseMoveEvent(Event::TYPE type, const float xPos, const float yPos)
 			: Event(type), xPos(xPos), yPos(yPos)
 		{
 

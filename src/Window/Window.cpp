@@ -108,19 +108,19 @@ namespace MyWorld {
             {
             case GLFW_PRESS:
             {
-                KeyPressEvent event(Event::KEY_PRESS, key, KeyPressEvent::KEY_DOWN);
+                KeyPressEvent event(Event::TYPE::KEY_PRESS, key, KeyPressEvent::ACTION::KEY_DOWN);
                 windowData.eventHandler(event);
                 break;
             }
             case GLFW_RELEASE:
             {
-                KeyPressEvent event(Event::KEY_PRESS, key, KeyPressEvent::KEY_UP);
+                KeyPressEvent event(Event::TYPE::KEY_PRESS, key, KeyPressEvent::ACTION::KEY_UP);
                 windowData.eventHandler(event);
                 break;
             }
             case GLFW_REPEAT:
             {
-                KeyPressEvent event(Event::KEY_PRESS, key, KeyPressEvent::KEY_HOLD);
+                KeyPressEvent event(Event::TYPE::KEY_PRESS, key, KeyPressEvent::ACTION::KEY_HOLD);
                 windowData.eventHandler(event);
                 break;
             }
@@ -137,19 +137,19 @@ namespace MyWorld {
             {
             case GLFW_PRESS:
             {
-                MousePressEvent event(Event::MOUSE_PRESS, button, MousePressEvent::MOUSE_DOWN);
+                MousePressEvent event(Event::TYPE::MOUSE_PRESS, button, MousePressEvent::ACTION::MOUSE_DOWN);
                 windowData.eventHandler(event);
                 break;
             }
             case GLFW_RELEASE:
             {
-                MousePressEvent event(Event::MOUSE_PRESS, button, MousePressEvent::MOUSE_UP);
+                MousePressEvent event(Event::TYPE::MOUSE_PRESS, button, MousePressEvent::ACTION::MOUSE_UP);
                 windowData.eventHandler(event);
                 break;
             }
             case GLFW_REPEAT:
             {
-                MousePressEvent event(Event::MOUSE_PRESS, button, MousePressEvent::MOUSE_HOLD);
+                MousePressEvent event(Event::TYPE::MOUSE_PRESS, button, MousePressEvent::ACTION::MOUSE_HOLD);
                 windowData.eventHandler(event);
                 break;
             }
@@ -162,7 +162,7 @@ namespace MyWorld {
             WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
             if (!windowData.eventHandler) return;
 
-            MouseWheelEvent event(Event::MOUSE_WHEEL, (float)xOffset, (float)yOffset);
+            MouseWheelEvent event(Event::TYPE::MOUSE_WHEEL, (float)xOffset, (float)yOffset);
             windowData.eventHandler(event);
         });
 
@@ -172,7 +172,7 @@ namespace MyWorld {
             WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
             if (!windowData.eventHandler) return;
 
-            MouseMoveEvent event(Event::MOUSE_MOVE, (float)xPos, (float)yPos);
+            MouseMoveEvent event(Event::TYPE::MOUSE_MOVE, (float)xPos, (float)yPos);
             windowData.eventHandler(event);
         });
     }

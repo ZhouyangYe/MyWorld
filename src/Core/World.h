@@ -9,15 +9,19 @@ namespace MyWorld
 		static float distance_blocks;
 		static float distance_blocks_square;
 		static int chunk_num;
-		// the position of selected block
+		// the position info of selected block
 		static glm::vec3 selectedPos;
+		// the face of the block selected
+		static Block::DIRECTION selectedFace;
 		static const glm::vec3 NOT_SELECTED;
 		static Wireframe* wireframe;
 	public:
 		static void Generate();
 		static void Update();
 		static void Destroy();
-		static void updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, float& face, float& offset, float& closestPointLength);
+		static void updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength);
 		static void selectBlock();
+		static const glm::vec3& getSelectedBlockPos();
+		static const Block::DIRECTION& getSelectedFace();
 	};
 }

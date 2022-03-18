@@ -5,7 +5,7 @@ namespace MyWorld
 	Air::Air()
 	{}
 
-	Air::Air(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::AIR, coords, chunk_coords)
+	Air::Air(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::TYPE::AIR, coords, chunk_coords)
 	{}
 
 	Air::~Air()

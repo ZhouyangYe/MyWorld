@@ -18,7 +18,7 @@ namespace MyWorld
 	Dirt::Dirt()
 	{}
 
-	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::DIRT, coords, chunk_coords)
+	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::TYPE::DIRT, coords, chunk_coords)
 	{}
 
 	Dirt::~Dirt()

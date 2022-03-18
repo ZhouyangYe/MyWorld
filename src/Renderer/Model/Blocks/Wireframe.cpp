@@ -6,7 +6,13 @@ namespace MyWorld
 	bgfx::VertexBufferHandle Wireframe::vbh = BGFX_INVALID_HANDLE;
 	const uint64_t Wireframe::state = Block::default_state & (~BGFX_STATE_CULL_CW);
 	const glm::vec2 Wireframe::face = { 0.0f, 0.0f };
-	const uint8_t Wireframe::faces = Block::DIRECTION::NORTH | Block::DIRECTION::SOUTH | Block::DIRECTION::WEST | Block::DIRECTION::EAST | Block::DIRECTION::TOP | Block::DIRECTION::BOTTOM;
+	const uint8_t Wireframe::faces = 
+		(uint8_t)Block::DIRECTION::NORTH |
+		(uint8_t)Block::DIRECTION::SOUTH |
+		(uint8_t)Block::DIRECTION::WEST |
+		(uint8_t)Block::DIRECTION::EAST |
+		(uint8_t)Block::DIRECTION::TOP |
+		(uint8_t)Block::DIRECTION::BOTTOM;
 
 	void Wireframe::Register()
 	{
@@ -32,7 +38,7 @@ namespace MyWorld
 	Wireframe::Wireframe()
 	{}
 
-	Wireframe::Wireframe(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::DIRT, coords, chunk_coords)
+	Wireframe::Wireframe(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::TYPE::WIREFRAME, coords, chunk_coords)
 	{}
 
 	Wireframe::~Wireframe()

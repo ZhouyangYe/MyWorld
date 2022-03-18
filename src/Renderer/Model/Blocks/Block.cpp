@@ -269,37 +269,37 @@ namespace MyWorld
 
         switch (direction)
         {
-        case MyWorld::Block::NORTH:
+        case MyWorld::Block::DIRECTION::NORTH:
             vertices[0] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y + 1.0f,      startCoords.z,    0.0f, zLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f,      startCoords.z, xLength, zLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{      startCoords.x, startCoords.y + 1.0f, endCoords.z + 1.0f, xLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y + 1.0f, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
-        case MyWorld::Block::SOUTH:
+        case MyWorld::Block::DIRECTION::SOUTH:
             vertices[0] = Renderer::PosTextureArrayVertex{      startCoords.x, startCoords.y,      startCoords.z,    0.0f, zLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f, startCoords.y,      startCoords.z, xLength, zLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,   endCoords.y, endCoords.z + 1.0f, xLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{      startCoords.x, startCoords.y, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
-        case MyWorld::Block::WEST:
+        case MyWorld::Block::DIRECTION::WEST:
             vertices[0] = Renderer::PosTextureArrayVertex{ startCoords.x, endCoords.y + 1.0f,      startCoords.z,    0.0f, zLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{ startCoords.x,      startCoords.y,      startCoords.z, yLength, zLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{ startCoords.x,      startCoords.y, endCoords.z + 1.0f, yLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{   endCoords.x, endCoords.y + 1.0f, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
-        case MyWorld::Block::EAST:
+        case MyWorld::Block::DIRECTION::EAST:
             vertices[0] = Renderer::PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y,      startCoords.z,    0.0f, zLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{ startCoords.x + 1.0f, endCoords.y + 1.0f,      startCoords.z, yLength, zLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{   endCoords.x + 1.0f, endCoords.y + 1.0f, endCoords.z + 1.0f, yLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{ startCoords.x + 1.0f,      startCoords.y, endCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
-        case MyWorld::Block::TOP:
+        case MyWorld::Block::DIRECTION::TOP:
             vertices[0] = Renderer::PosTextureArrayVertex{      startCoords.x,      startCoords.y, startCoords.z + 1.0f,    0.0f, yLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z + 1.0f, xLength, yLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f, endCoords.y + 1.0f,   endCoords.z + 1.0f, xLength,    0.0f, texIndex };
             vertices[3] = Renderer::PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z + 1.0f,    0.0f,    0.0f, texIndex };
             break;
-        case MyWorld::Block::BOTTOM:
+        case MyWorld::Block::DIRECTION::BOTTOM:
             vertices[0] = Renderer::PosTextureArrayVertex{      startCoords.x, endCoords.y + 1.0f, startCoords.z,    0.0f, yLength, texIndex };
             vertices[1] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,    endCoords.y + 1,   endCoords.z, xLength, yLength, texIndex };
             vertices[2] = Renderer::PosTextureArrayVertex{ endCoords.x + 1.0f,      startCoords.y, startCoords.z, xLength,    0.0f, texIndex };

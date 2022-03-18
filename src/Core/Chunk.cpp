@@ -27,7 +27,7 @@ namespace MyWorld
 	{
 		const glm::vec3 blockCoords = block->getWorldCoords();
 		glm::vec3 center;
-		switch (block->faces)
+		switch ((Block::DIRECTION)block->faces)
 		{
 		case Block::DIRECTION::NORTH:
 			center = blockCoords + Block::NorthFaceVec;
@@ -68,12 +68,12 @@ namespace MyWorld
 
 		const int chunkNum = WORLD_CHUNK_RENDER_DISTANCE * 2;
 		bool noAdjacent = false;
-		Block::TYPE adjacentType = Block::INVALID;
+		Block::TYPE adjacentType = Block::TYPE::INVALID;
 		glm::vec3 pos;
 
 		switch (face)
 		{
-		case Block::NORTH:
+		case Block::DIRECTION::NORTH:
 			noAdjacent = index >= chunkNum * (chunkNum - 1);
 			isChunkBorder = blockCoords.y == (CHUNK_WIDTH - 1);
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -85,16 +85,16 @@ namespace MyWorld
 			}
 			adjacentIsAir = [&] {
 				return
-					(isChunkBorder && adjacentType == Block::AIR) ||
-					(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::AIR);
+					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
+					(!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::TYPE::AIR);
 			};
 			adjacentIsWater = [&] {
 				return 
-					type != Block::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::WATER) ||
-					(isChunkBorder && adjacentType == Block::WATER));
+					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx + Y_OFFSET]->type == Block::TYPE::WATER) ||
+					(isChunkBorder && adjacentType == Block::TYPE::WATER));
 			};
-			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
-		case Block::SOUTH:
+			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::DIRECTION::SOUTH:
 			noAdjacent = index < chunkNum;
 			isChunkBorder = blockCoords.y == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -105,16 +105,16 @@ namespace MyWorld
 			}
 			adjacentIsAir = [&] {
 				return 
-					(isChunkBorder && adjacentType == Block::AIR) ||
-					(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::AIR);
+					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
+					(!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::TYPE::AIR);
 			};
 			adjacentIsWater = [&] {
 				return 
-					type != Block::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::WATER) ||
-					(isChunkBorder && adjacentType == Block::WATER));
+					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx - Y_OFFSET]->type == Block::TYPE::WATER) ||
+					(isChunkBorder && adjacentType == Block::TYPE::WATER));
 			};
-			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
-		case Block::WEST:
+			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::DIRECTION::WEST:
 			noAdjacent = index % chunkNum == 0;
 			isChunkBorder = blockCoords.x == 0;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -125,16 +125,16 @@ namespace MyWorld
 			}
 			adjacentIsAir = [&] {
 				return 
-					(isChunkBorder && adjacentType == Block::AIR) ||
-					(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::AIR);
+					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
+					(!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::TYPE::AIR);
 			};
 			adjacentIsWater = [&] {
 				return 
-					type != Block::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::WATER) ||
-					(isChunkBorder && adjacentType == Block::WATER));
+					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx - X_OFFSET]->type == Block::TYPE::WATER) ||
+					(isChunkBorder && adjacentType == Block::TYPE::WATER));
 			};
-			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
-		case Block::EAST:
+			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::DIRECTION::EAST:
 			noAdjacent = index % chunkNum == chunkNum - 1;
 			isChunkBorder = blockCoords.x == CHUNK_WIDTH - 1;
 			isWorldBorder = isChunkBorder && noAdjacent;
@@ -145,24 +145,24 @@ namespace MyWorld
 			}
 			adjacentIsAir = [&] {
 				return 
-					(isChunkBorder && adjacentType == Block::AIR) ||
-					(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::AIR);
+					(isChunkBorder && adjacentType == Block::TYPE::AIR) ||
+					(!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::TYPE::AIR);
 			};
 			adjacentIsWater = [&] {
 				return 
-					type != Block::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::WATER) ||
-					(isChunkBorder && adjacentType == Block::WATER));
+					type != Block::TYPE::WATER && ((!isChunkBorder && blocks[idx + X_OFFSET]->type == Block::TYPE::WATER) ||
+					(isChunkBorder && adjacentType == Block::TYPE::WATER));
 			};
-			return (type == Block::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
-		case Block::TOP:
+			return (type == Block::TYPE::WATER || showWorldBorder || !isWorldBorder) && (isWorldBorder || adjacentIsAir() || adjacentIsWater());
+		case Block::DIRECTION::TOP:
 			isWorldBorder = blockCoords.z == CHUNK_DEPTH - 1;
-			adjacentIsAir = [&] { return blocks[idx + Z_OFFSET]->type == Block::AIR; };
-			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx + Z_OFFSET]->type == Block::WATER; };
+			adjacentIsAir = [&] { return blocks[idx + Z_OFFSET]->type == Block::TYPE::AIR; };
+			adjacentIsWater = [&] { return type != Block::TYPE::WATER && blocks[idx + Z_OFFSET]->type == Block::TYPE::WATER; };
 			return isWorldBorder || adjacentIsAir() || adjacentIsWater();
-		case Block::BOTTOM:
+		case Block::DIRECTION::BOTTOM:
 			isWorldBorder = blockCoords.z == 0;
-			adjacentIsAir = [&] { return blocks[idx - Z_OFFSET]->type == Block::AIR; };
-			adjacentIsWater = [&] { return type != Block::WATER && blocks[idx - Z_OFFSET]->type == Block::WATER; };
+			adjacentIsAir = [&] { return blocks[idx - Z_OFFSET]->type == Block::TYPE::AIR; };
+			adjacentIsWater = [&] { return type != Block::TYPE::WATER && blocks[idx - Z_OFFSET]->type == Block::TYPE::WATER; };
 			return (isWorldBorder || adjacentIsAir() || adjacentIsWater()) && (showWorldBorder || !isChunkBorder);
 		default:
 			return false;
@@ -191,19 +191,19 @@ namespace MyWorld
 	{
 		switch (startBlock->type)
 		{
-		case Block::DIRT:
+		case Block::TYPE::DIRT:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Dirt::getFaceVertices(startBlock, endBlock, direction);
 			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
 			break;
 		}
-		case Block::GRASS:
+		case Block::TYPE::GRASS:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Grass::getFaceVertices(startBlock, endBlock, direction);
 			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
 			break;
 		}
-		case Block::WATER:
+		case Block::TYPE::WATER:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Water::getFaceVertices(startBlock, endBlock, direction);
 			batchFaces(vertices, vList_type2_current, iList_type2_current, batching_index_type2);
@@ -224,8 +224,8 @@ namespace MyWorld
 
 		switch (face)
 		{
-		case Block::NORTH:
-		case Block::SOUTH:
+		case Block::DIRECTION::NORTH:
+		case Block::DIRECTION::SOUTH:
 			xOffset = X_OFFSET;
 			yOffset = Z_OFFSET;
 			zOffset = Y_OFFSET;
@@ -235,8 +235,8 @@ namespace MyWorld
 			xLength = CHUNK_WIDTH;
 			yLength = CHUNK_DEPTH;
 			break;
-		case Block::WEST:
-		case Block::EAST:
+		case Block::DIRECTION::WEST:
+		case Block::DIRECTION::EAST:
 			xOffset = Y_OFFSET;
 			yOffset = Z_OFFSET;
 			zOffset = X_OFFSET;
@@ -246,8 +246,8 @@ namespace MyWorld
 			xLength = CHUNK_WIDTH;
 			yLength = CHUNK_DEPTH;
 			break;
-		case Block::TOP:
-		case Block::BOTTOM:
+		case Block::DIRECTION::TOP:
+		case Block::DIRECTION::BOTTOM:
 			xOffset = X_OFFSET;
 			yOffset = Y_OFFSET;
 			zOffset = Z_OFFSET;
@@ -261,16 +261,16 @@ namespace MyWorld
 			break;
 		}
 
-		block->faces |= face;
+		block->faces |= (uint8_t)face;
 		const int startingXCount = xCount - 1;
 		const int startingYCount = yCount;
 		int xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 		int hitEdge = false;
 		while (yCount < yLength && !hitEdge)
 		{
-			if (yCount == startingYCount && xCount < xLength && (blocks[xIndex]->faces & face) == 0 && blocks[xIndex]->type == block->type && has(face, xIndex))
+			if (yCount == startingYCount && xCount < xLength && (blocks[xIndex]->faces & (uint8_t)face) == 0 && blocks[xIndex]->type == block->type && has(face, xIndex))
 			{
-				blocks[xIndex]->faces |= face;
+				blocks[xIndex]->faces |= (uint8_t)face;
 				xCount++;
 				xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 			}
@@ -288,9 +288,9 @@ namespace MyWorld
 				for (int i = startingXCount; i < xCount; i++)
 				{
 					const int yIndex = zCount * zOffset + i * xOffset + yCount * yOffset;
-					if ((blocks[yIndex]->faces & face) == 0 && blocks[yIndex]->type == block->type && has(face, yIndex))
+					if ((blocks[yIndex]->faces & (uint8_t)face) == 0 && blocks[yIndex]->type == block->type && has(face, yIndex))
 					{
-						blocks[yIndex]->faces |= face;
+						blocks[yIndex]->faces |= (uint8_t)face;
 					}
 					else
 					{
@@ -298,7 +298,7 @@ namespace MyWorld
 						{
 							for (int j = i - 1; j >= startingXCount; j--)
 							{
-								blocks[zCount * zOffset + j * xOffset + yCount * yOffset]->faces &= ~face;
+								blocks[zCount * zOffset + j * xOffset + yCount * yOffset]->faces &= ~(uint8_t)face;
 							}
 						}
 						hitEdge = true;
@@ -318,36 +318,36 @@ namespace MyWorld
 		// TODO: 1. frustum culling 2. do this in a separate thread
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			if (blocks[i]->type != Block::AIR)
+			if (blocks[i]->type != Block::TYPE::AIR)
 			{
 				Block* block = blocks[i];
 				Block::TYPE type = block->type;
 
 				if (has(Block::DIRECTION::BOTTOM, i))
 				{
-					if ((block->faces & Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
 				}
 				if (has(Block::DIRECTION::TOP, i))
 				{
-					if ((block->faces & Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
 				}
 
 				if (has(Block::DIRECTION::WEST, i))
 				{
-					if ((block->faces & Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
 				}
 				if (has(Block::DIRECTION::EAST, i))
 				{
-					if ((block->faces & Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
 				}
 
 				if (has(Block::DIRECTION::SOUTH, i))
 				{
-					if ((block->faces & Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
 				}
 				if (has(Block::DIRECTION::NORTH, i))
 				{
-					if ((block->faces & Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
+					if ((block->faces & (uint8_t)Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
 				}
 			}
 		}
@@ -419,23 +419,23 @@ namespace MyWorld
 					const Block::TYPE type = getType(pos);
 
 					// set spawn location
-					if (spawn_location.z == -1.0f && type == Block::AIR && coords.x == 0.0f && coords.y == 0.0f)
+					if (spawn_location.z == -1.0f && type == Block::TYPE::AIR && coords.x == 0.0f && coords.y == 0.0f)
 					{
 						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 2.0f };
 					}
 
 					switch (type)
 					{
-					case Block::AIR:
+					case Block::TYPE::AIR:
 						blocks.push_back(new Air({ x, y, z }, coords));
 						break;
-					case Block::WATER:
+					case Block::TYPE::WATER:
 						blocks.push_back(new Water({ x, y, z }, coords, index));
 						break;
-					case Block::DIRT:
+					case Block::TYPE::DIRT:
 						blocks.push_back(new Dirt({ x, y, z }, coords));
 						break;
-					case Block::GRASS:
+					case Block::TYPE::GRASS:
 						blocks.push_back(new Grass({ x, y, z }, coords));
 						break;
 					default:
@@ -476,20 +476,20 @@ namespace MyWorld
 		{
 			if (pos.z == edge && pos.z >= waterLine)
 			{
-				return Block::GRASS;
+				return Block::TYPE::GRASS;
 			}
 			else
 			{
-				return Block::DIRT;
+				return Block::TYPE::DIRT;
 			}
 		}
 		else if (pos.z <= waterLine)
 		{
-			return Block::WATER;
+			return Block::TYPE::WATER;
 		}
 		else
 		{
-			return Block::AIR;
+			return Block::TYPE::AIR;
 		}
 	}
 
@@ -500,7 +500,7 @@ namespace MyWorld
 		transparent_blocks.clear();
 		for (std::vector<Block*>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
 		{
-			if ((*iter)->type == Block::WATER && ((Water*)(*iter))->chunk_id == index)
+			if ((*iter)->type == Block::TYPE::WATER && ((Water*)(*iter))->chunk_id == index)
 			{
 				delete (*iter);
 				continue;

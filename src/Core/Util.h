@@ -28,13 +28,6 @@ namespace MyWorld
         void log(bool boo, char* text = "");
         void log(uint8_t type, char* text = "");
 
-        struct ColorVec
-        {
-            float r, g, b, a;
-            ColorVec() : r(0.0f), g(0.0f), b(0.0f), a(0.0f) {}
-            ColorVec(float _r, float _g, float _b, float _a) : r(_r), g(_g), b(_b), a(_a) {}
-        };
-
         template <typename T>
         void merge(T arr[], T temp[], int begin, int middle, int end, const std::function<float(T item1, T item2)>& compare)
         {

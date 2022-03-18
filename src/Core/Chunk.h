@@ -33,7 +33,7 @@ namespace MyWorld
 		// transparent blocks to be rendered
 		static std::vector<Block*> transparent_blocks;
 	public:
-		static const enum Phase : uint8_t
+		static const enum class Phase : uint8_t
 		{
 			OPAQUE_P            = 1 << 0,
 			WATER_P             = 1 << 1,

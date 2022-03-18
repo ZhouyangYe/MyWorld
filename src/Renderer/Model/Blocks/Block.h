@@ -12,22 +12,24 @@ namespace MyWorld
 	class Block
 	{
 	public:
-		static const enum DIRECTION : uint8_t
+		static const enum class DIRECTION : uint8_t
 		{
-			NORTH =  1 << 0,
-			SOUTH =  1 << 1,
-			WEST =   1 << 2,
-			EAST =   1 << 3,
-			TOP =    1 << 4,
-			BOTTOM = 1 << 5
+			NORTH   = 1 << 0,
+			SOUTH   = 1 << 1,
+			WEST    = 1 << 2,
+			EAST    = 1 << 3,
+			TOP     = 1 << 4,
+			BOTTOM  = 1 << 5,
+			INVALID = 1 << 6
 		};
-		static const enum TYPE : uint8_t
+		static const enum class TYPE : uint8_t
 		{
-			INVALID = 0,
-			AIR     = 1,
-			DIRT    = 2,
-			GRASS   = 3,
-			WATER   = 4
+			INVALID   = 0,
+			AIR       = 1,
+			DIRT      = 2,
+			GRASS     = 3,
+			WATER     = 4,
+			WIREFRAME = 5
 		};
 		// the offsets of coordinate for each face of a block, used to calculate the distance of the faces to camera, useless when using greedy meshing
 		static const glm::vec3 NorthFaceVec;

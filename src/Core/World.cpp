@@ -8,6 +8,7 @@ namespace MyWorld
 	Wireframe* World::wireframe = nullptr;
 	const glm::vec3 World::NOT_SELECTED = { 0.0f, 0.0f, -1.0f };
 	glm::vec3 World::selectedPos = NOT_SELECTED;
+	Block::DIRECTION World::selectedFace = Block::DIRECTION::INVALID;
 
 	void World::Generate()
 	{
@@ -18,7 +19,7 @@ namespace MyWorld
 		World::chunk_num = num * num * 4;
 	}
 
-	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, float& face, float& offset, float& closestPointLength)
+	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength)
 	{
 		const glm::vec3 eyeLocation = Camera::getCameraCoords();
 		const glm::vec3 forwardVec = Camera::getForwardVec();
@@ -26,10 +27,11 @@ namespace MyWorld
 		const float length = glm::length2(eyeLocation - interceptPoint);
 		if (length < distance_blocks_square && length < closestPointLength)
 		{
-			if (Chunk::getType(pos) != Block::AIR)
+			if (Chunk::getType(pos) != Block::TYPE::AIR)
 			{
 				closestPointLength = length;
 				selectedPos = pos;
+				selectedFace = direction;
 				blockFound = true;
 				done = true;
 			}
@@ -53,6 +55,7 @@ namespace MyWorld
 			float factor;
 			bool blockFound = false;
 
+			Block::DIRECTION yzDirection, xzDirection, xyDirection;
 			glm::vec3 
 				yzInterceptPoint,
 				xzInterceptPoint,
@@ -113,14 +116,16 @@ namespace MyWorld
 						factor = abs((eyeLocation.x - yzFace) / forwardVec.x);
 						yzInterceptPoint = { yzFace, factor * forwardVec.y + eyeLocation.y, factor * forwardVec.z + eyeLocation.z };
 						yzPos = { yzInterceptPoint.x, floor(yzInterceptPoint.y), floor(yzInterceptPoint.z) };
+						yzDirection = Block::DIRECTION::WEST;
 					}
 					else
 					{
 						factor = abs((eyeLocation.x - yzFace) / forwardVec.x);
 						yzInterceptPoint = { yzFace, factor * forwardVec.y + eyeLocation.y, factor * forwardVec.z + eyeLocation.z };
 						yzPos = { yzInterceptPoint.x - 1.0f, floor(yzInterceptPoint.y), floor(yzInterceptPoint.z) };
+						yzDirection = Block::DIRECTION::EAST;
 					}
-					updateClosestPoint(blockFound, yzDone, yzInterceptPoint, yzPos, yzFace, xOffset, closestPointLength);
+					updateClosestPoint(blockFound, yzDone, yzInterceptPoint, yzPos, yzDirection, yzFace, xOffset, closestPointLength);
 				}
 
 				if (!xzDone)
@@ -130,14 +135,16 @@ namespace MyWorld
 						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
 						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
 						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y, floor(xzInterceptPoint.z) };
+						yzDirection = Block::DIRECTION::SOUTH;
 					}
 					else
 					{
 						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
 						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
 						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y - 1.0f, floor(xzInterceptPoint.z) };
+						yzDirection = Block::DIRECTION::NORTH;
 					}
-					updateClosestPoint(blockFound, xzDone, xzInterceptPoint, xzPos, xzFace, yOffset, closestPointLength);
+					updateClosestPoint(blockFound, xzDone, xzInterceptPoint, xzPos, xzDirection, xzFace, yOffset, closestPointLength);
 				}
 
 				if (!xyDone)
@@ -147,14 +154,16 @@ namespace MyWorld
 						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
 						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
 						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z };
+						yzDirection = Block::DIRECTION::BOTTOM;
 					}
 					else
 					{
 						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
 						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
 						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z - 1.0f };
+						yzDirection = Block::DIRECTION::TOP;
 					}
-					updateClosestPoint(blockFound, xyDone, xyInterceptPoint, xyPos, xyFace, zOffset, closestPointLength);
+					updateClosestPoint(blockFound, xyDone, xyInterceptPoint, xyPos, xyDirection, xyFace, zOffset, closestPointLength);
 				}
 			}
 
@@ -163,6 +172,16 @@ namespace MyWorld
 			else
 				selectedPos = NOT_SELECTED;
 		}
+	}
+
+	const glm::vec3& World::getSelectedBlockPos()
+	{
+		return selectedPos;
+	}
+
+	const Block::DIRECTION& World::getSelectedFace()
+	{
+		return selectedFace;
 	}
 
 	void World::Update()
@@ -190,6 +209,7 @@ namespace MyWorld
 
 	void World::Destroy()
 	{
+		delete wireframe;
 		Data::Destroy();
 	}
 }

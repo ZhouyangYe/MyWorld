@@ -20,7 +20,7 @@ namespace MyWorld
 	Water::Water() : chunk_id(0)
 	{}
 
-	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id) : Block(Block::WATER, coords, chunk_coords), chunk_id(chunk_id)
+	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id) : Block(Block::TYPE::WATER, coords, chunk_coords), chunk_id(chunk_id)
 	{}
 
 	Water::~Water()

@@ -506,11 +506,6 @@ namespace MyWorld
 		}
 	}
 
-	const int& Chunk::getChunkRenderDistanceNum()
-	{
-		return WORLD_CHUNK_RENDER_DISTANCE;
-	}
-
 	void Chunk::setChunkRenderDistanceNum(int num)
 	{
 		WORLD_CHUNK_RENDER_DISTANCE = num;

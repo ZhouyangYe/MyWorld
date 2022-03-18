@@ -9,6 +9,7 @@ namespace MyWorld
 		static bool selectionEnabled;
 		static bool collisionEnabled;
 		static bool infiniteWorldEnabled;
+		static int renderDistance;
 		static float distance_blocks;
 		static float distance_blocks_square;
 		static int chunk_num;
@@ -29,5 +30,6 @@ namespace MyWorld
 		static void setSelectionEnabled(bool enabled);
 		static void setCollisionEnabled(bool enabled);
 		static void setInfiniteWorldEnabled(bool enabled);
+		static const int& getRenderDistance();
 	};
 }

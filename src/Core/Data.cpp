@@ -8,14 +8,14 @@ namespace MyWorld
 	{}
 
 	// TODO: do this in a separate thread
-	void Data::Init(bool& infiniteWorldEnabled)
+	void Data::Init(bool& infiniteWorldEnabled, int& renderDistance)
 	{
+		Chunk::setChunkRenderDistanceNum(renderDistance);
 		Chunk::setShowWorldBorder(!infiniteWorldEnabled);
-		const int chunkNum = Chunk::getChunkRenderDistanceNum();
 		int index = 0;
-		for (int y = -chunkNum; y < chunkNum; y++)
+		for (int y = -renderDistance; y < renderDistance; y++)
 		{
-			for (int x = -chunkNum; x < chunkNum; x++)
+			for (int x = -renderDistance; x < renderDistance; x++)
 			{
 				chunks.push_back(new Chunk(glm::vec2{ (float)x * 16.0f, (float)y * 16.0f }, index));
 				index++;

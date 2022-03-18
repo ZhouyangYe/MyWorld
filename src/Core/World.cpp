@@ -5,6 +5,7 @@ namespace MyWorld
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
 	bool World::infiniteWorldEnabled = false;
+	int World::renderDistance = 6;
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;
@@ -15,11 +16,10 @@ namespace MyWorld
 
 	void World::Generate()
 	{
-		Data::Init(infiniteWorldEnabled);
+		Data::Init(infiniteWorldEnabled, renderDistance);
 		wireframe = new Wireframe(NOT_SELECTED, glm::vec3{0.0f, 0.0f, 0.0f});
 
-		const int num = Chunk::getChunkRenderDistanceNum();
-		World::chunk_num = num * num * 4;
+		World::chunk_num = renderDistance * renderDistance * 4;
 	}
 
 	void World::setSelectionEnabled(bool enabled)
@@ -35,6 +35,11 @@ namespace MyWorld
 	void World::setInfiniteWorldEnabled(bool enabled)
 	{
 		infiniteWorldEnabled = enabled;
+	}
+
+	const int& World::getRenderDistance()
+	{
+		return renderDistance;
 	}
 
 	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength)

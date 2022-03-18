@@ -41,13 +41,12 @@ namespace MyWorld
 		};
 		static void Init();
 		static void Destroy();
-		static const int& getChunkRenderDistanceNum();
-		static void setChunkRenderDistanceNum(int num);
 		static void DrawTransparent();
 		static const glm::vec3& getSpawnLocation();
 		// get the type of the specific block
 		static const Block::TYPE getType(glm::vec3& pos);
 		static void setShowWorldBorder(bool show);
+		static void setChunkRenderDistanceNum(int num);
 	private:
 		// the index of chunk in the world space
 		const int index;

@@ -26,7 +26,7 @@ namespace MyWorld
 		// initialize world
 		World::Generate();
 
-		Camera::Init({ { windowSize.width, windowSize.height }, (float)Chunk::getChunkRenderDistanceNum() * 16, Chunk::getSpawnLocation() });
+		Camera::Init({ { windowSize.width, windowSize.height }, (float)World::getRenderDistance() * 16, Chunk::getSpawnLocation() });
 
 		Window::setEventCallback([](Event& event)
 			{

@@ -17,7 +17,7 @@ namespace MyWorld
 		static void Generate();
 		static void Update();
 		static void Destroy();
-		static void updateClosestPoint(bool& blockFound, float& closestPointLength, const Block::DIRECTION& direction, bool& outOfRange, int& face, const int& offset, const glm::vec3& forwardVec, const glm::vec3& eyeLocation);
+		static void updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, float& face, float& offset, float& closestPointLength);
 		static void selectBlock();
 	};
 }

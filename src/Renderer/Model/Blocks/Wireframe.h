@@ -20,6 +20,6 @@ namespace MyWorld
 		Wireframe(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Wireframe();
 		void Draw(const uint8_t& faces = faces) override;
-		void setCoords(glm::vec3& coords);
+		void setCoords(const glm::vec3& coords);
 	};
 }

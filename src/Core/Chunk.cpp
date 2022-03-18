@@ -421,7 +421,7 @@ namespace MyWorld
 					// set spawn location
 					if (spawn_location.z == -1.0f && type == Block::AIR && coords.x == 0.0f && coords.y == 0.0f)
 					{
-						spawn_location = glm::vec3{ 0.0f, 0.0f, z + 3.0f };
+						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 2.0f };
 					}
 
 					switch (type)

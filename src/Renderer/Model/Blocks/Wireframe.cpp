@@ -24,7 +24,7 @@ namespace MyWorld
 		}
 	}
 
-	void Wireframe::setCoords(glm::vec3& coords)
+	void Wireframe::setCoords(const glm::vec3& coords)
 	{
 		this->world_coords = coords;
 	}

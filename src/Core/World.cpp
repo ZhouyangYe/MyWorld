@@ -18,75 +18,25 @@ namespace MyWorld
 		World::chunk_num = num * num * 4;
 	}
 
-	void World::updateClosestPoint(bool& blockFound, float& closestPointLength, const Block::DIRECTION& direction, bool& outOfRange, int& face, const int& offset, const glm::vec3& forwardVec, const glm::vec3& eyeLocation)
+	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, float& face, float& offset, float& closestPointLength)
 	{
-		glm::vec3 interceptPoint;
-		glm::vec3 pos = NOT_SELECTED;
-		float length;
-		float factor1, factor2;
+		const glm::vec3 eyeLocation = Camera::getCameraCoords();
+		const glm::vec3 forwardVec = Camera::getForwardVec();
 
-		switch (direction)
+		const float length = glm::length2(eyeLocation - interceptPoint);
+		if (length < distance_blocks_square && length < closestPointLength)
 		{
-		case Block::DIRECTION::EAST:
-			factor1 = abs(face / forwardVec.x);
-			factor2 = abs(eyeLocation.x / forwardVec.x);
-			interceptPoint = { (float)face, (factor1 - factor2) * forwardVec.y + eyeLocation.y, (factor1 - factor2) * forwardVec.z + eyeLocation.z };
-			pos = { interceptPoint.x - 1.0f, floor(interceptPoint.y), floor(interceptPoint.z) };
-			break;
-		case Block::DIRECTION::WEST:
-			factor1 = abs(face / forwardVec.x);
-			factor2 = abs(eyeLocation.x / forwardVec.x);
-			interceptPoint = { (float)face, (factor1 - factor2) * forwardVec.y + eyeLocation.y, (factor1 - factor2) * forwardVec.z + eyeLocation.z };
-			pos = { interceptPoint.x, floor(interceptPoint.y), floor(interceptPoint.z) };
-			break;
-		case Block::DIRECTION::NORTH:
-			factor1 = abs(face / forwardVec.y);
-			factor2 = abs(eyeLocation.y / forwardVec.y);
-			interceptPoint = { (factor1 - factor2) * forwardVec.x + eyeLocation.x, (float)face, (factor1 - factor2) * forwardVec.z + eyeLocation.z };
-			pos = { floor(interceptPoint.x), interceptPoint.y - 1.0f, floor(interceptPoint.z) };
-			break;
-		case Block::DIRECTION::SOUTH:
-			factor1 = abs(face / forwardVec.y);
-			factor2 = abs(eyeLocation.y / forwardVec.y);
-			interceptPoint = { (factor1 - factor2) * forwardVec.x + eyeLocation.x, (float)face, (factor1 - factor2) * forwardVec.z + eyeLocation.z };
-			pos = { floor(interceptPoint.x), interceptPoint.y, floor(interceptPoint.z) };
-			break;
-		case Block::DIRECTION::TOP:
-			factor1 = abs(face / forwardVec.z);
-			factor2 = abs(eyeLocation.z / forwardVec.z);
-			interceptPoint = { (factor1 - factor2) * forwardVec.x + eyeLocation.x, (factor1 - factor2) * forwardVec.y + eyeLocation.y, (float)face };
-			pos = { floor(interceptPoint.x) , floor(interceptPoint.y), interceptPoint.z - 1.0f };
-			break;
-		case Block::DIRECTION::BOTTOM:
-			factor1 = abs(face / forwardVec.z);
-			factor2 = abs(eyeLocation.z / forwardVec.z);
-			interceptPoint = { (factor1 - factor2) * forwardVec.x + eyeLocation.x, (factor1 - factor2) * forwardVec.y + eyeLocation.y, (float)face };
-			pos = { floor(interceptPoint.x) , floor(interceptPoint.y), interceptPoint.z };
-			break;
-		default:
-			break;
-		}
-
-		length = glm::length2(eyeLocation - interceptPoint);
-		Util::log(length, "length: ");
-		Util::log(pos, "pos: ");
-		Util::log(interceptPoint, "interceptPoint: ");
-		Util::log(Chunk::getType(pos) != Block::AIR, "isNotAir: ");
-		Util::log(direction, "direction: ");
-
-		if (length < distance_blocks_square)
-		{
-			if (length < closestPointLength && Chunk::getType(pos) != Block::AIR)
+			if (Chunk::getType(pos) != Block::AIR)
 			{
-				Util::log("reach");
 				closestPointLength = length;
 				selectedPos = pos;
 				blockFound = true;
+				done = true;
 			}
 		}
 		else
 		{
-			outOfRange = true;
+			done = true;
 		}
 
 		face += offset;
@@ -100,88 +50,118 @@ namespace MyWorld
 			const glm::vec3 eyeLocation = Camera::getCameraCoords();
 			const glm::vec3 forwardVec = Camera::getForwardVec();
 			float closestPointLength = distance_blocks_square;
+			float factor;
+			bool blockFound = false;
 
+			glm::vec3 
+				yzInterceptPoint,
+				xzInterceptPoint,
+				xyInterceptPoint;
+			glm::vec3
+				yzPos = NOT_SELECTED,
+				xzPos = NOT_SELECTED,
+				xyPos = NOT_SELECTED;
 			bool
-				blockFound = false,
-				yzOutOfRange = forwardVec.x == 0,
-				xzOutOfRange = forwardVec.y == 0,
-				xyOutOfRange = forwardVec.z == 0;
+				yzDone = forwardVec.x == 0,
+				xzDone = forwardVec.y == 0,
+				xyDone = forwardVec.z == 0;
+			float yzFace, xzFace, xyFace, xOffset, yOffset, zOffset;
+			bool
+				hitWest = forwardVec.x > 0,
+				hitSouth = forwardVec.y > 0,
+				hitBottom = forwardVec.z > 0;
 
-			int yzFace, xzFace, xyFace;
-
-			int xOffset, yOffset, zOffset;
-
-			Block::DIRECTION yzDirection, xzDirection, xyDirection;
-
-			if (forwardVec.x > 0)
+			if (hitWest)
 			{
 				yzFace = ceil(eyeLocation.x);
-				xOffset = 1;
-				yzDirection = Block::DIRECTION::WEST;
+				xOffset = 1.0f;
 			}
 			else
 			{
 				yzFace = floor(eyeLocation.x);
-				xOffset = -1;
-				yzDirection = Block::DIRECTION::EAST;
+				xOffset = -1.0f;
 			}
 
-			if (forwardVec.y > 0)
+			if (hitSouth)
 			{
 				xzFace = ceil(eyeLocation.y);
-				yOffset = 1;
-				xzDirection = Block::DIRECTION::SOUTH;
+				yOffset = 1.0f;
 			}
 			else
 			{
 				xzFace = floor(eyeLocation.y);
-				yOffset = -1;
-				xzDirection = Block::DIRECTION::NORTH;
+				yOffset = -1.0f;
 			}
 
-			if (forwardVec.z > 0)
+			if (hitBottom)
 			{
 				xyFace = ceil(eyeLocation.z);
-				zOffset = 1;
-				xyDirection = Block::DIRECTION::BOTTOM;
+				zOffset = 1.0f;
 			}
 			else
 			{
 				xyFace = floor(eyeLocation.z);
-				zOffset = -1;
-				xyDirection = Block::DIRECTION::TOP;
+				zOffset = -1.0f;
 			}
 
-			Util::log("---------");
-			while (!blockFound && (!xyOutOfRange || !yzOutOfRange || !yzOutOfRange))
+			while (!xyDone || !yzDone || !xzDone)
 			{
-				if (!yzOutOfRange)
+				if (!yzDone)
 				{
-					Util::log("in1");
-					updateClosestPoint(blockFound, closestPointLength, yzDirection, yzOutOfRange, yzFace, xOffset, forwardVec, eyeLocation);
+					if (hitWest)
+					{
+						factor = abs((eyeLocation.x - yzFace) / forwardVec.x);
+						yzInterceptPoint = { yzFace, factor * forwardVec.y + eyeLocation.y, factor * forwardVec.z + eyeLocation.z };
+						yzPos = { yzInterceptPoint.x, floor(yzInterceptPoint.y), floor(yzInterceptPoint.z) };
+					}
+					else
+					{
+						factor = abs((eyeLocation.x - yzFace) / forwardVec.x);
+						yzInterceptPoint = { yzFace, factor * forwardVec.y + eyeLocation.y, factor * forwardVec.z + eyeLocation.z };
+						yzPos = { yzInterceptPoint.x - 1.0f, floor(yzInterceptPoint.y), floor(yzInterceptPoint.z) };
+					}
+					updateClosestPoint(blockFound, yzDone, yzInterceptPoint, yzPos, yzFace, xOffset, closestPointLength);
 				}
 
-				if (!xzOutOfRange)
+				if (!xzDone)
 				{
-					Util::log("in2");
-					updateClosestPoint(blockFound, closestPointLength, xzDirection, xzOutOfRange, xzFace, yOffset, forwardVec, eyeLocation);
+					if (hitSouth)
+					{
+						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
+						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
+						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y, floor(xzInterceptPoint.z) };
+					}
+					else
+					{
+						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
+						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
+						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y - 1.0f, floor(xzInterceptPoint.z) };
+					}
+					updateClosestPoint(blockFound, xzDone, xzInterceptPoint, xzPos, xzFace, yOffset, closestPointLength);
 				}
 
-				if (!xyOutOfRange)
+				if (!xyDone)
 				{
-					Util::log("in3");
-					updateClosestPoint(blockFound, closestPointLength, xyDirection, xyOutOfRange, xyFace, zOffset, forwardVec, eyeLocation);
+					if (hitBottom)
+					{
+						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
+						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
+						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z };
+					}
+					else
+					{
+						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
+						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
+						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z - 1.0f };
+					}
+					updateClosestPoint(blockFound, xyDone, xyInterceptPoint, xyPos, xyFace, zOffset, closestPointLength);
 				}
 			}
 
 			if (blockFound)
-			{
 				wireframe->setCoords(selectedPos);
-			}
 			else
-			{
 				selectedPos = NOT_SELECTED;
-			}
 		}
 	}
 
@@ -205,10 +185,7 @@ namespace MyWorld
 		Chunk::DrawTransparent();
 
 		selectBlock();
-		if (selectedPos.z != -1.0f)
-		{
-			wireframe->Draw();
-		}
+		if (selectedPos.z != -1.0f) wireframe->Draw();
 	}
 
 	void World::Destroy()

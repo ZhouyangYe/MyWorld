@@ -19,6 +19,5 @@ namespace MyWorld
 		Water();
 		Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id);
 		~Water();
-		void Draw(const uint8_t& faces) override;
 	};
 }

@@ -23,7 +23,4 @@ namespace MyWorld
 
 	Dirt::~Dirt()
 	{}
-
-	void Dirt::Draw(const uint8_t& faces)
-	{}
 }

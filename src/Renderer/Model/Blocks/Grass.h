@@ -17,6 +17,5 @@ namespace MyWorld
 		Grass();
 		Grass(glm::vec3 coords, glm::vec2 chunk_coords);
 		~Grass();
-		void Draw(const uint8_t& faces) override;
 	};
 }

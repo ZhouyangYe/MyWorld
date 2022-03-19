@@ -25,7 +25,4 @@ namespace MyWorld
 
 	Water::~Water()
 	{}
-
-	void Water::Draw(const uint8_t& faces)
-	{}
 }

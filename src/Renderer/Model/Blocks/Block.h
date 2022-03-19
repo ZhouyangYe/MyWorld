@@ -75,8 +75,6 @@ namespace MyWorld
 		Block(Block::TYPE type, glm::vec3& coords, glm::vec2& chunk_coords);
 		const glm::vec3& getCoords();
 		const glm::vec3& getWorldCoords();
-		// draw faces for each block(when greedy meshing is not used)
-		virtual void Draw(const uint8_t& faces) = 0;
 	protected:
 		// coords of block, based on chunks
 		glm::vec3 coords;

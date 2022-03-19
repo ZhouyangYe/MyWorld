@@ -29,6 +29,6 @@ namespace MyWorld
 		{
 			delete (*iter);
 		}
-		chunks.clear();
+		std::vector<Chunk*>().swap(chunks);
 	}
 }

@@ -38,7 +38,4 @@ namespace MyWorld
 
 	Grass::~Grass()
 	{}
-
-	void Grass::Draw(const uint8_t& faces)
-	{}
 }

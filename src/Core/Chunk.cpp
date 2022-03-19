@@ -15,7 +15,7 @@ namespace MyWorld
 
 	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
-	std::vector<Block*> Chunk::transparent_blocks;
+	std::vector<Block> Chunk::transparent_blocks;
 
 	void Chunk::setShowWorldBorder(bool show)
 	{
@@ -28,11 +28,11 @@ namespace MyWorld
 	}
 
 	// get unit blocks' faces' distance to camera
-	float Chunk::getLength(Block* block)
+	float Chunk::getLength(Block& block)
 	{
-		const glm::vec3 blockCoords = block->getWorldCoords();
+		const glm::vec3 blockCoords = block.getWorldCoords();
 		glm::vec3 center;
-		switch ((Block::DIRECTION)block->faces)
+		switch ((Block::DIRECTION)block.faces)
 		{
 		case Block::DIRECTION::NORTH:
 			center = blockCoords + Block::NorthFaceVec;
@@ -381,7 +381,7 @@ namespace MyWorld
 		faceCullingAndSeparating();
 
 		// remove blocks when chunk builds are done
-		blocks.clear();
+		std::vector<Block>().swap(blocks);
 	}
 
 	// TODO: implement more interesting terrain
@@ -431,14 +431,14 @@ namespace MyWorld
 
 	Chunk::~Chunk()
 	{
+		// TODO: optimize it
 		// remove transparent blocks data for this chunk
-		std::vector<Block*> temp = transparent_blocks;
+		std::vector<Block> temp = transparent_blocks;
 		transparent_blocks.clear();
-		for (std::vector<Block*>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
+		for (std::vector<Block>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
 		{
-			if ((*iter)->type == Block::TYPE::WATER && ((Water*)(*iter))->chunk_id == index)
+			if ((*iter).type == Block::TYPE::WATER && ((Water&)(*iter)).chunk_id == index)
 			{
-				delete (*iter);
 				continue;
 			}
 			transparent_blocks.push_back(*iter);
@@ -453,22 +453,23 @@ namespace MyWorld
 		if (bgfx::isValid(ibh_type2)) bgfx::destroy(ibh_type2);
 	}
 
+	// TODO: optimize it
 	// draw transparent blocks
 	void Chunk::DrawTransparent()
 	{
-		int size = transparent_blocks.size();
-		if (size)
-		{
-			Block** sortedBlocks = transparent_blocks.data();
-			// draw far faces first
-			Util::mergeSort<Block*>(sortedBlocks, size, [](Block* item1, Block* item2) {
-				return getLength(item1) - getLength(item2);
-			});
-			for (int i = 0; i < size; i++)
-			{
-				sortedBlocks[i]->Draw(sortedBlocks[i]->faces);
-			}
-		}
+		//int size = transparent_blocks.size();
+		//if (size)
+		//{
+		//	Block* sortedBlocks = transparent_blocks.data();
+		//	// draw far faces first
+		//	Util::mergeSort<Block>(sortedBlocks, size, [](Block& item1, Block& item2) {
+		//		return getLength(item1) - getLength(item2);
+		//	});
+		//	for (int i = 0; i < size; i++)
+		//	{
+		//		sortedBlocks[i].Draw(sortedBlocks[i].faces);
+		//	}
+		//}
 	}
 
 	// draw batched terrain

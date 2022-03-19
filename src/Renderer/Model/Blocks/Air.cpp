@@ -10,7 +10,4 @@ namespace MyWorld
 
 	Air::~Air()
 	{}
-
-	void Air::Draw(const uint8_t& faces)
-	{}
 }

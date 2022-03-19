@@ -29,9 +29,9 @@ namespace MyWorld
 		static const int X_OFFSET;
 		static const int Y_OFFSET;
 		static const int Z_OFFSET;
-		static float getLength(Block* block);
+		static float getLength(Block& block);
 		// transparent blocks to be rendered
-		static std::vector<Block*> transparent_blocks;
+		static std::vector<Block> transparent_blocks;
 	public:
 		static const enum class Phase : uint8_t
 		{

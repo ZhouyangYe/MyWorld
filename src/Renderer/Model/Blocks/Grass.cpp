@@ -6,7 +6,7 @@ namespace MyWorld
 	const glm::vec2 Grass::top = { 1.0f, 1.0f };
 	const glm::vec2 Grass::bottom = { 3.0f, 1.0f };
 
-	const Renderer::PosTextureArrayVertex* Grass::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosTextureArrayVertex* Grass::getFaceVertices(Block& start, Block& end, Block::DIRECTION direction)
 	{
 		switch (direction)
 		{

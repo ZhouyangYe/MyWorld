@@ -4,7 +4,7 @@ namespace MyWorld
 {
 	const glm::vec2 Dirt::face = { 3.0f, 1.0f };
 
-	const Renderer::PosTextureArrayVertex* Dirt::getFaceVertices(Block* start, Block* end, Block::DIRECTION direction)
+	const Renderer::PosTextureArrayVertex* Dirt::getFaceVertices(Block& start, Block& end, Block::DIRECTION direction)
 	{
 		return Block::getFaceVertices(start, end, face, direction);
 	}

@@ -52,7 +52,7 @@ namespace MyWorld
 		const int index;
 		glm::vec3 coords;
 		// data of blocks
-		std::vector<Block*> blocks;
+		std::vector<Block> blocks;
 
 		template<typename T>
 		std::vector<T>& getModelData(std::vector<T>& buffer1, std::vector<T>& buffer2)
@@ -61,7 +61,7 @@ namespace MyWorld
 		}
 
 		// greedy meshing
-		void createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction);
+		void createBatchingOfFaces(Block& startBlock, Block& endBlock, Block::DIRECTION& direction);
 		void greedyMergeFaces(Block::DIRECTION&& face, const int& idx);
 		void faceCullingAndSeparating();
 		const bool has(Block::DIRECTION face, const int& idx);

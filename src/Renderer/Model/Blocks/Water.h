@@ -13,7 +13,7 @@ namespace MyWorld
 		static const uint64_t placeholder_state;
 		static void Register();
 		static void Destroy();
-		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, Block::DIRECTION direction);
+		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block& start, Block& end, Block::DIRECTION direction);
 	public:
 		const int chunk_id;
 		Water();

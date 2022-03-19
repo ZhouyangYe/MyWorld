@@ -255,12 +255,12 @@ namespace MyWorld
 
     // --- Vertex and index buffer pair type 2 --- begin
     // get vertices for faces with texture
-    Renderer::PosTextureArrayVertex* Block::getFaceVertices(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction)
+    Renderer::PosTextureArrayVertex* Block::getFaceVertices(Block& start, Block& end, const glm::vec2& texCoord, DIRECTION direction)
     {
         const float texIndex = (texCoord.y - 1) * WIDTH_NUM + texCoord.x - 1;
 
-        const glm::vec3 startCoords = start->getCoords();
-        const glm::vec3 endCoords = end->getCoords();
+        const glm::vec3 startCoords = start.getCoords();
+        const glm::vec3 endCoords = end.getCoords();
         const float xLength = endCoords.x - startCoords.x + 1;
         const float yLength = endCoords.y - startCoords.y + 1;
         const float zLength = endCoords.z - startCoords.z + 1;

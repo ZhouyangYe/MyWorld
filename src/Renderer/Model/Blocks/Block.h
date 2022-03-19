@@ -44,7 +44,7 @@ namespace MyWorld
 		// creating vbh and ibh for greedy meshing
 		static const int faceVerticesNum;
 		static const uint16_t faceIndex[6];
-		static Renderer::PosTextureArrayVertex* getFaceVertices(Block* start, Block* end, const glm::vec2& texCoord, DIRECTION direction);
+		static Renderer::PosTextureArrayVertex* getFaceVertices(Block& start, Block& end, const glm::vec2& texCoord, DIRECTION direction);
 
 		static void Register();
 		static void Destroy();

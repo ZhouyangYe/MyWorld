@@ -54,7 +54,7 @@ namespace MyWorld
 		case Key::T:
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN) Renderer::switchRenderMode();
 			break;
-		case Key::I:
+		case Key::F1:
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{
 				const bool showInfo = Renderer::toggleDebugText();

@@ -27,7 +27,7 @@ namespace MyWorld
 		return spawn_location;
 	}
 
-	// get unit blocks' faces' distance to camera(when greedy meshing is not used)
+	// get unit blocks' faces' distance to camera
 	float Chunk::getLength(Block* block)
 	{
 		const glm::vec3 blockCoords = block->getWorldCoords();
@@ -62,9 +62,8 @@ namespace MyWorld
 	// check if we should show the face of certain direction for the block
 	const bool Chunk::has(Block::DIRECTION face, const int& idx)
 	{
-		Block* block = blocks[idx];
-		Block::TYPE type = block->type;
-		glm::vec3 blockCoords = block->getCoords();
+		Block::TYPE type = blocks[idx].type;
+		glm::vec3 blockCoords = blocks[idx].getCoords();
 
 		bool isChunkBorder = false;
 		Block::TYPE adjacentType = Block::TYPE::INVALID;
@@ -73,27 +72,27 @@ namespace MyWorld
 		{
 		case Block::DIRECTION::NORTH:
 			isChunkBorder = (int)blockCoords.y == CHUNK_WIDTH - 1;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z }) : blocks[idx + Y_OFFSET]->type;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z }) : blocks[idx + Y_OFFSET].type;
 			break;
 		case Block::DIRECTION::SOUTH:
 			isChunkBorder = (int)blockCoords.y == 0;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y - 1.0f, blockCoords.z }) : blocks[idx - Y_OFFSET]->type;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y - 1.0f, blockCoords.z }) : blocks[idx - Y_OFFSET].type;
 			break;
 		case Block::DIRECTION::WEST:
 			isChunkBorder = (int)blockCoords.x == 0;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx - X_OFFSET]->type;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx - X_OFFSET].type;
 			break;
 		case Block::DIRECTION::EAST:
 			isChunkBorder = (int)blockCoords.x == CHUNK_WIDTH - 1;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx + X_OFFSET]->type;
+			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx + X_OFFSET].type;
 			break;
 		case Block::DIRECTION::TOP:
 			isChunkBorder = blockCoords.z == CHUNK_DEPTH - 1;
-			adjacentType = isChunkBorder ? Block::TYPE::AIR : blocks[idx + Z_OFFSET]->type;
+			adjacentType = isChunkBorder ? Block::TYPE::AIR : blocks[idx + Z_OFFSET].type;
 			break;
 		case Block::DIRECTION::BOTTOM:
 			isChunkBorder = blockCoords.z == 0;
-			adjacentType = isChunkBorder ? (showWorldBorder ? Block::TYPE::AIR : Block::TYPE::INVALID) : blocks[idx - Z_OFFSET]->type;
+			adjacentType = isChunkBorder ? (showWorldBorder ? Block::TYPE::AIR : Block::TYPE::INVALID) : blocks[idx - Z_OFFSET].type;
 			break;
 		default:
 			break;
@@ -120,9 +119,9 @@ namespace MyWorld
 		count++;
 	}
 
-	void Chunk::createBatchingOfFaces(Block* startBlock, Block* endBlock, Block::DIRECTION& direction)
+	void Chunk::createBatchingOfFaces(Block& startBlock, Block& endBlock, Block::DIRECTION& direction)
 	{
-		switch (startBlock->type)
+		switch (startBlock.type)
 		{
 		case Block::TYPE::DIRT:
 		{
@@ -150,8 +149,7 @@ namespace MyWorld
 	// greedy meshing for faces(main logic)
 	void Chunk::greedyMergeFaces(Block::DIRECTION&& face, const int& idx)
 	{
-		Block* block = blocks[idx];
-		const glm::vec3 blockCoords = block->getCoords();
+		const glm::vec3 blockCoords = blocks[idx].getCoords();
 
 		int xOffset = 0, yOffset = 0, zOffset = 0, xCount = 0, yCount = 0, zCount = 0, xLength = 0, yLength = 0;
 
@@ -194,16 +192,16 @@ namespace MyWorld
 			break;
 		}
 
-		block->faces |= (uint8_t)face;
+		blocks[idx].faces |= (uint8_t)face;
 		const int startingXCount = xCount - 1;
 		const int startingYCount = yCount;
 		int xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 		int hitEdge = false;
 		while (yCount < yLength && !hitEdge)
 		{
-			if (yCount == startingYCount && xCount < xLength && (blocks[xIndex]->faces & (uint8_t)face) == 0 && blocks[xIndex]->type == block->type && has(face, xIndex))
+			if (yCount == startingYCount && xCount < xLength && (blocks[xIndex].faces & (uint8_t)face) == 0 && blocks[xIndex].type == blocks[idx].type && has(face, xIndex))
 			{
-				blocks[xIndex]->faces |= (uint8_t)face;
+				blocks[xIndex].faces |= (uint8_t)face;
 				xCount++;
 				xIndex = zCount * zOffset + yCount * yOffset + xCount * xOffset;
 			}
@@ -221,9 +219,9 @@ namespace MyWorld
 				for (int i = startingXCount; i < xCount; i++)
 				{
 					const int yIndex = zCount * zOffset + i * xOffset + yCount * yOffset;
-					if ((blocks[yIndex]->faces & (uint8_t)face) == 0 && blocks[yIndex]->type == block->type && has(face, yIndex))
+					if ((blocks[yIndex].faces & (uint8_t)face) == 0 && blocks[yIndex].type == blocks[idx].type && has(face, yIndex))
 					{
-						blocks[yIndex]->faces |= (uint8_t)face;
+						blocks[yIndex].faces |= (uint8_t)face;
 					}
 					else
 					{
@@ -231,7 +229,7 @@ namespace MyWorld
 						{
 							for (int j = i - 1; j >= startingXCount; j--)
 							{
-								blocks[zCount * zOffset + j * xOffset + yCount * yOffset]->faces &= ~(uint8_t)face;
+								blocks[zCount * zOffset + j * xOffset + yCount * yOffset].faces &= ~(uint8_t)face;
 							}
 						}
 						hitEdge = true;
@@ -242,7 +240,7 @@ namespace MyWorld
 			}
 		}
 
-		createBatchingOfFaces(block, blocks[zCount * zOffset + (xCount - 1) * xOffset + (yCount - 1) * yOffset], face);
+		createBatchingOfFaces(blocks[idx], blocks[zCount * zOffset + (xCount - 1) * xOffset + (yCount - 1) * yOffset], face);
 	}
 
 	// figure out which faces to be drawn, merge faces, and put opaque and transparent blocks into different arrays
@@ -251,36 +249,35 @@ namespace MyWorld
 		// TODO: 1. frustum culling 2. do this in a separate thread
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			if (blocks[i]->type != Block::TYPE::AIR)
+			if (blocks[i].type != Block::TYPE::AIR)
 			{
-				Block* block = blocks[i];
-				Block::TYPE type = block->type;
+				Block::TYPE type = blocks[i].type;
 
 				if (has(Block::DIRECTION::BOTTOM, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::BOTTOM) == 0) greedyMergeFaces(Block::DIRECTION::BOTTOM, i);
 				}
 				if (has(Block::DIRECTION::TOP, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::TOP) == 0) greedyMergeFaces(Block::DIRECTION::TOP, i);
 				}
 
 				if (has(Block::DIRECTION::WEST, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::WEST) == 0) greedyMergeFaces(Block::DIRECTION::WEST, i);
 				}
 				if (has(Block::DIRECTION::EAST, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::EAST) == 0) greedyMergeFaces(Block::DIRECTION::EAST, i);
 				}
 
 				if (has(Block::DIRECTION::SOUTH, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::SOUTH) == 0) greedyMergeFaces(Block::DIRECTION::SOUTH, i);
 				}
 				if (has(Block::DIRECTION::NORTH, i))
 				{
-					if ((block->faces & (uint8_t)Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
+					if ((blocks[i].faces & (uint8_t)Block::DIRECTION::NORTH) == 0) greedyMergeFaces(Block::DIRECTION::NORTH, i);
 				}
 			}
 		}
@@ -354,16 +351,16 @@ namespace MyWorld
 					switch (type)
 					{
 					case Block::TYPE::AIR:
-						blocks.push_back(new Air({ x, y, z }, coords));
+						blocks.push_back(Air({ x, y, z }, coords));
 						break;
 					case Block::TYPE::WATER:
-						blocks.push_back(new Water({ x, y, z }, coords, index));
+						blocks.push_back(Water({ x, y, z }, coords, index));
 						break;
 					case Block::TYPE::DIRT:
-						blocks.push_back(new Dirt({ x, y, z }, coords));
+						blocks.push_back(Dirt({ x, y, z }, coords));
 						break;
 					case Block::TYPE::GRASS:
-						blocks.push_back(new Grass({ x, y, z }, coords));
+						blocks.push_back(Grass({ x, y, z }, coords));
 						break;
 					default:
 						break;
@@ -384,10 +381,6 @@ namespace MyWorld
 		faceCullingAndSeparating();
 
 		// remove blocks when chunk builds are done
-		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
-		{
-		  delete (*iter);
-		}
 		blocks.clear();
 	}
 
@@ -449,12 +442,6 @@ namespace MyWorld
 				continue;
 			}
 			transparent_blocks.push_back(*iter);
-		}
-
-		// destroy data(no greedy meshing)
-		for (std::vector<Block*>::iterator iter = blocks.begin(); iter != blocks.end(); ++iter)
-		{
-			delete (*iter);
 		}
 
 		// destroy data(with greedy meshing)

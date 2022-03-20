@@ -35,10 +35,7 @@ namespace MyWorld
 		this->world_coords = coords;
 	}
 
-	Wireframe::Wireframe()
-	{}
-
-	Wireframe::Wireframe(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id) : Block(Block::TYPE::WIREFRAME, coords, chunk_coords, chunk_id)
+	Wireframe::Wireframe() : Block(Block::TYPE::WIREFRAME, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f }, 0)
 	{}
 
 	Wireframe::~Wireframe()

@@ -18,7 +18,7 @@ namespace MyWorld
 		// the face of the block selected
 		static Block::DIRECTION selectedFace;
 		static const glm::vec3 NOT_SELECTED;
-		static Wireframe* wireframe;
+		static Wireframe wireframe;
 	public:
 		static void Generate();
 		static void Update();

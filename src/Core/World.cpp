@@ -9,7 +9,7 @@ namespace MyWorld
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;
-	Wireframe* World::wireframe = nullptr;
+	Wireframe World::wireframe;
 	const glm::vec3 World::NOT_SELECTED = { 0.0f, 0.0f, -1.0f };
 	glm::vec3 World::selectedPos = NOT_SELECTED;
 	Block::DIRECTION World::selectedFace = Block::DIRECTION::INVALID;
@@ -17,7 +17,6 @@ namespace MyWorld
 	void World::Generate()
 	{
 		Data::Init(infiniteWorldEnabled, renderDistance);
-		wireframe = new Wireframe(NOT_SELECTED, glm::vec3{0.0f, 0.0f, 0.0f});
 
 		World::chunk_num = renderDistance * renderDistance * 4;
 	}
@@ -191,7 +190,7 @@ namespace MyWorld
 			}
 
 			if (blockFound)
-				wireframe->setCoords(selectedPos);
+				wireframe.setCoords(selectedPos);
 			else
 			{
 				selectedPos = NOT_SELECTED;
@@ -232,13 +231,12 @@ namespace MyWorld
 		if (selectionEnabled)
 		{
 			selectBlock();
-			if (selectedPos.z != -1.0f) wireframe->Draw();
+			if (selectedPos.z != -1.0f) wireframe.Draw();
 		}
 	}
 
 	void World::Destroy()
 	{
-		delete wireframe;
 		Data::Destroy();
 	}
 }

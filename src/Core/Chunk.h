@@ -92,7 +92,7 @@ namespace MyWorld
 		bgfx::DynamicVertexBufferHandle  vbh_type2;
 		bgfx::DynamicIndexBufferHandle ibh_type2;
 
-		// custom blocks
+		// custom blocks that user placed
 		std::vector<CustomBlock> custom_blocks;
 	public:
 		Chunk();

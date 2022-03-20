@@ -5,14 +5,6 @@ namespace MyWorld
 	// numbers of chunks to be rendered based on the player
 	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 1;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
-	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
-	const int Chunk::CHUNK_DEPTH = 386;
-	const int Chunk::CHUNK_WIDTH = 16;
-	const int Chunk::TOTAL_BLOCKS = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_DEPTH;
-
-	const int Chunk::X_OFFSET = CHUNK_DEPTH;
-	const int Chunk::Y_OFFSET = CHUNK_WIDTH * CHUNK_DEPTH;
-	const int Chunk::Z_OFFSET = 1;
 
 	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
@@ -110,7 +102,8 @@ namespace MyWorld
 			batched_vertices.push_back(vertices[i]);
 		}
 
-		for (int i = 0; i < Model::faceVerticesNum + 2; i++)
+		int indexNum = Model::faceVerticesNum + 2;
+		for (int i = 0; i < indexNum; i++)
 		{
 			batched_index.push_back(Model::faceIndex[i] + count * Model::faceVerticesNum);
 		}
@@ -431,7 +424,7 @@ namespace MyWorld
 			transparent_blocks.push_back(*iter);
 		}
 
-		// destroy data(with greedy meshing)
+		// destroy data
 		// opaque
 		if (bgfx::isValid(vbh_type1)) bgfx::destroy(vbh_type1);
 		if (bgfx::isValid(ibh_type1)) bgfx::destroy(ibh_type1);

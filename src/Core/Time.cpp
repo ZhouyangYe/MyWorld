@@ -11,6 +11,11 @@ namespace MyWorld
 		return deltaTime;
 	}
 
+	const double Time::getCurrentTime()
+	{
+		return Window::getCurrentTime();
+	}
+
 	void Time::updateTime()
 	{
 		double currentTime = Window::getCurrentTime();

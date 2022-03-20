@@ -25,6 +25,7 @@ namespace MyWorld
         void log(char* stir);
         void log(glm::vec3 vec, char* text = "");
         void log(float num, char* text = "");
+        void log(double num, char* text = "");
         void log(bool boo, char* text = "");
         void log(uint8_t type, char* text = "");
 
@@ -80,6 +81,7 @@ namespace MyWorld
             merge(arr, temp, begin, middle, end, compare);
         };
 
+        // TODO: improve this
         template <typename T>
         void mergeSort(T arr[], int size, const std::function<float(T item1, T item2)>& compare)
         {

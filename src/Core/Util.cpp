@@ -33,6 +33,11 @@ namespace MyWorld
             std::cout << text << num << "\n";
         }
 
+        void log(double num, char* text)
+        {
+            std::cout << text << num << "\n";
+        }
+
         void log(bool boo, char* text)
         {
             std::cout << text << boo << "\n";

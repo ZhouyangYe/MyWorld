@@ -15,5 +15,6 @@ namespace MyWorld
 		static void updateTime();
 		static void updateFps();
 		static const int& getFps();
+		static const double getCurrentTime();
 	};
 }

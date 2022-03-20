@@ -10,11 +10,11 @@ namespace MyWorld
 	// TODO: do this in a separate thread
 	void Data::Init(bool& infiniteWorldEnabled, int& renderDistance)
 	{
-		chunks.reserve(renderDistance * renderDistance * 4);
-
 		Chunk::setChunkRenderDistanceNum(renderDistance);
 		Chunk::setShowWorldBorder(!infiniteWorldEnabled);
+
 		int index = 0;
+		chunks.reserve(renderDistance * renderDistance * 4);
 		for (int y = -renderDistance; y < renderDistance; y++)
 		{
 			for (int x = -renderDistance; x < renderDistance; x++)

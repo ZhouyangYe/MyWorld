@@ -9,6 +9,15 @@
 #include "Renderer/Model/Blocks/Water.h"
 #include "Renderer/Model/Blocks/Wireframe.h"
 
+#define CHUNK_DEPTH 386
+#define CHUNK_WIDTH 16
+#define TOTAL_BLOCKS CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_DEPTH
+
+#define X_OFFSET CHUNK_DEPTH
+#define Y_OFFSET CHUNK_WIDTH * CHUNK_DEPTH
+#define Z_OFFSET 1
+
+
 namespace MyWorld
 {
 	class Chunk
@@ -24,12 +33,6 @@ namespace MyWorld
 		static glm::vec3 spawn_location;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
-		static const int CHUNK_WIDTH;
-		static const int CHUNK_DEPTH;
-		static const int TOTAL_BLOCKS;
-		static const int X_OFFSET;
-		static const int Y_OFFSET;
-		static const int Z_OFFSET;
 		static float getLength(Block& block);
 		// transparent blocks to be rendered
 		static std::vector<Block> transparent_blocks;

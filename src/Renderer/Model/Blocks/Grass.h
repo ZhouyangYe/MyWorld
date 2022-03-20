@@ -1,5 +1,5 @@
 #pragma once
-#include "Block.h"
+#include "../Model.h"
 
 namespace MyWorld
 {
@@ -15,7 +15,7 @@ namespace MyWorld
 		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block& start, Block& end, Block::DIRECTION direction);
 	public:
 		Grass();
-		Grass(glm::vec3 coords, glm::vec2 chunk_coords);
+		Grass(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id = 0);
 		~Grass();
 	};
 }

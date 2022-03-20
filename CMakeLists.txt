@@ -52,6 +52,8 @@ add_executable(${PROJECT_NAME}
   src/Core/World.cpp
   src/Renderer/Model/Blocks/WireFrame.h
   src/Renderer/Model/Blocks/WireFrame.cpp
+  src/Renderer/Model/Model.h
+  src/Renderer/Model/Model.cpp
 )
 
 # add glfw

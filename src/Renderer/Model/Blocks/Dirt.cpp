@@ -6,7 +6,7 @@ namespace MyWorld
 
 	const Renderer::PosTextureArrayVertex* Dirt::getFaceVertices(Block& start, Block& end, Block::DIRECTION direction)
 	{
-		return Block::getFaceVertices(start, end, face, direction);
+		return Model::getFaceVertices(start, end, face, direction);
 	}
 
 	void Dirt::Register()
@@ -18,9 +18,11 @@ namespace MyWorld
 	Dirt::Dirt()
 	{}
 
-	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords) : Block(Block::TYPE::DIRT, coords, chunk_coords)
+	Dirt::Dirt(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id) : Block(Block::TYPE::DIRT, coords, chunk_coords, chunk_id)
 	{}
 
 	Dirt::~Dirt()
-	{}
+	{
+		// std::cout << "hello" << "\n";
+	}
 }

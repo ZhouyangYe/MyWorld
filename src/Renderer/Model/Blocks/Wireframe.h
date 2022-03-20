@@ -1,5 +1,5 @@
 #pragma once
-#include "Block.h"
+#include "../Model.h"
 
 namespace MyWorld
 {
@@ -17,7 +17,7 @@ namespace MyWorld
 		static void Destroy();
 	public:
 		Wireframe();
-		Wireframe(glm::vec3 coords, glm::vec2 chunk_coords);
+		Wireframe(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id = 0);
 		~Wireframe();
 		void Draw(const uint8_t& faces = faces);
 		void setCoords(const glm::vec3& coords);

@@ -1,6 +1,5 @@
 #pragma once
-#include "Block.h"
-#include "../../Camera.h"
+#include "../Model.h"
 
 namespace MyWorld
 {
@@ -15,9 +14,8 @@ namespace MyWorld
 		static void Destroy();
 		static const Renderer::PosTextureArrayVertex* getFaceVertices(Block& start, Block& end, Block::DIRECTION direction);
 	public:
-		const int chunk_id;
 		Water();
-		Water(glm::vec3 coords, glm::vec2 chunk_coords, const int chunk_id);
+		Water(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id = 0);
 		~Water();
 	};
 }

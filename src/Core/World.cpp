@@ -5,7 +5,7 @@ namespace MyWorld
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
 	bool World::infiniteWorldEnabled = false;
-	int World::renderDistance = 6;
+	int World::renderDistance = 1;
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;

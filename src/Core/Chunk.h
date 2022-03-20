@@ -2,7 +2,7 @@
 #include <FastNoiseLite.h>
 
 #include "Renderer/Camera.h"
-#include "Renderer/Model/Blocks/Block.h"
+#include "Renderer/Model/Model.h"
 #include "Renderer/Model/Blocks/Air.h"
 #include "Renderer/Model/Blocks/Grass.h"
 #include "Renderer/Model/Blocks/Dirt.h"
@@ -71,8 +71,8 @@ namespace MyWorld
 
 		// create batched terrain model (opaque blocks)
 		int batching_index_type1;
-		std::vector<Renderer::PosTextureArrayVertex> vList_type1_current;
-		std::vector<uint16_t> iList_type1_current;
+		std::vector<Renderer::PosTextureArrayVertex>* vList_type1_current;
+		std::vector<uint16_t>* iList_type1_current;
 		std::vector<Renderer::PosTextureArrayVertex> batched_model_vertices_type1_one;
 		std::vector<Renderer::PosTextureArrayVertex> batched_model_vertices_type1_two;
 		std::vector<uint16_t> batched_model_index_type1_one;
@@ -82,8 +82,8 @@ namespace MyWorld
 
 		// create batched terrain model (water)
 		int batching_index_type2;
-		std::vector<Renderer::PosTextureArrayVertex> vList_type2_current;
-		std::vector<uint16_t> iList_type2_current;
+		std::vector<Renderer::PosTextureArrayVertex>* vList_type2_current;
+		std::vector<uint16_t>* iList_type2_current;
 		std::vector<Renderer::PosTextureArrayVertex> batched_model_vertices_type2_one;
 		std::vector<Renderer::PosTextureArrayVertex> batched_model_vertices_type2_two;
 		std::vector<uint16_t> batched_model_index_type2_one;

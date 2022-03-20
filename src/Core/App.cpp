@@ -14,7 +14,7 @@ namespace MyWorld
 		Renderer::Init({ MyWorld::Window::getWindowHWND(), { windowSize.width, windowSize.height } });
 
 		// register blocks
-		Block::Register();
+		Model::Register();
 		Grass::Register();
 		Dirt::Register();
 		Water::Register();
@@ -47,7 +47,7 @@ namespace MyWorld
 	void App::Terminate()
 	{
 		// destroy blocks
-		Block::Destroy();
+		Model::Destroy();
 		Grass::Destroy();
 		Dirt::Destroy();
 		Water::Destroy();

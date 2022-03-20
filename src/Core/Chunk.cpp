@@ -35,22 +35,22 @@ namespace MyWorld
 		switch ((Block::DIRECTION)block.faces)
 		{
 		case Block::DIRECTION::NORTH:
-			center = blockCoords + Block::NorthFaceVec;
+			center = blockCoords + Model::NorthFaceVec;
 			break;
 		case Block::DIRECTION::SOUTH:
-			center = blockCoords + Block::SouthFaceVec;
+			center = blockCoords + Model::SouthFaceVec;
 			break;
 		case Block::DIRECTION::WEST:
-			center = blockCoords + Block::WestFaceVec;
+			center = blockCoords + Model::WestFaceVec;
 			break;
 		case Block::DIRECTION::EAST:
-			center = blockCoords + Block::EastFaceVec;
+			center = blockCoords + Model::EastFaceVec;
 			break;
 		case Block::DIRECTION::TOP:
-			center = blockCoords + Block::TopFaceVec;
+			center = blockCoords + Model::TopFaceVec;
 			break;
 		case Block::DIRECTION::BOTTOM:
-			center = blockCoords + Block::BottomFaceVec;
+			center = blockCoords + Model::BottomFaceVec;
 			break;
 		default:
 			break;
@@ -104,14 +104,14 @@ namespace MyWorld
 	// merge vertices of each face into one array
 	void Chunk::batchFaces(const Renderer::PosTextureArrayVertex* vertices, std::vector<Renderer::PosTextureArrayVertex>& batched_vertices, std::vector<uint16_t>& batched_index, int& count)
 	{
-		for (int i = 0; i < Block::faceVerticesNum; i++)
+		for (int i = 0; i < Model::faceVerticesNum; i++)
 		{
 			batched_vertices.push_back(vertices[i]);
 		}
 
-		for (int i = 0; i < Block::faceVerticesNum + 2; i++)
+		for (int i = 0; i < Model::faceVerticesNum + 2; i++)
 		{
-			batched_index.push_back(Block::faceIndex[i] + count * Block::faceVerticesNum);
+			batched_index.push_back(Model::faceIndex[i] + count * Model::faceVerticesNum);
 		}
 
 		delete[] vertices;
@@ -126,19 +126,19 @@ namespace MyWorld
 		case Block::TYPE::DIRT:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Dirt::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
+			batchFaces(vertices, *vList_type1_current, *iList_type1_current, batching_index_type1);
 			break;
 		}
 		case Block::TYPE::GRASS:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Grass::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, vList_type1_current, iList_type1_current, batching_index_type1);
+			batchFaces(vertices, *vList_type1_current, *iList_type1_current, batching_index_type1);
 			break;
 		}
 		case Block::TYPE::WATER:
 		{
 			const Renderer::PosTextureArrayVertex* vertices = Water::getFaceVertices(startBlock, endBlock, direction);
-			batchFaces(vertices, vList_type2_current, iList_type2_current, batching_index_type2);
+			batchFaces(vertices, *vList_type2_current, *iList_type2_current, batching_index_type2);
 			break;
 		}
 		default:
@@ -317,22 +317,24 @@ namespace MyWorld
 
 		// create model buffer for the chunk terrain
 		// opaque
-		if (vList_type1_current.size())
+		if ((*vList_type1_current).size())
 		{
-		  vbh_type1 = bgfx::createDynamicVertexBuffer(bgfx::makeRef(vList_type1_current.data(), vList_type1_current.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
-		  ibh_type1 = bgfx::createDynamicIndexBuffer(bgfx::makeRef(iList_type1_current.data(), iList_type1_current.size() * sizeof(uint16_t)));
+		  vbh_type1 = bgfx::createDynamicVertexBuffer(bgfx::makeRef((*vList_type1_current).data(), (*vList_type1_current).size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		  ibh_type1 = bgfx::createDynamicIndexBuffer(bgfx::makeRef((*iList_type1_current).data(), (*iList_type1_current).size() * sizeof(uint16_t)));
 		}
 
 		// water
-		if (vList_type2_current.size())
+		if ((*vList_type2_current).size())
 		{
-		  vbh_type2 = bgfx::createDynamicVertexBuffer(bgfx::makeRef(vList_type2_current.data(), vList_type2_current.size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
-		  ibh_type2 = bgfx::createDynamicIndexBuffer(bgfx::makeRef(iList_type2_current.data(), iList_type2_current.size() * sizeof(uint16_t)));
+		  vbh_type2 = bgfx::createDynamicVertexBuffer(bgfx::makeRef((*vList_type2_current).data(), (*vList_type2_current).size() * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		  ibh_type2 = bgfx::createDynamicIndexBuffer(bgfx::makeRef((*iList_type2_current).data(), (*iList_type2_current).size() * sizeof(uint16_t)));
 		}
 	}
 
 	void Chunk::GenBlocks()
 	{
+		blocks.reserve(CHUNK_DEPTH * CHUNK_WIDTH * CHUNK_WIDTH);
+
 		// create all blocks in the chunk
 		for (int y = 0; y < CHUNK_WIDTH; y++)
 		{
@@ -351,16 +353,16 @@ namespace MyWorld
 					switch (type)
 					{
 					case Block::TYPE::AIR:
-						blocks.push_back(Air({ x, y, z }, coords));
+						blocks.emplace_back(Air({ x, y, z }, coords));
 						break;
 					case Block::TYPE::WATER:
-						blocks.push_back(Water({ x, y, z }, coords, index));
+						blocks.emplace_back(Water({ x, y, z }, coords));
 						break;
 					case Block::TYPE::DIRT:
-						blocks.push_back(Dirt({ x, y, z }, coords));
+						blocks.emplace_back(Dirt({ x, y, z }, coords));
 						break;
 					case Block::TYPE::GRASS:
-						blocks.push_back(Grass({ x, y, z }, coords));
+						blocks.emplace_back(Grass({ x, y, z }, coords));
 						break;
 					default:
 						break;
@@ -373,10 +375,10 @@ namespace MyWorld
 	void Chunk::Build()
 	{
 		// switch working data to be calculated
-		vList_type1_current = getModelData(batched_model_vertices_type1_one, batched_model_vertices_type1_two);
-		iList_type1_current = getModelData(batched_model_index_type1_one, batched_model_index_type1_two);
-		vList_type2_current = getModelData(batched_model_vertices_type2_one, batched_model_vertices_type2_two);
-		iList_type2_current = getModelData(batched_model_index_type2_one, batched_model_index_type2_two);
+		vList_type1_current = &getModelData(batched_model_vertices_type1_one, batched_model_vertices_type1_two);
+		iList_type1_current = &getModelData(batched_model_index_type1_one, batched_model_index_type1_two);
+		vList_type2_current = &getModelData(batched_model_vertices_type2_one, batched_model_vertices_type2_two);
+		iList_type2_current = &getModelData(batched_model_index_type2_one, batched_model_index_type2_two);
 
 		faceCullingAndSeparating();
 
@@ -479,15 +481,15 @@ namespace MyWorld
 		{
 		case Phase::OPAQUE_P:
 			// draw opaque terrain
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Block::default_state, coords);
+			Model::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type1, ibh_type1, Renderer::texture_array_program, Model::default_state, coords);
 			break;
 		case Phase::WATER_PLACEHOLDER_P:
 			// draw water placeholder(depth buffer)
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
+			Model::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::placeholder_state, coords);
 			break;
 		case Phase::WATER_P:
 			// draw water
-			Block::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
+			Model::DrawTerrain(Tools::DEFAULT_VIEW_ID, vbh_type2, ibh_type2, Renderer::water_program, Water::state, coords);
 			break;
 		default:
 			break;

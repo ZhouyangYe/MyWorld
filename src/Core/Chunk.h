@@ -26,6 +26,7 @@ namespace MyWorld
 		static FastNoiseLite noise;
 		static const int CHUNK_WIDTH;
 		static const int CHUNK_DEPTH;
+		static const int TOTAL_BLOCKS;
 		static const int X_OFFSET;
 		static const int Y_OFFSET;
 		static const int Z_OFFSET;

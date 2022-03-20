@@ -29,13 +29,4 @@ namespace MyWorld
 
 	void Grass::Destroy()
 	{}
-
-	Grass::Grass()
-	{}
-
-	Grass::Grass(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id) : Block(Block::TYPE::GRASS, coords, chunk_coords, chunk_id)
-	{}
-
-	Grass::~Grass()
-	{}
 }

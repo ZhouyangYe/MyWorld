@@ -16,13 +16,4 @@ namespace MyWorld
 
 	void Water::Destroy()
 	{}
-
-	Water::Water()
-	{}
-
-	Water::Water(glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id) : Block(Block::TYPE::WATER, coords, chunk_coords, chunk_id)
-	{}
-
-	Water::~Water()
-	{}
 }

@@ -15,7 +15,10 @@ namespace MyWorld
     Block::Block() : coords({ 0.0f, 0.0f, 0.0f }), type(TYPE::INVALID), chunk_id(0)
     {}
 
-    Block::Block(Block::TYPE type, glm::vec3 &coords, glm::vec2 &chunk_coords, int& chunk_id) : coords(coords), world_coords(coords + glm::vec3(chunk_coords, 0)), type(type), chunk_id(chunk_id)
+    Block::Block(Block::TYPE type, glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id) : coords(coords), world_coords(coords + glm::vec3(chunk_coords, 0)), type(type), chunk_id(chunk_id)
+    {}
+
+    Block::~Block()
     {}
 
 	void Block::Draw(Texture* texture, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state)

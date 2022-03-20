@@ -32,7 +32,8 @@ namespace MyWorld
 		// indicates the faces to be drawn for the block
 		uint8_t faces = 0;
 		Block();
-		Block(Block::TYPE type, glm::vec3& coords, glm::vec2& chunk_coords, int& chunk_id);
+		Block(Block::TYPE type, glm::vec3 coords, glm::vec2 chunk_coords, int chunk_id = 0);
+		~Block();
 		const glm::vec3& getCoords();
 		const glm::vec3& getWorldCoords();
 	protected:

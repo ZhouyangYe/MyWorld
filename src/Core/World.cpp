@@ -5,7 +5,7 @@ namespace MyWorld
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
 	bool World::infiniteWorldEnabled = false;
-	int World::renderDistance = 1;
+	int World::renderDistance = 2;
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;
@@ -214,17 +214,17 @@ namespace MyWorld
 	{
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
+		  Data::chunks[i].Draw(Chunk::Phase::OPAQUE_P);
 		}
 
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
+		  Data::chunks[i].Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
 		}
 
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i]->Draw(Chunk::Phase::WATER_P);
+		  Data::chunks[i].Draw(Chunk::Phase::WATER_P);
 		}
 
 		Chunk::DrawTransparent();

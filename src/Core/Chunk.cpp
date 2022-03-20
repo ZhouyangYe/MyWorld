@@ -8,6 +8,7 @@ namespace MyWorld
 	// CHUNK_DEPTH blocks high and CHUNK_WIDTH blocks wide
 	const int Chunk::CHUNK_DEPTH = 386;
 	const int Chunk::CHUNK_WIDTH = 16;
+	const int Chunk::TOTAL_BLOCKS = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_DEPTH;
 
 	const int Chunk::X_OFFSET = CHUNK_DEPTH;
 	const int Chunk::Y_OFFSET = CHUNK_WIDTH * CHUNK_DEPTH;
@@ -333,7 +334,7 @@ namespace MyWorld
 
 	void Chunk::GenBlocks()
 	{
-		blocks.reserve(CHUNK_DEPTH * CHUNK_WIDTH * CHUNK_WIDTH);
+		blocks.reserve(TOTAL_BLOCKS);
 
 		// create all blocks in the chunk
 		for (int y = 0; y < CHUNK_WIDTH; y++)
@@ -350,23 +351,7 @@ namespace MyWorld
 						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 2.0f };
 					}
 
-					switch (type)
-					{
-					case Block::TYPE::AIR:
-						blocks.emplace_back(Air({ x, y, z }, coords));
-						break;
-					case Block::TYPE::WATER:
-						blocks.emplace_back(Water({ x, y, z }, coords));
-						break;
-					case Block::TYPE::DIRT:
-						blocks.emplace_back(Dirt({ x, y, z }, coords));
-						break;
-					case Block::TYPE::GRASS:
-						blocks.emplace_back(Grass({ x, y, z }, coords));
-						break;
-					default:
-						break;
-					}
+					blocks.emplace_back(type, glm::vec3{ x, y, z }, coords);
 				}
 			}
 		}

@@ -3,6 +3,7 @@
 #define WALK_SPEED 2.0f
 #define SPRINT_SPEED 3.0f
 #define CRAWL_SPEED 1.0f
+#define MAX_DISTANCE 5.0f
 
 namespace MyWorld
 {
@@ -11,6 +12,8 @@ namespace MyWorld
 	glm::mat4 Camera::view;
 	glm::mat4 Camera::proj;
 	glm::vec3 Camera::eye;
+	float Camera::zoom;
+	glm::vec3 Camera::offset;
 	glm::vec3 Camera::forward = { 1.0f, 0.0f, 0.0f };
 	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
 	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));
@@ -24,6 +27,29 @@ namespace MyWorld
 
 	bool Camera::isCameraMoved = false;
 	bool Camera::isCameraRotated = false;
+
+	void Camera::zoomIn()
+	{
+		if (zoom == 0.0f) return;
+		zoom -= 0.3;
+		if (zoom < 0) zoom = 0;
+		offset = zoom * forward;
+		view = glm::lookAt(eye - offset, eye + forward, up);
+	}
+
+	void Camera::zoomOut()
+	{
+		if (zoom == MAX_DISTANCE) return;
+		zoom += 0.3;
+		if (zoom > MAX_DISTANCE) zoom = MAX_DISTANCE;
+		offset = zoom * forward;
+		view = glm::lookAt(eye - offset, eye + forward, up);
+	}
+
+	void Camera::setCamPos(glm::vec3& pos)
+	{
+		eye = pos;
+	}
 
 	const glm::vec3& Camera::getCameraCoords()
 	{
@@ -84,25 +110,25 @@ namespace MyWorld
 	void Camera::MoveUp()
 	{
 		eye.z += WALK_SPEED * Time::getDeltaTime();
-   		view = glm::lookAt(eye, eye + forward, up);
+   		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::MoveDown()
 	{
 		eye.z += -WALK_SPEED * Time::getDeltaTime();
-		view = glm::lookAt(eye, eye + forward, up);
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::MoveLeft()
 	{
 		eye += -right * WALK_SPEED * (float)Time::getDeltaTime();
-		view = glm::lookAt(eye, eye + forward, up);
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::MoveRight()
 	{
 		eye += right * WALK_SPEED * (float)Time::getDeltaTime();
-		view = glm::lookAt(eye, eye + forward, up);
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::MoveForward()
@@ -110,7 +136,7 @@ namespace MyWorld
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
 		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
 		eye += glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
-		view = glm::lookAt(eye, eye + forward, up);
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::MoveBackward()
@@ -118,7 +144,7 @@ namespace MyWorld
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
 		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
 		eye += -glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
-		view = glm::lookAt(eye, eye + forward, up);
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	void Camera::Rotate(glm::vec2 delta)
@@ -135,6 +161,8 @@ namespace MyWorld
 
 		up = glm::normalize(glm::cross(right, forward));
 
-		view = glm::lookAt(eye, eye + forward, up);
+		offset = zoom * forward;
+
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 }

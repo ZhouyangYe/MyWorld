@@ -44,18 +44,18 @@ namespace MyWorld
 			break;
 		case Key::H:
 			if (event.action != KeyPressEvent::ACTION::KEY_DOWN)
-				return;
+				break;
 			if (Cursor::hideCursor)
 				Cursor::show();
 			else
 				Cursor::hide();
 			Cursor::hideCursor = !Cursor::hideCursor;
 			break;
-		case Key::T:
+		case Key::T: // show
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN) Renderer::switchRenderMode();
 			break;
 		case Key::F1:
-			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
+			if (event.action == KeyPressEvent::ACTION::KEY_UP)
 			{
 				const bool showInfo = Renderer::toggleDebugText();
 				Info::setVisible(showInfo);
@@ -73,5 +73,13 @@ namespace MyWorld
 	{
 		Cursor::updateCoord({ event.xPos, event.yPos });
 		Camera::Rotate(Cursor::getDeltaCoord());
+	}
+
+	void handleMouseWheel(MouseWheelEvent& event)
+	{
+		if (event.yOffset < 0)
+			Camera::zoomOut();
+		else
+			Camera::zoomIn();
 	}
 }

@@ -14,4 +14,5 @@ namespace MyWorld
 {
 	void handleKeyPress(KeyPressEvent& event);
 	void handleMouseMove(MouseMoveEvent& event);
+	void handleMouseWheel(MouseWheelEvent& event);
 }

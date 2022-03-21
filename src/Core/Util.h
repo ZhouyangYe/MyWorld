@@ -7,6 +7,7 @@
 #include <functional>
 #include <stdio.h>
 #include <math.h>
+#include <algorithm>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -85,10 +86,8 @@ namespace MyWorld
         template <typename T>
         void mergeSort(T arr[], int size, const std::function<float(T item1, T item2)>& compare)
         {
-            T* temp = new T[size];
+            T temp[size];
             mergeSortFunc<T>(arr, temp, 0, size - 1, compare);
-            delete[] temp;
-            temp = nullptr;
         };
     }
 }

@@ -5,18 +5,19 @@ namespace MyWorld
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
 	bool World::infiniteWorldEnabled = false;
-	int World::renderDistance = 8;
+	int World::renderDistance = 1;
 	int World::chunk_num;
 	float World::distance_blocks = 5.0f;
 	float World::distance_blocks_square = distance_blocks * distance_blocks;
 	Wireframe World::wireframe;
+	PlayerObj World::player;
 	const glm::vec3 World::NOT_SELECTED = { 0.0f, 0.0f, -1.0f };
 	glm::vec3 World::selectedPos = NOT_SELECTED;
 	Block::DIRECTION World::selectedFace = Block::DIRECTION::INVALID;
 
 	void World::Generate()
 	{
-		Data::Init(infiniteWorldEnabled, renderDistance);
+		Data::Init({ infiniteWorldEnabled, renderDistance });
 
 		World::chunk_num = renderDistance * renderDistance * 4;
 	}
@@ -213,17 +214,17 @@ namespace MyWorld
 	{
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i].Draw(Chunk::Phase::OPAQUE_P);
+		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
 		}
 
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i].Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
+		  Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
 		}
 
 		for (int i = 0; i < chunk_num; i++)
 		{
-		  Data::chunks[i].Draw(Chunk::Phase::WATER_P);
+		  Data::chunks[i]->Draw(Chunk::Phase::WATER_P);
 		}
 
 		Chunk::DrawTransparent();
@@ -233,6 +234,8 @@ namespace MyWorld
 			selectBlock();
 			if (selectedPos.z != -1.0f) wireframe.Draw();
 		}
+
+		player.Update(collisionEnabled);
 	}
 
 	void World::Destroy()

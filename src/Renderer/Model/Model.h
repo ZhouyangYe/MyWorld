@@ -32,6 +32,8 @@ namespace MyWorld
 		static void Register();
 		static void Destroy();
 		// draw batched trangles created by greedy meshing
+		static void DrawStatic(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords, glm::vec3& scale);
+		// draw batched trangles created by greedy meshing
 		static void DrawTerrain(bgfx::ViewId viewId, bgfx::DynamicVertexBufferHandle& vbh, const bgfx::DynamicIndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords);
 		// used for getting vertices for each block
 		static Renderer::PosColorVertex* getVerticesType0(const uint32_t color);

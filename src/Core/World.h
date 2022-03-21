@@ -1,5 +1,7 @@
 #pragma once
 #include "Data.h"
+#include "Objects/PlayerObj.h"
+#include "Renderer/Model/Characters/Player.h"
 
 namespace MyWorld
 {
@@ -19,6 +21,7 @@ namespace MyWorld
 		static Block::DIRECTION selectedFace;
 		static const glm::vec3 NOT_SELECTED;
 		static Wireframe wireframe;
+		static PlayerObj player;
 	public:
 		static void Generate();
 		static void Update();

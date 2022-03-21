@@ -341,7 +341,7 @@ namespace MyWorld
 					// set spawn location
 					if (spawn_location.z == -1.0f && type == Block::TYPE::AIR && coords.x == 0.0f && coords.y == 0.0f)
 					{
-						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 2.0f };
+						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 1.8f };
 					}
 
 					blocks.emplace_back(type, glm::vec3{ x, y, z }, coords);
@@ -362,6 +362,8 @@ namespace MyWorld
 
 		// remove blocks when chunk builds are done
 		std::vector<Block>().swap(blocks);
+		batching_index_type1 = 0;
+		batching_index_type2 = 0;
 	}
 
 	// TODO: implement more interesting terrain

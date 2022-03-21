@@ -9,9 +9,9 @@ namespace MyWorld
 	const uint8_t Wireframe::faces = 
 		(uint8_t)Block::DIRECTION::NORTH |
 		(uint8_t)Block::DIRECTION::SOUTH |
-		(uint8_t)Block::DIRECTION::WEST |
-		(uint8_t)Block::DIRECTION::EAST |
-		(uint8_t)Block::DIRECTION::TOP |
+		(uint8_t)Block::DIRECTION::WEST  |
+		(uint8_t)Block::DIRECTION::EAST  |
+		(uint8_t)Block::DIRECTION::TOP   |
 		(uint8_t)Block::DIRECTION::BOTTOM;
 
 	void Wireframe::Register()

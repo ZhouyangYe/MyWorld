@@ -16,9 +16,7 @@ namespace MyWorld {
 		const ACTION action;
 		MousePressEvent(Event::TYPE type, MouseCode mouseCode, ACTION action)
 			: Event(type), mouseCode(mouseCode), action(action)
-		{
-
-		};
+		{};
 	};
 
 	class MouseWheelEvent : public Event
@@ -27,9 +25,7 @@ namespace MyWorld {
 		const float xOffset, yOffset;
 		MouseWheelEvent(Event::TYPE type, float xOffset, float yOffset)
 			: Event(type), xOffset(xOffset), yOffset(yOffset)
-		{
-
-		};
+		{};
 	};
 
 	class MouseMoveEvent : public Event
@@ -39,9 +35,7 @@ namespace MyWorld {
 		const float yPos;
 		MouseMoveEvent(Event::TYPE type, const float xPos, const float yPos)
 			: Event(type), xPos(xPos), yPos(yPos)
-		{
-
-		};
+		{};
 	};
 }
 

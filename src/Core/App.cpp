@@ -19,6 +19,7 @@ namespace MyWorld
 		Dirt::Register();
 		Water::Register();
 		Wireframe::Register();
+		HitBox::Register();
 
 		// initialize chunk
 		Chunk::Init();
@@ -27,6 +28,7 @@ namespace MyWorld
 		World::Generate();
 
 		Camera::Init({ { windowSize.width, windowSize.height }, (float)World::getRenderDistance() * 16, Chunk::getSpawnLocation() });
+		Player::Register();
 
 		Window::setEventCallback([](Event& event)
 			{
@@ -37,6 +39,9 @@ namespace MyWorld
 					break;
 				case Event::TYPE::MOUSE_MOVE:
 					handleMouseMove((MouseMoveEvent&) event);
+					break;
+				case Event::TYPE::MOUSE_WHEEL:
+					handleMouseWheel((MouseWheelEvent&) event);
 					break;
 				default:
 					break;
@@ -52,6 +57,7 @@ namespace MyWorld
 		Dirt::Destroy();
 		Water::Destroy();
 		Wireframe::Destroy();
+		HitBox::Destroy();
 
 		// destroy chunk
 		Chunk::Destroy();
@@ -60,6 +66,7 @@ namespace MyWorld
 		World::Destroy();
 		Renderer::Terminate();
 		Camera::Terminate();
+		Player::Destroy();
 
 		Window::Terminate();
 	}

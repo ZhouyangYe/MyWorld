@@ -202,6 +202,28 @@ namespace MyWorld
     // create cache for static index buffer
     void Model::createIbh(const uint8_t& idx)
     {
+        if (idx == 0)
+        {
+            uint16_t* cubeTriList = new uint16_t[24]
+            {
+                0, 1,
+                0, 3,
+                0, 5,
+                4, 5,
+                4, 3,
+                4, 7,
+                6, 7,
+                6, 5,
+                6, 1,
+                2, 1,
+                2, 7,
+                2, 3
+            };
+            triListPointers[idx] = cubeTriList;
+            ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, 24 * sizeof(uint16_t)));
+            return;
+        }
+
         uint8_t counter = 0;
         for (uint8_t i = 0; i < 6; i++)
         {
@@ -247,8 +269,6 @@ namespace MyWorld
 
     const bgfx::IndexBufferHandle& Model::getIbh(const uint8_t& idx)
     {
-        if (idx == 0) return ibh[idx];
-
         if (ibh[idx].idx == bgfx::kInvalidHandle) createIbh(idx);
         return ibh[idx];
     }
@@ -331,6 +351,29 @@ namespace MyWorld
         }
         delete blockTexture;
         blockTexture = nullptr;
+    }
+
+    void Model::DrawStatic(bgfx::ViewId viewId, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords, glm::vec3& scale)
+    {
+        if (!bgfx::isValid(ibh) || !bgfx::isValid(vbh)) return;
+
+        glm::mat4 mtx(1.0f);
+        mtx = glm::translate(mtx, coords);
+        mtx = glm::scale(mtx, scale);
+
+        // Set model matrix for rendering.
+        bgfx::setTransform(&mtx);
+        bgfx::setViewMode(viewId, bgfx::ViewMode::Sequential);
+
+        // Set vertex and index buffer.
+        bgfx::setVertexBuffer(0, vbh);
+        bgfx::setIndexBuffer(ibh);
+
+        // Set render states.
+        bgfx::setState(state);
+
+        // Submit primitive for rendering to view 0.
+        bgfx::submit(viewId, program);
     }
 
     void Model::DrawTerrain(bgfx::ViewId viewId, bgfx::DynamicVertexBufferHandle& vbh, const bgfx::DynamicIndexBufferHandle& ibh, bgfx::ProgramHandle& program, uint64_t state, glm::vec3& coords)

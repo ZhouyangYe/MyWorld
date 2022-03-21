@@ -15,6 +15,8 @@ namespace MyWorld
 		static glm::mat4 view;
 		static glm::mat4 proj;
 		static glm::vec3 eye;
+		static float zoom;
+		static glm::vec3 offset;
 		static glm::vec3 forward;
 		static glm::vec3 up;
 		static glm::vec3 right;
@@ -49,5 +51,8 @@ namespace MyWorld
 		static void Rotate(glm::vec2 delta);
 		static const bool& cameraMoved();
 		static const bool& cameraRotated();
+		static void zoomIn();
+		static void zoomOut();
+		static void setCamPos(glm::vec3& pos);
 	};
 }

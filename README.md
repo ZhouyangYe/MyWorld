@@ -5,4 +5,4 @@ TODO:
 	2. collision
 	3. biome
 	4. animal generation
-	4. shading
+	5. shading

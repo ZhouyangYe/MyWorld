@@ -15,22 +15,24 @@ namespace MyWorld
 
 	const glm::vec3 HitBox::getCollisionOffset(HitBox& box)
 	{
+		AABB aabb_s = getAABB();
+		AABB aabb_t = box.getAABB();
 		if (
-			aabb.min.x < box.aabb.max.x &&
-			aabb.min.y < box.aabb.max.y &&
-			aabb.min.z < box.aabb.max.z &&
-			aabb.max.x > box.aabb.min.x &&
-			aabb.max.y > box.aabb.min.y &&
-			aabb.max.z > box.aabb.min.z
+			aabb_s.min.x < aabb_t.max.x &&
+			aabb_s.min.y < aabb_t.max.y &&
+			aabb_s.min.z < aabb_t.max.z &&
+			aabb_s.max.x > aabb_t.min.x &&
+			aabb_s.max.y > aabb_t.min.y &&
+			aabb_s.max.z > aabb_t.min.z
 		)
 		{
 			float
-				x1 = aabb.max.x - box.aabb.min.x,
-				x2 = box.aabb.max.x - aabb.min.x,
-				y1 = aabb.max.y - box.aabb.min.y,
-				y2 = box.aabb.max.y - aabb.min.y,
-				z1 = aabb.max.z - box.aabb.min.z,
-				z2 = box.aabb.max.z - aabb.min.z;
+				x1 = aabb_s.max.x - aabb_t.min.x,
+				x2 = aabb_t.max.x - aabb_s.min.x,
+				y1 = aabb_s.max.y - aabb_t.min.y,
+				y2 = aabb_t.max.y - aabb_s.min.y,
+				z1 = aabb_s.max.z - aabb_t.min.z,
+				z2 = aabb_t.max.z - aabb_s.min.z;
 			return glm::vec3{
 				x1 < x2 ? -x1 : x2,
 				y1 < y2 ? -y1 : y2,

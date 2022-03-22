@@ -49,6 +49,7 @@ namespace MyWorld
 	void Camera::setCamPos(glm::vec3& pos)
 	{
 		eye = pos;
+		view = glm::lookAt(eye - offset, eye + forward, up);
 	}
 
 	const glm::vec3& Camera::getCameraCoords()
@@ -97,14 +98,14 @@ namespace MyWorld
 			MoveForward();
 		if (moveBackward)
 			MoveBackward();
-
-		bgfx::setViewTransform(Tools::DEFAULT_VIEW_ID, &view, &proj);
 	}
 
 	void Camera::End()
 	{
 		isCameraMoved = false;
 		isCameraRotated = false;
+
+		bgfx::setViewTransform(Tools::DEFAULT_VIEW_ID, &view, &proj);
 	}
 
 	void Camera::MoveUp()

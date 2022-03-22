@@ -9,6 +9,7 @@ namespace MyWorld
 	protected:
 		static bool showHitBox;
 		HitBox hitBox;
+		bool handleTerrainCollision();
 	public:
 		static void setShowHitBox(bool&& show);
 		static const bool& getShowHitBox();

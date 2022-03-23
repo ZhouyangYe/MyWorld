@@ -18,12 +18,12 @@ namespace MyWorld
 		AABB aabb_s = getAABB();
 		AABB aabb_t = box.getAABB();
 		if (
-			aabb_s.min.x < aabb_t.max.x &&
-			aabb_s.min.y < aabb_t.max.y &&
-			aabb_s.min.z < aabb_t.max.z &&
-			aabb_s.max.x > aabb_t.min.x &&
-			aabb_s.max.y > aabb_t.min.y &&
-			aabb_s.max.z > aabb_t.min.z
+			aabb_t.max.x - aabb_s.min.x > float_precision &&
+			aabb_t.max.y - aabb_s.min.y > float_precision &&
+			aabb_t.max.z - aabb_s.min.z > float_precision &&
+			aabb_s.max.x - aabb_t.min.x > float_precision &&
+			aabb_s.max.y - aabb_t.min.y > float_precision &&
+			aabb_s.max.z - aabb_t.min.z > float_precision
 		)
 		{
 			float

@@ -30,6 +30,9 @@ namespace MyWorld
         void log(bool boo, char* text = "");
         void log(uint8_t type, char* text = "");
 
+        float getPrecition(float& num, int&& pre = 5);
+        float getPrecition(float&& num, int&& pre = 5);
+
         template <typename T>
         void merge(T arr[], T temp[], int begin, int middle, int end, const std::function<float(T item1, T item2)>& compare)
         {

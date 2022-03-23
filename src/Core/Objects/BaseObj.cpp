@@ -16,45 +16,103 @@ namespace MyWorld
 
 	bool BaseObj::handleTerrainCollision()
 	{
-		const glm::vec3 pos = hitBox.getCoords();
-		const float endX = pos.x + hitBox.width;
-		const float endY = pos.y + hitBox.width;
-		const float endZ = pos.z + hitBox.height;
+		glm::vec3 pos = hitBox.getCoords();
 		glm::vec3 offsetCoords = glm::vec3{ 0.0f, 0.0f, 0.0f };
-		for (float x = floor(pos.x); x < endX; x++)
+		const glm::vec3 movement = pos - prevPos;
+
+		if (movement.x != 0.0f)
 		{
-			for (float y = floor(pos.y); y < endY; y++)
+			bool done = false;
+			glm::vec3 coords{ movement.x + prevPos.x, prevPos.y, prevPos.z };
+			const float
+				startX = floor(coords.x),
+				startY = floor(coords.y),
+				startZ = floor(coords.z),
+				endX = coords.x + hitBox.width,
+				endY = coords.y + hitBox.width,
+				endZ = coords.z + hitBox.height;
+			const float x = movement.x > 0.0f ? floor(endX) : startX;
+			for (float y = startY; y < endY && !done; y++)
 			{
-				for (float z = floor(pos.z); z < endZ; z++)
+				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					// TODO: skip the inner blocks and only check the surface blocks?
-					if (Chunk::getType(blockCoords) == Block::TYPE::AIR)
-						continue;
+					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
+					hitBox.setPos(coords);
 					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
-					const float
-						offsetX = abs(offsets.x),
-						offsetY = abs(offsets.y),
-						offsetZ = abs(offsets.z);
-					glm::vec3 offset = glm::vec3{
-						offsetX < offsetY && offsetX < offsetZ ? offsets.x : 0.0f,
-						offsetY < offsetX && offsetY < offsetZ ? offsets.y : 0.0f,
-						offsetZ < offsetX && offsetZ < offsetY ? offsets.z : 0.0f
-					};
-					offsetCoords = glm::vec3{
-						abs(offsetCoords.x) > abs(offset.x) ? offsetCoords.x : offset.x,
-						abs(offsetCoords.y) > abs(offset.y) ? offsetCoords.y : offset.y,
-						abs(offsetCoords.z) > abs(offset.z) ? offsetCoords.z : offset.z
-					};
+					offsetCoords.x = offsets.x;
+					done = true;
 				}
 			}
 		}
 
-		if (offsetCoords.x == 0.0f && offsetCoords.y == 0.0f && offsetCoords.z == 0.0f) return false;
+		if (movement.y != 0.0f)
+		{
+			bool done = false;
+			glm::vec3 coords{ prevPos.x, movement.y + prevPos.y, prevPos.z };
+			const float
+				startX = floor(coords.x),
+				startY = floor(coords.y),
+				startZ = floor(coords.z),
+				endX = coords.x + hitBox.width,
+				endY = coords.y + hitBox.width,
+				endZ = coords.z + hitBox.height;
+			const float y = movement.y > 0.0f ? floor(endY) : startY;
+			for (float x = startX; x < endX && !done; x++)
+			{
+				for (float z = startZ; z < endZ && !done; z++)
+				{
+					glm::vec3 blockCoords{ x, y, z };
+					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
+
+					HitBox::terrainHitBox.setPos(blockCoords);
+					hitBox.setPos(coords);
+					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
+					offsetCoords.y = offsets.y;
+					done = true;
+				}
+			}
+		}
+
+		if (movement.z != 0.0f)
+		{
+			bool done = false;
+			glm::vec3 coords{ prevPos.x, prevPos.y, movement.z + prevPos.z };
+			const float
+				startX = floor(coords.x),
+				startY = floor(coords.y),
+				startZ = floor(coords.z),
+				endX = coords.x + hitBox.width,
+				endY = coords.y + hitBox.width,
+				endZ = coords.z + hitBox.height;
+			const float z = movement.z > 0.0f ? floor(endZ) : startZ;
+			for (float x = startX; x < endX && !done; x++)
+			{
+				for (float y = startY; y < endY && !done; y++)
+				{
+					glm::vec3 blockCoords{ x, y, z };
+					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
+
+					HitBox::terrainHitBox.setPos(blockCoords);
+					hitBox.setPos(coords);
+					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
+					offsetCoords.z = offsets.z;
+					done = true;
+				}
+			}
+		}
+
+		if (offsetCoords.x == 0.0f && offsetCoords.y == 0.0f && offsetCoords.z == 0.0f)
+		{
+			hitBox.setPos(pos);
+			prevPos = pos;
+			return false;
+		}
 
 		hitBox.setPos(pos + offsetCoords);
+		prevPos = hitBox.getCoords();
 		return true;
 	}
 }

@@ -47,5 +47,17 @@ namespace MyWorld
         {
             std::cout << text << std::bitset<8>(type) << "\n";
         }
+
+        float getPrecition(float& num, int&& pre)
+        {
+            int precision = pow(10, pre);
+            return floor(num * precision) / precision;
+        }
+
+        float getPrecition(float&& num, int&& pre)
+        {
+            int precision = pow(10, pre);
+            return floor(num * precision) / precision;
+        }
     }
 }

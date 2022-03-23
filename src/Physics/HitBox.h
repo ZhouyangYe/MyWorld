@@ -2,6 +2,8 @@
 #include "../Core/Util.h"
 #include "../Renderer/Model/Model.h"
 
+#define float_precision 0.00001
+
 namespace MyWorld
 {
 	class HitBox

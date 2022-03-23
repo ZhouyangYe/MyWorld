@@ -9,7 +9,7 @@ namespace MyWorld
 	{
 		// hook up with camera
 		hitBox.setPos(Camera::getCameraCoords() - posVec);
-		if (collisionEnabled && handleTerrainCollision())
+		if (collisionEnabled && Camera::cameraMoved() && handleTerrainCollision())
 		{
 			// if there is a collision, correct the camera pos
 			Camera::setCamPos(hitBox.getCoords() + posVec);

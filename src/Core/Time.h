@@ -9,6 +9,8 @@ namespace MyWorld
 	private:
 		static double deltaTime;
 		static double prevTime;
+		static double fpsDeltaTime;
+		static double fpsPrevTime;
 		static int fps;
 	public:
 		static const double& getDeltaTime();

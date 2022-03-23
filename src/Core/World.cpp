@@ -217,6 +217,8 @@ namespace MyWorld
 		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
 		}
 
+		player.Update(collisionEnabled);
+
 		for (int i = 0; i < chunk_num; i++)
 		{
 		  Data::chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
@@ -234,8 +236,6 @@ namespace MyWorld
 			selectBlock();
 			if (selectedPos.z != -1.0f) wireframe.Draw();
 		}
-
-		player.Update(collisionEnabled);
 	}
 
 	void World::Destroy()

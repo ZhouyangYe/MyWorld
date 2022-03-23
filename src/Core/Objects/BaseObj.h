@@ -11,6 +11,7 @@ namespace MyWorld
 		static bool showHitBox;
 		HitBox hitBox;
 		bool handleTerrainCollision();
+		bool hasCollision(Block::TYPE&& type);
 	public:
 		static void setShowHitBox(bool&& show);
 		static const bool& getShowHitBox();

@@ -4,6 +4,8 @@ namespace MyWorld
 {
 	double Time::deltaTime = 0;
 	double Time::prevTime = 0;
+	double Time::fpsDeltaTime = 0;
+	double Time::fpsPrevTime = 0;
 	int Time::fps = 0;
 
 	const double& Time::getDeltaTime()
@@ -25,7 +27,13 @@ namespace MyWorld
 
 	void Time::updateFps()
 	{
-		fps = round(1 / deltaTime);
+		double currentTime = Window::getCurrentTime();
+		fpsDeltaTime = currentTime - fpsPrevTime;
+		if (fpsDeltaTime >= 1.0f || fps == 0)
+		{
+			fpsPrevTime = currentTime;
+			fps = round(1 / deltaTime);
+		}
 	}
 
 	const int& Time::getFps()

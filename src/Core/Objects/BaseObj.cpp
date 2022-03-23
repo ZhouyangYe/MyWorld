@@ -14,6 +14,11 @@ namespace MyWorld
 		showHitBox = show;
 	}
 
+	bool BaseObj::hasCollision(Block::TYPE&& type)
+	{
+		return type == Block::TYPE::AIR || type == Block::TYPE::WATER;
+	}
+
 	bool BaseObj::handleTerrainCollision()
 	{
 		glm::vec3 pos = hitBox.getCoords();
@@ -37,7 +42,7 @@ namespace MyWorld
 				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
+					if (hasCollision(Chunk::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);
@@ -65,7 +70,7 @@ namespace MyWorld
 				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
+					if (hasCollision(Chunk::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);
@@ -93,7 +98,7 @@ namespace MyWorld
 				for (float y = startY; y < endY && !done; y++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (Chunk::getType(blockCoords) == Block::TYPE::AIR) continue;
+					if (hasCollision(Chunk::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);

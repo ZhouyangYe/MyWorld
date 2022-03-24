@@ -45,7 +45,7 @@ namespace MyWorld
 
 	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength)
 	{
-		const glm::vec3 eyeLocation = Camera::getCameraCoords();
+		const glm::vec3 eyeLocation = Camera::getEyeCoords();
 		const glm::vec3 forwardVec = Camera::getForwardVec();
 
 		const float length = glm::length2(eyeLocation - interceptPoint);
@@ -73,7 +73,7 @@ namespace MyWorld
 	{
 		if (Camera::cameraMoved() || Camera::cameraRotated())
 		{
-			const glm::vec3 eyeLocation = Camera::getCameraCoords();
+			const glm::vec3 eyeLocation = Camera::getEyeCoords();
 			const glm::vec3 forwardVec = Camera::getForwardVec();
 			float closestPointLength = distance_blocks_square;
 			float factor;

@@ -10,7 +10,7 @@ namespace MyWorld
 		glm::vec3 prevPos;
 		static bool showHitBox;
 		HitBox hitBox;
-		bool&& handleTerrainCollision();
+		bool&& handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ);
 		bool&& notCollide(Block::TYPE type);
 	public:
 		static void setShowHitBox(bool&& show);

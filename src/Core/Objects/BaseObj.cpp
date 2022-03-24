@@ -19,7 +19,7 @@ namespace MyWorld
 		return type == Block::TYPE::AIR || type == Block::TYPE::WATER;
 	}
 
-	bool&& BaseObj::handleTerrainCollision()
+	bool&& BaseObj::handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ)
 	{
 		glm::vec3 pos = hitBox.getCoords();
 		glm::vec3 offsetCoords = glm::vec3{ 0.0f, 0.0f, 0.0f };
@@ -47,8 +47,7 @@ namespace MyWorld
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);
-					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
-					offsetCoords.x = offsets.x;
+					offsetCoords.x = hitBox.getCollisionOffset(HitBox::terrainHitBox).x;
 					done = true;
 				}
 			}
@@ -76,8 +75,7 @@ namespace MyWorld
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);
-					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
-					offsetCoords.y = offsets.y;
+					offsetCoords.y = hitBox.getCollisionOffset(HitBox::terrainHitBox).y;
 					done = true;
 				}
 			}
@@ -105,8 +103,7 @@ namespace MyWorld
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox.setPos(coords);
-					glm::vec3 offsets = hitBox.getCollisionOffset(HitBox::terrainHitBox);
-					offsetCoords.z = offsets.z;
+					offsetCoords.z = hitBox.getCollisionOffset(HitBox::terrainHitBox).z;
 					done = true;
 				}
 			}
@@ -241,6 +238,9 @@ namespace MyWorld
 			return false;
 		}
 
+		hitX = offsetCoords.x == 0.0f ? 0 : offsetCoords.x > 0.0f ? 1 : 2;
+		hitY = offsetCoords.y == 0.0f ? 0 : offsetCoords.y > 0.0f ? 1 : 2;
+		hitZ = offsetCoords.z == 0.0f ? 0 : offsetCoords.z > 0.0f ? 1 : 2;
 		hitBox.setPos(pos + offsetCoords);
 		prevPos = hitBox.getCoords();
 		return true;

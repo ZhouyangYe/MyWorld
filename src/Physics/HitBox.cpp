@@ -13,7 +13,22 @@ namespace MyWorld
 		// Util::log("in");
 	}
 
-	const glm::vec3 HitBox::getCollisionOffset(HitBox& box)
+	// detect collision
+	const bool&& HitBox::collide(HitBox& box)
+	{
+		AABB aabb_s = getAABB();
+		AABB aabb_t = box.getAABB();
+		return
+			aabb_t.max.x - aabb_s.min.x >= -FLOAT_PRECISION &&
+			aabb_t.max.y - aabb_s.min.y >= -FLOAT_PRECISION &&
+			aabb_t.max.z - aabb_s.min.z >= -FLOAT_PRECISION &&
+			aabb_s.max.x - aabb_t.min.x >= -FLOAT_PRECISION &&
+			aabb_s.max.y - aabb_t.min.y >= -FLOAT_PRECISION &&
+			aabb_s.max.z - aabb_t.min.z >= -FLOAT_PRECISION;
+	}
+
+	// get offsets for hitbox when there is a collision(collide with static object)
+	const glm::vec3&& HitBox::getCollisionOffset(HitBox& box)
 	{
 		AABB aabb_s = getAABB();
 		AABB aabb_t = box.getAABB();
@@ -43,6 +58,21 @@ namespace MyWorld
 		return glm::vec3{ 0.0f, 0.0f, 0.0f };
 	}
 
+	// get offsets for hitbox when there is a collision(collide with non-static object)
+	const HitBox::Offset&& HitBox::getCollisionOffsets(HitBox& box)
+	{
+		glm::vec3 offset = getCollisionOffset(box);
+
+		if (isStatic) return { glm::vec3{ 0.0f, 0.0f, 0.0f }, offset };
+		if (box.isStatic) return { offset, glm::vec3{ 0.0f, 0.0f, 0.0f } };
+
+		const float total_weight = weight + box.weight;
+		return {
+			offset * box.weight / total_weight,
+			-offset * weight / total_weight
+		};
+	}
+
 	const HitBox::AABB& HitBox::getAABB()
 	{
 		if (aabb.min.x != pos.x || aabb.min.y != pos.y || aabb.min.z != pos.z)
@@ -65,6 +95,26 @@ namespace MyWorld
 	void HitBox::setPos(glm::vec3&& pos)
 	{
 		this->pos = pos;
+	}
+
+	void HitBox::setVelocityX(float&& v)
+	{
+		velocity.x = v;
+	}
+
+	void HitBox::setVelocityY(float&& v)
+	{
+		velocity.y = v;
+	}
+
+	void HitBox::setVelocityZ(float&& v)
+	{
+		velocity.z = v;
+	}
+
+	void HitBox::applyGravity()
+	{
+
 	}
 
 	void HitBox::Register()

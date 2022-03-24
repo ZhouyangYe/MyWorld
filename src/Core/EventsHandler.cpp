@@ -7,12 +7,14 @@ namespace MyWorld
 		switch (event.keyCode)
 		{
 		case Key::Space:
+			if (!Camera::freeCamera) break;
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveUp = true;
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveUp = false;
 			break;
 		case Key::Z:
+			if (!Camera::freeCamera) break;
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 				Camera::moveDown = true;
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)

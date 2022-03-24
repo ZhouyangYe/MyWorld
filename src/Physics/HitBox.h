@@ -2,8 +2,9 @@
 #include "../Core/Util.h"
 #include "../Renderer/Model/Model.h"
 
-#define FLOAT_PRECISION 0.00001
-#define GRAVITY 0.98 // acceleration
+#define FLOAT_PRECISION 0.00001 // near 0 detection(solve float precision issue)
+#define GRAVITY 0.98f           // vertical acceleration
+#define MAX_SPEED 6.0f          // max speed
 
 namespace MyWorld
 {
@@ -25,17 +26,34 @@ namespace MyWorld
 			}
 			AABB(glm::vec3& min, glm::vec3& max) : min(min), max(max) {}
 		};
-		const bool isStatic;   // can or cannot move
-		const float width;     // width
-		const float height;    // height
+		struct Offset
+		{
+			const glm::vec3 offset1;
+			const glm::vec3 offset2;
+		};
 		static HitBox terrainHitBox;
 		static void Register();
 		static void Destroy();
+	private:
+		static Renderer::PosColorVertex* cubeVertices;
+		static bgfx::VertexBufferHandle vbh;
+		static const uint8_t faces;
+		static const uint64_t state;
+	public:
+		const bool isStatic; // can or cannot move
+		const float width;   // width
+		const float height;  // height
 		const AABB& getAABB();
 		const glm::vec3& getCoords();
-		const glm::vec3 getCollisionOffset(HitBox& box);
+		const bool&& collide(HitBox& box);
+		const glm::vec3&& getCollisionOffset(HitBox& box);
+		const Offset&& getCollisionOffsets(HitBox& box);
 		void setPos(glm::vec3& pos);
 		void setPos(glm::vec3&& pos);
+		void setVelocityX(float&& v);
+		void setVelocityY(float&& v);
+		void setVelocityZ(float&& v);
+		void applyGravity();
 		HitBox()
 			: isStatic(true), weight(0.0f), pos(glm::vec3{ 0.0f, 0.0f, 0.0f }), width(1.0f), height(1.0f), aabb(pos, glm::vec3{ 1.0f, 1.0f, 1.0f }), scale(glm::vec3{ 1.0f, 1.0f, 1.0f }) {}
 		HitBox(bool&& isStatic, float&& weight, glm::vec3&& pos, float&& width, float&& height)
@@ -43,14 +61,11 @@ namespace MyWorld
 		~HitBox();
 		void Draw();
 	private:
-		static Renderer::PosColorVertex* cubeVertices;
-		static bgfx::VertexBufferHandle vbh;
-		static const uint8_t faces;
-		static const uint64_t state;
-		float velocity;
-		float weight;    // mass
-		glm::vec3 pos;   // coordinates
-		AABB aabb;       // aabb used to detect collision
-		glm::vec3 scale; // scale
+		float weight;       // mass
+		glm::vec3 pos;      // coordinates
+		glm::vec3 scale;    // scale
+		glm::vec3 forward;  // forward
+		glm::vec3 velocity; // velocity
+		AABB aabb;          // aabb used to detect collision
 	};
 }

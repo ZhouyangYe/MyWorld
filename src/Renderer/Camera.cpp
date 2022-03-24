@@ -7,18 +7,20 @@
 
 namespace MyWorld
 {
-	const glm::vec3 Camera::WORLD_UP = { 0.0f, 0.0f, 1.0f };
+	const glm::vec3 Camera::WORLD_UP{ 0.0f, 0.0f, 1.0f };
 
 	glm::mat4 Camera::view;
 	glm::mat4 Camera::proj;
 	glm::vec3 Camera::eye;
+	glm::vec3 Camera::cam;
 	float Camera::zoom;
 	glm::vec3 Camera::offset;
-	glm::vec3 Camera::forward = { 1.0f, 0.0f, 0.0f };
-	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
-	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));
+	glm::vec3 Camera::forward;
+	glm::vec3 Camera::up;
+	glm::vec3 Camera::right;
 
 	bool Camera::freeCamera = true;
+	bool Camera::cameraMoveDisabled = false;
 
 	bool Camera::moveUp = false;
 	bool Camera::moveDown = false;
@@ -30,13 +32,19 @@ namespace MyWorld
 	bool Camera::isCameraMoved = false;
 	bool Camera::isCameraRotated = false;
 
+	void Camera::updateCam()
+	{
+		cam = eye - offset;
+		view = glm::lookAt(cam, eye + forward, up);
+	}
+
 	void Camera::zoomIn()
 	{
 		if (zoom == 0.0f) return;
 		zoom -= 0.3;
 		if (zoom < 0) zoom = 0;
 		offset = zoom * forward;
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::zoomOut()
@@ -45,16 +53,21 @@ namespace MyWorld
 		zoom += 0.3;
 		if (zoom > MAX_DISTANCE) zoom = MAX_DISTANCE;
 		offset = zoom * forward;
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::setCamPos(glm::vec3& pos)
 	{
 		eye = pos;
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	const glm::vec3& Camera::getCameraCoords()
+	{
+		return cam;
+	}
+
+	const glm::vec3& Camera::getEyeCoords()
 	{
 		return eye;
 	}
@@ -77,7 +90,11 @@ namespace MyWorld
 	void Camera::Init(CameraParam param)
 	{
 		eye = param.spawnLocation;
-		view = glm::lookAt(eye, eye + forward, up);
+		offset = param.offset;
+		forward = param.forward;
+		up = param.up;
+		right = glm::normalize(glm::cross(Camera::forward, Camera::up));
+		updateCam();
 		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.01f, param.view_distance);
 	}
 
@@ -86,6 +103,8 @@ namespace MyWorld
 
 	void Camera::Begin()
 	{
+		if (cameraMoveDisabled) return;
+
 		isCameraMoved = moveUp || moveDown || moveLeft || moveRight || moveForward || moveBackward;
 
 		if (moveUp && freeCamera)
@@ -113,25 +132,25 @@ namespace MyWorld
 	void Camera::MoveUp()
 	{
 		eye.z += WALK_SPEED * Time::getDeltaTime();
-   		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::MoveDown()
 	{
 		eye.z += -WALK_SPEED * Time::getDeltaTime();
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::MoveLeft()
 	{
 		eye += -right * WALK_SPEED * (float)Time::getDeltaTime();
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::MoveRight()
 	{
 		eye += right * WALK_SPEED * (float)Time::getDeltaTime();
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::MoveForward()
@@ -139,7 +158,7 @@ namespace MyWorld
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
 		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
 		eye += glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::MoveBackward()
@@ -147,7 +166,7 @@ namespace MyWorld
 		float movement = WALK_SPEED * (float)Time::getDeltaTime();
 		glm::vec2 horizontal = glm::normalize(glm::vec2{ forward.x, forward.y });
 		eye += -glm::vec3{ horizontal.x * movement, horizontal.y * movement, 0.0f };
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 
 	void Camera::Rotate(glm::vec2 delta)
@@ -166,6 +185,6 @@ namespace MyWorld
 
 		offset = zoom * forward;
 
-		view = glm::lookAt(eye - offset, eye + forward, up);
+		updateCam();
 	}
 }

@@ -1,6 +1,4 @@
-private to public
-
-TODO:
+# TODO:
 	1. multi-threading
 	2. collision
 	3. biome

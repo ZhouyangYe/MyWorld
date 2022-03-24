@@ -21,7 +21,7 @@ namespace MyWorld
 	}
 
 	// get unit blocks' faces' distance to camera
-	float Chunk::getLength(Block& block)
+	float&& Chunk::getLength(Block& block)
 	{
 		const glm::vec3 blockCoords = block.getWorldCoords();
 		glm::vec3 center;
@@ -367,7 +367,7 @@ namespace MyWorld
 	}
 
 	// TODO: implement more interesting terrain
-	const Block::TYPE Chunk::getType(glm::vec3& pos)
+	const Block::TYPE&& Chunk::getType(glm::vec3& pos)
 	{
 		if (showWorldBorder)
 		{

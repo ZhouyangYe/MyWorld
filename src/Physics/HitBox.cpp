@@ -18,12 +18,12 @@ namespace MyWorld
 		AABB aabb_s = getAABB();
 		AABB aabb_t = box.getAABB();
 		if (
-			aabb_t.max.x - aabb_s.min.x > float_precision &&
-			aabb_t.max.y - aabb_s.min.y > float_precision &&
-			aabb_t.max.z - aabb_s.min.z > float_precision &&
-			aabb_s.max.x - aabb_t.min.x > float_precision &&
-			aabb_s.max.y - aabb_t.min.y > float_precision &&
-			aabb_s.max.z - aabb_t.min.z > float_precision
+			aabb_t.max.x - aabb_s.min.x > FLOAT_PRECISION &&
+			aabb_t.max.y - aabb_s.min.y > FLOAT_PRECISION &&
+			aabb_t.max.z - aabb_s.min.z > FLOAT_PRECISION &&
+			aabb_s.max.x - aabb_t.min.x > FLOAT_PRECISION &&
+			aabb_s.max.y - aabb_t.min.y > FLOAT_PRECISION &&
+			aabb_s.max.z - aabb_t.min.z > FLOAT_PRECISION
 		)
 		{
 			float
@@ -70,7 +70,7 @@ namespace MyWorld
 	void HitBox::Register()
 	{
 		cubeVertices = Model::getVerticesType0(0xffffffff);
-		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosColorVertex)), Renderer::PosColorVertex::layout);
+		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 8 * sizeof(Renderer::PosColorVertex)), Renderer::PosColorVertex::layout);
 	}
 
 	void HitBox::Destroy()

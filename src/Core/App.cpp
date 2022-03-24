@@ -86,8 +86,8 @@ namespace MyWorld
 		Info::Update();
 		if (Cursor::hideCursor) Cursor::reset();
 
-		Window::End();
-		Renderer::End();
 		Camera::End();
+		Renderer::End();
+		Window::End();
 	}
 }

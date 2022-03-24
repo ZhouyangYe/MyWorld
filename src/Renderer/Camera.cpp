@@ -18,6 +18,8 @@ namespace MyWorld
 	glm::vec3 Camera::up = { 0.0f, 0.0f, 1.0f };
 	glm::vec3 Camera::right = glm::normalize(glm::cross(Camera::forward, Camera::up));
 
+	bool Camera::freeCamera = true;
+
 	bool Camera::moveUp = false;
 	bool Camera::moveDown = false;
 	bool Camera::moveLeft = false;
@@ -86,9 +88,9 @@ namespace MyWorld
 	{
 		isCameraMoved = moveUp || moveDown || moveLeft || moveRight || moveForward || moveBackward;
 
-		if (moveUp)
+		if (moveUp && freeCamera)
 			MoveUp();
-		if (moveDown)
+		if (moveDown && freeCamera)
 			MoveDown();
 		if (moveLeft)
 			MoveLeft();

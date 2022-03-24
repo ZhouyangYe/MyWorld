@@ -20,6 +20,7 @@ namespace MyWorld
 		static glm::vec3 forward;
 		static glm::vec3 up;
 		static glm::vec3 right;
+		static bool freeCamera;
 		static bool isCameraMoved;
 		static bool isCameraRotated;
 	public:

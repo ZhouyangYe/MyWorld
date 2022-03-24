@@ -10,6 +10,7 @@ namespace MyWorld
 	private:
 		static bool selectionEnabled;
 		static bool collisionEnabled;
+		static bool gravityEnabled;
 		static bool infiniteWorldEnabled;
 		static int renderDistance;
 		static float distance_blocks;

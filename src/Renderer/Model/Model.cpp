@@ -33,7 +33,7 @@ namespace MyWorld
     // block vertices for color
     Renderer::PosColorVertex* Model::getVerticesType0(const uint32_t color)
     {
-        Renderer::PosColorVertex* vertices = new Renderer::PosColorVertex[16]{
+        Renderer::PosColorVertex* vertices = new Renderer::PosColorVertex[8]{
             { 0.0f, 0.0f, 0.0f, color, }, // 0 --- 0,0,0
             { 1.0f, 0.0f, 0.0f, color, }, // 1 --- 1,0,0
             { 1.0f, 0.0f, 1.0f, color, }, // 2 --- 1,0,1
@@ -42,15 +42,6 @@ namespace MyWorld
             { 0.0f, 1.0f, 0.0f, color, }, // 5 --- 0,1,0
             { 1.0f, 1.0f, 0.0f, color, }, // 6 --- 1,1,0
             { 1.0f, 1.0f, 1.0f, color, }, // 7 --- 1,1,1
-
-            { 0.0f, 0.0f, 0.0f, color, }, // 0 + 8 --- 0,0,0
-            { 1.0f, 0.0f, 0.0f, color, }, // 1 + 8 --- 1,0,0
-            { 1.0f, 0.0f, 1.0f, color, }, // 2 + 8 --- 1,0,1 --- top
-            { 0.0f, 0.0f, 1.0f, color, }, // 3 + 8 --- 0,0,1 --- top
-            { 0.0f, 1.0f, 1.0f, color, }, // 4 + 8 --- 0,1,1 --- top
-            { 0.0f, 1.0f, 0.0f, color, }, // 5 + 8 --- 0,1,0
-            { 1.0f, 1.0f, 0.0f, color, }, // 6 + 8 --- 1,1,0
-            { 1.0f, 1.0f, 1.0f, color  }  // 7 + 8 --- 1,1,1 --- top
         };
 
         return vertices;
@@ -202,6 +193,7 @@ namespace MyWorld
     // create cache for static index buffer
     void Model::createIbh(const uint8_t& idx)
     {
+        // hack: if idx equal to 0, we get index buffer for hitbox wireframe
         if (idx == 0)
         {
             uint16_t* cubeTriList = new uint16_t[24]

@@ -2,7 +2,8 @@
 #include "../Core/Util.h"
 #include "../Renderer/Model/Model.h"
 
-#define float_precision 0.00001
+#define FLOAT_PRECISION 0.00001
+#define GRAVITY 0.98 // acceleration
 
 namespace MyWorld
 {
@@ -46,6 +47,7 @@ namespace MyWorld
 		static bgfx::VertexBufferHandle vbh;
 		static const uint8_t faces;
 		static const uint64_t state;
+		float velocity;
 		float weight;    // mass
 		glm::vec3 pos;   // coordinates
 		AABB aabb;       // aabb used to detect collision

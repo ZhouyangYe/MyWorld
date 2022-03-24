@@ -4,6 +4,7 @@ namespace MyWorld
 {
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
+	bool World::gravityEnabled = true;
 	bool World::infiniteWorldEnabled = false;
 	int World::renderDistance = 1;
 	int World::chunk_num;
@@ -217,7 +218,7 @@ namespace MyWorld
 		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
 		}
 
-		player.Update(collisionEnabled);
+		player.Update(collisionEnabled, gravityEnabled);
 
 		for (int i = 0; i < chunk_num; i++)
 		{

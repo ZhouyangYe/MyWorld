@@ -33,7 +33,7 @@ namespace MyWorld
 		static glm::vec3 spawn_location;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
-		static float getLength(Block& block);
+		static float&& getLength(Block& block);
 		// transparent blocks to be rendered
 		static std::vector<Block> transparent_blocks;
 	public:
@@ -48,7 +48,7 @@ namespace MyWorld
 		static void DrawTransparent();
 		static const glm::vec3& getSpawnLocation();
 		// get the type of the specific block
-		static const Block::TYPE getType(glm::vec3& pos);
+		static const Block::TYPE&& getType(glm::vec3& pos);
 		static void setShowWorldBorder(bool show);
 		static void setChunkRenderDistanceNum(int num);
 	private:

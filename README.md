@@ -6,3 +6,5 @@ TODO:
 	3. biome
 	4. animal generation
 	5. shading
+	6. gravity
+	7. instancing

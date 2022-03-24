@@ -339,7 +339,7 @@ namespace MyWorld
 					const Block::TYPE type = getType(glm::vec3{ x + coords.x, y + coords.y, z });
 
 					// set spawn location
-					if (spawn_location.z == -1.0f && type == Block::TYPE::AIR && coords.x == 0.0f && coords.y == 0.0f)
+					if (spawn_location.z == -1.0f && coords.x == 0.0f && coords.y == 0.0f && type == Block::TYPE::AIR)
 					{
 						spawn_location = glm::vec3{ 0.5f, 0.5f, z + 1.8f };
 					}

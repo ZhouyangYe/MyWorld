@@ -9,14 +9,20 @@ namespace MyWorld
 		case Key::Space:
 			if (!Camera::freeCamera) break;
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
+			{
 				Camera::moveUp = true;
+				if (World::gravityEnabled) World::gravityEnabled = false;
+			}
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveUp = false;
 			break;
 		case Key::Z:
 			if (!Camera::freeCamera) break;
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
+			{
 				Camera::moveDown = true;
+				if (World::gravityEnabled) World::gravityEnabled = false;
+			}
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveDown = false;
 			break;
@@ -52,6 +58,10 @@ namespace MyWorld
 			else
 				Cursor::hide();
 			Cursor::hideCursor = !Cursor::hideCursor;
+			break;
+		case Key::G:
+			if (event.action == KeyPressEvent::ACTION::KEY_UP)
+				World::gravityEnabled = !World::gravityEnabled;
 			break;
 		case Key::T: // show
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN) Renderer::switchRenderMode();

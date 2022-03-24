@@ -30,7 +30,7 @@ namespace MyWorld
 			WindowSize windowSize;
 			float view_distance;
 			glm::vec3 spawnLocation;
-			glm::vec3 offset{ 0.0f, 0.0f, 0.0f };
+			float zoom = 5.0f;
 			glm::vec3 forward{ 1.0f, 0.0f, 0.0f };
 			glm::vec3 up{ 0.0f, 0.0f, 1.0f };
 		};

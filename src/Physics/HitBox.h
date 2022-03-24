@@ -1,9 +1,10 @@
 #pragma once
 #include "../Core/Util.h"
 #include "../Renderer/Model/Model.h"
+#include "../Core/Time.h"
 
 #define FLOAT_PRECISION 0.00001 // near 0 detection(solve float precision issue)
-#define GRAVITY 0.98f           // vertical acceleration
+#define GRAVITY -0.6f           // vertical acceleration
 #define MAX_SPEED 6.0f          // max speed
 
 namespace MyWorld

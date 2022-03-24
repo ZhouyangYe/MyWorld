@@ -8,13 +8,9 @@ namespace MyWorld
 	class World
 	{
 	private:
-		static bool selectionEnabled;
-		static bool collisionEnabled;
-		static bool gravityEnabled;
-		static bool infiniteWorldEnabled;
-		static int renderDistance;
-		static float distance_blocks;
-		static float distance_blocks_square;
+		static int renderDistance; // SETTINGS
+		static float selection_distance_blocks;
+		static float selection_distance_blocks_square;
 		static int chunk_num;
 		// the position info of selected block
 		static glm::vec3 selectedPos;
@@ -24,6 +20,10 @@ namespace MyWorld
 		static Wireframe wireframe;
 		static PlayerObj player;
 	public:
+		static bool selectionEnabled; // SETTINGS
+		static bool collisionEnabled; // SETTINGS
+		static bool gravityEnabled; // SETTINGS
+		static bool infiniteWorldEnabled; // SETTINGS
 		static void Generate();
 		static void Update();
 		static void Destroy();
@@ -31,9 +31,6 @@ namespace MyWorld
 		static void selectBlock();
 		static const glm::vec3& getSelectedBlockPos();
 		static const Block::DIRECTION& getSelectedFace();
-		static void setSelectionEnabled(bool enabled);
-		static void setCollisionEnabled(bool enabled);
-		static void setInfiniteWorldEnabled(bool enabled);
 		static const int& getRenderDistance();
 	};
 }

@@ -114,7 +114,11 @@ namespace MyWorld
 
 	void HitBox::applyGravity()
 	{
-
+		if (velocity.z < MAX_SPEED)
+			velocity.z += GRAVITY;
+		if (velocity.z > MAX_SPEED)
+			velocity.z = MAX_SPEED;
+		pos.z += velocity.z * Time::getDeltaTime();
 	}
 
 	void HitBox::Register()

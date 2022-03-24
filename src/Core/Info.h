@@ -7,7 +7,7 @@ namespace MyWorld
 	class Info
 	{
 	private:
-		static bool showInfo;
+		static bool showInfo; // SETTINGS
 	public:
 		static void Update();
 		static void setVisible(bool visible);

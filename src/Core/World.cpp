@@ -8,8 +8,8 @@ namespace MyWorld
 	bool World::infiniteWorldEnabled = false;
 	int World::renderDistance = 1;
 	int World::chunk_num;
-	float World::distance_blocks = 5.0f;
-	float World::distance_blocks_square = distance_blocks * distance_blocks;
+	float World::selection_distance_blocks = 5.0f;
+	float World::selection_distance_blocks_square = selection_distance_blocks * selection_distance_blocks;
 	Wireframe World::wireframe;
 	PlayerObj World::player;
 	const glm::vec3 World::NOT_SELECTED = { 0.0f, 0.0f, -1.0f };
@@ -21,21 +21,7 @@ namespace MyWorld
 		Data::Init({ infiniteWorldEnabled, renderDistance });
 
 		World::chunk_num = renderDistance * renderDistance * 4;
-	}
-
-	void World::setSelectionEnabled(bool enabled)
-	{
-		selectionEnabled = enabled;
-	}
-
-	void World::setCollisionEnabled(bool enabled)
-	{
-		collisionEnabled = enabled;
-	}
-
-	void World::setInfiniteWorldEnabled(bool enabled)
-	{
-		infiniteWorldEnabled = enabled;
+		player.setPos(Chunk::getSpawnLocation() - PlayerObj::posVec);
 	}
 
 	const int& World::getRenderDistance()
@@ -49,7 +35,7 @@ namespace MyWorld
 		const glm::vec3 forwardVec = Camera::getForwardVec();
 
 		const float length = glm::length2(eyeLocation - interceptPoint);
-		if (length < distance_blocks_square && length < closestPointLength)
+		if (length < selection_distance_blocks_square && length < closestPointLength)
 		{
 			if (Chunk::getType(pos) != Block::TYPE::AIR)
 			{
@@ -75,7 +61,7 @@ namespace MyWorld
 		{
 			const glm::vec3 eyeLocation = Camera::getEyeCoords();
 			const glm::vec3 forwardVec = Camera::getForwardVec();
-			float closestPointLength = distance_blocks_square;
+			float closestPointLength = selection_distance_blocks_square;
 			float factor;
 			bool blockFound = false;
 

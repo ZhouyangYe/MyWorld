@@ -14,6 +14,11 @@ namespace MyWorld
 		showHitBox = show;
 	}
 
+	void BaseObj::setPos(glm::vec3& pos)
+	{
+		hitBox.setPos(pos);
+	}
+
 	bool&& BaseObj::notCollide(Block::TYPE type)
 	{
 		return type == Block::TYPE::AIR || type == Block::TYPE::WATER;

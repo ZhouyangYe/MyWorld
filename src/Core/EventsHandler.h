@@ -9,6 +9,7 @@
 #include "Chunk.h"
 #include "Data.h"
 #include "Info.h"
+#include "World.h"
 
 namespace MyWorld
 {

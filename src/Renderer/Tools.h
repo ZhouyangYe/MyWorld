@@ -40,7 +40,6 @@ namespace MyWorld
 		};
 		static bgfx::ShaderHandle loadShader(const char* fileName);
 		static bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL, TextureArrayParam* taInfo = NULL);
-		static bgfx::TextureHandle loadAtlasTextureToTA();
 		static bgfx::ProgramHandle createProgram(const char* vs_name, const char* fs_name);
 		static void Init();
 		static void Terminate();

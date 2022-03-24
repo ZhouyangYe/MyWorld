@@ -15,18 +15,18 @@ namespace MyWorld
 
 		if (gravityEnabled)
 		{
-			hitBox.applyGravity();
+			// hitBox.applyGravity();
 		}
 
 		if (collisionEnabled)
 		{
-			handleTerrainCollision(hitX, hitY, hitZ);
+			// handleTerrainCollision(hitX, hitY, hitZ);
 		}
 
 		if (gravityEnabled)
 		{
 			if (hitX != 0) hitBox.setVelocityX(0.0f);
-			if (hitY != 0) hitBox.setVelocityX(0.0f);
+			if (hitY != 0) hitBox.setVelocityY(0.0f);
 			// if we are in the air, player move should be disabled
 			if (hitZ == 0)
 			{
@@ -34,10 +34,12 @@ namespace MyWorld
 			}
 			else
 			{
-				hitBox.setVelocityX(0.0f);
+				hitBox.setVelocityZ(0.0f);
 				if (hitZ == 1) Camera::cameraMoveDisabled = false;
 			}
 		}
+
+		Util::log(hitBox.getCoords(), "coords: ");
 
 		// correct the camera pos according to collision and gravity
 		Camera::setCamPos(hitBox.getCoords() + posVec);

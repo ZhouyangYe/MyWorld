@@ -90,8 +90,9 @@ namespace MyWorld
 	void Camera::Init(CameraParam param)
 	{
 		eye = param.spawnLocation;
-		offset = param.offset;
 		forward = param.forward;
+		zoom = param.zoom;
+		offset = param.zoom * forward;
 		up = param.up;
 		right = glm::normalize(glm::cross(Camera::forward, Camera::up));
 		updateCam();

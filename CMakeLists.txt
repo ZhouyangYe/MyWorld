@@ -62,6 +62,8 @@ add_executable(${PROJECT_NAME}
   src/Core/Objects/PlayerObj.cpp
   src/Core/Objects/BaseObj.h
   src/Core/Objects/BaseObj.cpp
+  src/Physics/Handler.h
+  src/Physics/Handler.cpp
 )
 
 # add glfw

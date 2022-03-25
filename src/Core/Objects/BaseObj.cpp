@@ -16,6 +16,7 @@ namespace MyWorld
 
 	void BaseObj::setPos(glm::vec3& pos)
 	{
+		prevPos = pos;
 		hitBox.setPos(pos);
 	}
 

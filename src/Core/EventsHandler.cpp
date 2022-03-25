@@ -12,6 +12,7 @@ namespace MyWorld
 			{
 				Camera::moveUp = true;
 				if (World::gravityEnabled) World::gravityEnabled = false;
+				if (Camera::cameraMoveDisabled) Camera::cameraMoveDisabled = false;
 			}
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveUp = false;
@@ -22,6 +23,7 @@ namespace MyWorld
 			{
 				Camera::moveDown = true;
 				if (World::gravityEnabled) World::gravityEnabled = false;
+				if (Camera::cameraMoveDisabled) Camera::cameraMoveDisabled = false;
 			}
 			else if (event.action == KeyPressEvent::ACTION::KEY_UP)
 				Camera::moveDown = false;

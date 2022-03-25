@@ -15,12 +15,12 @@ namespace MyWorld
 
 		if (gravityEnabled)
 		{
-			// hitBox.applyGravity();
+			hitBox.applyGravity();
 		}
 
 		if (collisionEnabled)
 		{
-			// handleTerrainCollision(hitX, hitY, hitZ);
+			handleTerrainCollision(hitX, hitY, hitZ);
 		}
 
 		if (gravityEnabled)
@@ -38,8 +38,6 @@ namespace MyWorld
 				if (hitZ == 1) Camera::cameraMoveDisabled = false;
 			}
 		}
-
-		Util::log(hitBox.getCoords(), "coords: ");
 
 		// correct the camera pos according to collision and gravity
 		Camera::setCamPos(hitBox.getCoords() + posVec);

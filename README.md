@@ -6,3 +6,4 @@
 	5. shading
 	6. gravity
 	7. instancing
+	8. sky box

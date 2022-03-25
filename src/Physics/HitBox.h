@@ -54,11 +54,28 @@ namespace MyWorld
 		void setVelocityX(float&& v);
 		void setVelocityY(float&& v);
 		void setVelocityZ(float&& v);
-		void applyGravity();
-		HitBox()
-			: isStatic(true), weight(0.0f), pos(glm::vec3{ 0.0f, 0.0f, 0.0f }), width(1.0f), height(1.0f), aabb(pos, glm::vec3{ 1.0f, 1.0f, 1.0f }), scale(glm::vec3{ 1.0f, 1.0f, 1.0f }) {}
-		HitBox(bool&& isStatic, float&& weight, glm::vec3&& pos, float&& width, float&& height)
-			: isStatic(isStatic), weight(weight), pos(pos), width(width), height(height), aabb(pos, pos + glm::vec3{ width, width, height }), scale(glm::vec3{ width, width, height }) {}
+		void updatePos();
+		const glm::vec3& getVelocity();
+		HitBox() :
+			isStatic(true),
+			weight(0.0f),
+			pos(glm::vec3{ 0.0f, 0.0f, 0.0f }),
+			width(1.0f),
+			height(1.0f),
+			aabb(pos, glm::vec3{ 1.0f, 1.0f, 1.0f }),
+			scale(glm::vec3{ 1.0f, 1.0f, 1.0f }),
+			velocity({ 0.0f, 0.0f, 0.0f })
+		{}
+		HitBox(bool&& isStatic, float&& weight, glm::vec3&& pos, float&& width, float&& height) :
+			isStatic(isStatic),
+			weight(weight),
+			pos(pos),
+			width(width),
+			height(height),
+			aabb(pos, pos + glm::vec3{ width, width, height }),
+			scale(glm::vec3{ width, width, height }),
+			velocity({ 0.0f, 0.0f, 0.0f })
+		{}
 		~HitBox();
 		void Draw();
 	private:

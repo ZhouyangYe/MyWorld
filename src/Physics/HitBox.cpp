@@ -112,13 +112,14 @@ namespace MyWorld
 		velocity.z = v;
 	}
 
-	void HitBox::applyGravity()
+	void HitBox::updatePos()
 	{
-		if (velocity.z < MAX_SPEED)
-			velocity.z += GRAVITY;
-		if (velocity.z > MAX_SPEED)
-			velocity.z = MAX_SPEED;
-		pos.z += velocity.z * Time::getDeltaTime();
+		pos += velocity * (float)Time::getDeltaTime();
+	}
+
+	const glm::vec3& HitBox::getVelocity()
+	{
+		return velocity;
 	}
 
 	void HitBox::Register()

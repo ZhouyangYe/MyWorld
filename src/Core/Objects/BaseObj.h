@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Physics/HitBox.h"
-#include "../Chunk.h"
+#include "../../Physics/Handler.h"
 
 namespace MyWorld
 {
@@ -8,15 +8,13 @@ namespace MyWorld
 	{
 	protected:
 		static bool showHitBox; // SETTINGS
-		glm::vec3 prevPos;
-		HitBox hitBox;
-		bool&& handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ);
-		bool&& notCollide(Block::TYPE type);
+		HitBox hitBox;   // hitBox
+		Handler handler; // physics handler
 	public:
 		void setPos(glm::vec3& pos);
 		static void setShowHitBox(bool&& show);
 		static const bool& getShowHitBox();
-		BaseObj(HitBox&& hitBox) : hitBox(hitBox), prevPos(hitBox.getCoords()) {}
+		BaseObj(HitBox&& box) : hitBox(box), handler(&hitBox) {}
 		virtual void Update(bool& collisionEnabled, bool& gravityEnabled) = 0;
 	};
 }

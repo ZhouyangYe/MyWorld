@@ -15,19 +15,19 @@ namespace MyWorld
 
 		if (gravityEnabled)
 		{
-			hitBox.applyGravity();
+			handler.applyGravity();
 		}
 
 		if (collisionEnabled)
 		{
-			handleTerrainCollision(hitX, hitY, hitZ);
+			handler.handleTerrainCollision(hitX, hitY, hitZ);
 		}
 
 		if (gravityEnabled)
 		{
 			if (hitX != 0) hitBox.setVelocityX(0.0f);
 			if (hitY != 0) hitBox.setVelocityY(0.0f);
-			// if we are in the air, player move should be disabled
+			// if the player is in the air, player move should be disabled
 			if (hitZ == 0)
 			{
 				Camera::cameraMoveDisabled = true;

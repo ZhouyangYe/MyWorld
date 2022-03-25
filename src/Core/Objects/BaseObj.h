@@ -15,6 +15,7 @@ namespace MyWorld
 		static void setShowHitBox(bool&& show);
 		static const bool& getShowHitBox();
 		BaseObj(HitBox&& box) : hitBox(box), handler(&hitBox) {}
-		virtual void Update(bool& collisionEnabled, bool& gravityEnabled) = 0;
+		virtual void Begin(bool& collisionEnabled, bool& gravityEnabled) = 0;
+		virtual void End(bool& collisionEnabled, bool& gravityEnabled) = 0;
 	};
 }

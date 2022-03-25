@@ -5,10 +5,14 @@ namespace MyWorld
 	// relative coordinates based on camera coords
 	const glm::vec3 PlayerObj::posVec = { 0.4f, 0.4f, 1.8f };
 
-	void PlayerObj::Update(bool& collisionEnabled, bool& gravityEnabled)
+	void PlayerObj::clearVelocity()
 	{
-		uint8_t hitX = 0, hitY = 0, hitZ = 0;
+		if (hitBox.getVelocity().x == 0.0f && hitBox.getVelocity().y == 0.0f && hitBox.getVelocity().z == 0.0f) return;
+		hitBox.setVelocity(0.0f, 0.0f, 0.0f);
+	}
 
+	void PlayerObj::Begin(bool& collisionEnabled, bool& gravityEnabled)
+	{
 		// hook up with camera
 		if (Camera::cameraMoved())
 			hitBox.setPos(Camera::getEyeCoords() - posVec);
@@ -18,9 +22,17 @@ namespace MyWorld
 			handler.applyGravity();
 		}
 
+		handler.commitVelocity();
+	}
+
+	void PlayerObj::End(bool& collisionEnabled, bool& gravityEnabled)
+	{
+		uint8_t hitX = 0, hitY = 0, hitZ = 0;
+		Block::TYPE hitType = Block::TYPE::AIR;
+
 		if (collisionEnabled)
 		{
-			handler.handleTerrainCollision(hitX, hitY, hitZ);
+			handler.handleTerrainCollision(hitX, hitY, hitZ, hitType);
 		}
 
 		if (gravityEnabled)

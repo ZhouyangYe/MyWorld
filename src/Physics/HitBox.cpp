@@ -97,6 +97,13 @@ namespace MyWorld
 		this->pos = pos;
 	}
 
+	void HitBox::setVelocity(float&& x, float&& y, float&& z)
+	{
+		velocity.x = x;
+		velocity.y = y;
+		velocity.z = z;
+	}
+
 	void HitBox::setVelocityX(float&& v)
 	{
 		velocity.x = v;
@@ -114,6 +121,7 @@ namespace MyWorld
 
 	void HitBox::updatePos()
 	{
+		if (velocity.x == 0.0f && velocity.y == 0.0f && velocity.z == 0.0f) return;
 		pos += velocity * (float)Time::getDeltaTime();
 	}
 

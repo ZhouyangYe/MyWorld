@@ -9,7 +9,9 @@ namespace MyWorld
 	{
 	public:
 		static const glm::vec3 posVec;
+		void clearVelocity();
 		PlayerObj() : BaseObj({ false, 66.6f, glm::vec3{0.0f, 0.0f, 0.0f}, 0.8f, 2.0f }) {}
-		void Update(bool& collisionEnabled, bool& gravityEnabled) override;
+		void Begin(bool& collisionEnabled, bool& gravityEnabled) override;
+		void End(bool& collisionEnabled, bool& gravityEnabled) override;
 	};
 }

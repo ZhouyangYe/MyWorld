@@ -13,6 +13,10 @@ namespace MyWorld
 			hitBox->setVelocityZ(hitBox->getVelocity().z + GRAVITY);
 		if (hitBox->getVelocity().z > MAX_SPEED)
 			hitBox->setVelocityZ(MAX_SPEED);
+	}
+
+	void Handler::commitVelocity()
+	{
 		hitBox->updatePos();
 	}
 
@@ -21,10 +25,10 @@ namespace MyWorld
 		return type == Block::TYPE::AIR || type == Block::TYPE::WATER;
 	}
 
-	bool&& Handler::handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ)
+	bool&& Handler::handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ, Block::TYPE& hitType)
 	{
 		glm::vec3 pos = hitBox->getCoords();
-		glm::vec3 offsetCoords = glm::vec3{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 offsetCoords{ 0.0f, 0.0f, 0.0f };
 		const glm::vec3 movement = pos - prevPos;
 
 		// pre-calculate x
@@ -240,9 +244,9 @@ namespace MyWorld
 			return false;
 		}
 
-		hitX = offsetCoords.x == 0.0f ? 0 : offsetCoords.x > 0.0f ? 1 : 2;
-		hitY = offsetCoords.y == 0.0f ? 0 : offsetCoords.y > 0.0f ? 1 : 2;
-		hitZ = offsetCoords.z == 0.0f ? 0 : offsetCoords.z > 0.0f ? 1 : 2;
+		if (offsetCoords.x != 0.0f) hitX = offsetCoords.x > 0.0f ? 1 : 2;
+		if (offsetCoords.y != 0.0f) hitY = offsetCoords.y > 0.0f ? 1 : 2;
+		if (offsetCoords.z != 0.0f) hitZ = offsetCoords.z > 0.0f ? 1 : 2;
 		hitBox->setPos(pos + offsetCoords);
 		prevPos = hitBox->getCoords();
 		return true;

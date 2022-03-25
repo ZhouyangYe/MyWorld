@@ -13,7 +13,8 @@ namespace MyWorld
 	public:
 		void setPrevPos(glm::vec3& pos);
 		void applyGravity();
-		bool&& handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ);
+		void commitVelocity();
+		bool&& handleTerrainCollision(uint8_t& hitX, uint8_t& hitY, uint8_t& hitZ, Block::TYPE& hitType);
 		Handler(HitBox* box) : hitBox(box), prevPos(box->getCoords()) {}
 	};
 }

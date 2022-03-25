@@ -51,6 +51,7 @@ namespace MyWorld
 		const Offset&& getCollisionOffsets(HitBox& box);
 		void setPos(glm::vec3& pos);
 		void setPos(glm::vec3&& pos);
+		void setVelocity(float&& x, float&& y, float&& z);
 		void setVelocityX(float&& v);
 		void setVelocityY(float&& v);
 		void setVelocityZ(float&& v);

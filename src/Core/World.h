@@ -32,5 +32,6 @@ namespace MyWorld
 		static const glm::vec3& getSelectedBlockPos();
 		static const Block::DIRECTION& getSelectedFace();
 		static const int& getRenderDistance();
+		static PlayerObj& getPlayer();
 	};
 }

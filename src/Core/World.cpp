@@ -24,6 +24,11 @@ namespace MyWorld
 		player.setPos(Chunk::getSpawnLocation() - PlayerObj::posVec);
 	}
 
+	PlayerObj& World::getPlayer()
+	{
+		return player;
+	}
+
 	const int& World::getRenderDistance()
 	{
 		return renderDistance;
@@ -204,7 +209,8 @@ namespace MyWorld
 		  Data::chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
 		}
 
-		player.Update(collisionEnabled, gravityEnabled);
+		player.Begin(collisionEnabled, gravityEnabled);
+		player.End(collisionEnabled, gravityEnabled);
 
 		for (int i = 0; i < chunk_num; i++)
 		{

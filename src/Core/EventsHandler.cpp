@@ -11,6 +11,7 @@ namespace MyWorld
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{
 				Camera::moveUp = true;
+				World::getPlayer().clearVelocity();
 				if (World::gravityEnabled) World::gravityEnabled = false;
 				if (Camera::cameraMoveDisabled) Camera::cameraMoveDisabled = false;
 			}
@@ -22,6 +23,7 @@ namespace MyWorld
 			if (event.action == KeyPressEvent::ACTION::KEY_DOWN)
 			{
 				Camera::moveDown = true;
+				World::getPlayer().clearVelocity();
 				if (World::gravityEnabled) World::gravityEnabled = false;
 				if (Camera::cameraMoveDisabled) Camera::cameraMoveDisabled = false;
 			}

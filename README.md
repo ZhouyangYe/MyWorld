@@ -18,3 +18,5 @@
 	17. audio
 	18. GUI
 	19. frustum culling
+	20. block placement
+	21. modeling

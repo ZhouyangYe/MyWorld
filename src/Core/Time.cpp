@@ -2,10 +2,10 @@
 
 namespace MyWorld
 {
-	double Time::deltaTime = 0;
-	double Time::prevTime = 0;
-	double Time::fpsDeltaTime = 0;
-	double Time::fpsPrevTime = 0;
+	double Time::deltaTime = 0.0f;
+	double Time::prevTime = 0.0f;
+	double Time::fpsDeltaTime = 0.0f;
+	double Time::fpsPrevTime = 0.0f;
 	int Time::fps = 0;
 
 	const double& Time::getDeltaTime()
@@ -39,5 +39,10 @@ namespace MyWorld
 	const int& Time::getFps()
 	{
 		return fps;
+	}
+
+	void Time::Init()
+	{
+		prevTime = Window::getCurrentTime();
 	}
 }

@@ -47,6 +47,9 @@ namespace MyWorld
 					break;
 				}
 			});
+		
+		// update prevTime right before rendering starts
+		Time::Init();
 	}
 
 	void App::Terminate()

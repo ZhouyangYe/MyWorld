@@ -42,7 +42,7 @@ namespace MyWorld
 			// if the player is in the air, player move should be disabled
 			if (hitZ == 0)
 			{
-				Camera::cameraMoveDisabled = true;
+				if (!Camera::cameraMoveDisabled) Camera::cameraMoveDisabled = true;
 			}
 			else
 			{

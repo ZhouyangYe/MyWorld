@@ -90,6 +90,7 @@ namespace MyWorld
 	void Camera::Init(CameraParam param)
 	{
 		eye = param.spawnLocation;
+		cam = eye - offset;
 		forward = param.forward;
 		zoom = param.zoom;
 		offset = param.zoom * forward;

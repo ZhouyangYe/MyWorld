@@ -20,3 +20,7 @@
 	19. frustum culling
 	20. block placement
 	21. modeling
+	22. events handling ✔
+	23. file system
+	24. increase render distance
+	25. particle system(rain, snow, etc)

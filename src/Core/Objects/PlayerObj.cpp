@@ -53,8 +53,10 @@ namespace MyWorld
 
 		// correct the camera pos according to collision and gravity
 		Camera::setCamPos(hitBox.getCoords() + posVec);
+	}
 
-		if (showHitBox)
-			hitBox.Draw();
+	void PlayerObj::DrawHitBox()
+	{
+		hitBox.Draw();
 	}
 }

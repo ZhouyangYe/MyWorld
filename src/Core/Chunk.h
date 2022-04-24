@@ -52,8 +52,6 @@ namespace MyWorld
 		static void setShowWorldBorder(bool show);
 		static void setChunkRenderDistanceNum(int num);
 	private:
-		// the index of chunk in the world space
-		const int index;
 		glm::vec3 coords;
 		// data of blocks
 		std::vector<Block> blocks;
@@ -99,7 +97,7 @@ namespace MyWorld
 		std::vector<CustomBlock> custom_blocks;
 	public:
 		Chunk();
-		Chunk(glm::vec2 coords, int idx);
+		Chunk(glm::vec2 coords);
 		~Chunk();
 		void Draw(Phase&& phase);
 		void GenBlocks();

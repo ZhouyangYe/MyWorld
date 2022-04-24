@@ -293,11 +293,10 @@ namespace MyWorld
 	void Chunk::Destroy()
 	{}
 
-	Chunk::Chunk() : index(0)
+	Chunk::Chunk()
 	{}
 
-	Chunk::Chunk(glm::vec2 coords, int index) :
-		index(index),
+	Chunk::Chunk(glm::vec2 coords) :
 		coords(glm::vec3(coords, 0.0f)), 
 		vbh_type1(BGFX_INVALID_HANDLE),
 		ibh_type1(BGFX_INVALID_HANDLE),
@@ -415,7 +414,7 @@ namespace MyWorld
 	{
 		// TODO: optimize it
 		// remove transparent blocks data for this chunk
-		std::vector<Block> temp = transparent_blocks;
+		/*std::vector<Block> temp = transparent_blocks;
 		transparent_blocks.clear();
 		for (std::vector<Block>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
 		{
@@ -424,7 +423,7 @@ namespace MyWorld
 				continue;
 			}
 			transparent_blocks.push_back(*iter);
-		}
+		}*/
 
 		// destroy data
 		// opaque

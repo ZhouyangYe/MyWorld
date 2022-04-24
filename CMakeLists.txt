@@ -44,8 +44,6 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Model/Blocks/Air.cpp
   src/Renderer/Model/Blocks/Water.h
   src/Renderer/Model/Blocks/Water.cpp
-  src/Core/Data.h
-  src/Core/Data.cpp
   src/Core/Info.h
   src/Core/Info.cpp
   src/Core/World.h

@@ -13,5 +13,6 @@ namespace MyWorld
 		PlayerObj() : BaseObj({ false, 66.6f, glm::vec3{0.0f, 0.0f, 0.0f}, 0.8f, 2.0f }) {}
 		void Begin(bool& collisionEnabled, bool& gravityEnabled) override;
 		void End(bool& collisionEnabled, bool& gravityEnabled) override;
+		void DrawHitBox() override;
 	};
 }

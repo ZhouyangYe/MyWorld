@@ -7,7 +7,6 @@
 #include "Cursor.h"
 #include "Renderer/Renderer.h"
 #include "Chunk.h"
-#include "Data.h"
 #include "Info.h"
 #include "World.h"
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "Data.h"
 #include "Objects/PlayerObj.h"
 #include "Renderer/Model/Characters/Player.h"
 
@@ -8,6 +7,7 @@ namespace MyWorld
 	class World
 	{
 	private:
+		static glm::vec2 region[4];
 		static int renderDistance; // SETTINGS
 		static float selection_distance_blocks;
 		static float selection_distance_blocks_square;
@@ -19,6 +19,7 @@ namespace MyWorld
 		static const glm::vec3 NOT_SELECTED;
 		static Wireframe wireframe;
 		static PlayerObj player;
+		static std::vector<Chunk*> chunks;
 	public:
 		static bool selectionEnabled; // SETTINGS
 		static bool collisionEnabled; // SETTINGS

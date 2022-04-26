@@ -25,7 +25,7 @@ namespace MyWorld
 		Chunk::Init();
 
 		// initialize world
-		World::Generate();
+		World::Init();
 
 		Camera::Init({ { windowSize.width, windowSize.height }, (float)World::getRenderDistance() * 16, Chunk::getSpawnLocation() });
 		Player::Register();
@@ -35,13 +35,13 @@ namespace MyWorld
 				switch (event.type)
 				{
 				case Event::TYPE::KEY_PRESS:
-					handleKeyPress((KeyPressEvent&) event);
+					EventHandler::handleKeyPress((KeyPressEvent&) event);
 					break;
 				case Event::TYPE::MOUSE_MOVE:
-					handleMouseMove((MouseMoveEvent&) event);
+					EventHandler::handleMouseMove((MouseMoveEvent&) event);
 					break;
 				case Event::TYPE::MOUSE_WHEEL:
-					handleMouseWheel((MouseWheelEvent&) event);
+					EventHandler::handleMouseWheel((MouseWheelEvent&) event);
 					break;
 				default:
 					break;

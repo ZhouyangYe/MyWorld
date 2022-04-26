@@ -1,4 +1,5 @@
 #pragma once
+#include "Util.h"
 #include "Objects/PlayerObj.h"
 #include "Renderer/Model/Characters/Player.h"
 
@@ -7,7 +8,9 @@ namespace MyWorld
 	class World
 	{
 	private:
-		static glm::vec2 region[4];
+		static std::mutex region_lock;
+		static glm::vec2 region;
+		static int regionWidth;
 		static int renderDistance; // SETTINGS
 		static float selection_distance_blocks;
 		static float selection_distance_blocks_square;
@@ -20,12 +23,15 @@ namespace MyWorld
 		static Wireframe wireframe;
 		static PlayerObj player;
 		static std::vector<Chunk*> chunks;
+		static std::thread terrain_generation_thread;
+		static const glm::vec2 syncRegion(bool&& write);
 	public:
 		static bool selectionEnabled; // SETTINGS
 		static bool collisionEnabled; // SETTINGS
 		static bool gravityEnabled; // SETTINGS
 		static bool infiniteWorldEnabled; // SETTINGS
 		static void Generate();
+		static void Init();
 		static void Update();
 		static void Destroy();
 		static void updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength);

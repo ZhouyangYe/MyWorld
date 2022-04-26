@@ -107,8 +107,6 @@ namespace MyWorld
 	{
 		if (cameraMoveDisabled) return;
 
-		isCameraMoved = moveUp || moveDown || moveLeft || moveRight || moveForward || moveBackward;
-
 		if (moveUp && freeCamera)
 			MoveUp();
 		if (moveDown && freeCamera)
@@ -121,6 +119,8 @@ namespace MyWorld
 			MoveForward();
 		if (moveBackward)
 			MoveBackward();
+
+		isCameraMoved = moveUp || moveDown || moveLeft || moveRight || moveForward || moveBackward;
 	}
 
 	void Camera::End()
@@ -173,7 +173,6 @@ namespace MyWorld
 
 	void Camera::Rotate(glm::vec2 delta)
 	{
-		isCameraRotated = true;
 		forward = glm::mat3(
 			glm::rotate(-delta.x * (float)Time::getDeltaTime(), WORLD_UP) *
 			glm::rotate(-delta.y * (float)Time::getDeltaTime(), right)
@@ -188,5 +187,6 @@ namespace MyWorld
 		offset = zoom * forward;
 
 		updateCam();
+		isCameraRotated = true;
 	}
 }

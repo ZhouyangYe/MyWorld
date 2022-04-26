@@ -12,7 +12,10 @@
 
 namespace MyWorld
 {
-	void handleKeyPress(KeyPressEvent& event);
-	void handleMouseMove(MouseMoveEvent& event);
-	void handleMouseWheel(MouseWheelEvent& event);
+	namespace EventHandler
+	{
+		void handleKeyPress(KeyPressEvent& event);
+		void handleMouseMove(MouseMoveEvent& event);
+		void handleMouseWheel(MouseWheelEvent& event);
+	}
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include "Renderer.h"
 #include "Core/Time.h"
 #include "Tools.h"

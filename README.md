@@ -1,7 +1,7 @@
 # TODOs:
 	1. camera ✔
 	2. chunk greedy meshing and batching ✔
-	3. terrain generation ✔
+	3. terrain generation(perlin noise) ✔
 	4. texture array ✔
 	5. texture atlas ✔
 	6. events handle ✔
@@ -27,3 +27,4 @@
 	26. increase render distance(1000 maybe?)
 	27. particle system(rain, snow, etc)
 	28. cmake build configurations(release, debug)
+	29. procedurally terrain generation

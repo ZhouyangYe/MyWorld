@@ -2,17 +2,19 @@
 
 namespace MyWorld
 {
+	std::atomic_bool World::gameover = false;
 	bool World::selectionEnabled = true;
 	bool World::collisionEnabled = true;
 	bool World::gravityEnabled = true;
-	bool World::infiniteWorldEnabled = false;
+	bool World::infiniteWorldEnabled = true;
 	std::vector<Chunk*> World::chunks;
 	int World::renderDistance = 3;
 	int World::chunk_num;
-	// chunks will not be updated unless player go out of the region
-	glm::vec2 World::region;
-	int World::regionWidth = CHUNK_WIDTH;
-	std::mutex World::region_lock;
+	// chunks will not be updated unless player go out of the zone
+	glm::vec2 World::bufferZone;
+	int World::zoneChunkNum = 1;
+	int World::zoneWidth = zoneChunkNum * CHUNK_WIDTH;
+	std::mutex World::zone_lock;
 	float World::selection_distance_blocks = 5.0f;
 	float World::selection_distance_blocks_square = selection_distance_blocks * selection_distance_blocks;
 	Wireframe World::wireframe;
@@ -31,15 +33,15 @@ namespace MyWorld
 		if (infiniteWorldEnabled)
 		{
 			chunks.reserve(4);
-			for (int y = -1; y < 1; y++)
+			for (int y = -zoneChunkNum; y < zoneChunkNum; y++)
 			{
-				for (int x = -1; x < 1; x++)
+				for (int x = -zoneChunkNum; x < zoneChunkNum; x++)
 				{
 					chunks.push_back(new Chunk(glm::vec2{ (float)x * 16.0f, (float)y * 16.0f }));
 				}
 			}
 
-			region = glm::vec2{ 0.0f, 0.0f };
+			bufferZone = glm::vec2{ 0.0f, 0.0f };
 
 			// generate terrain in terrain generation thread
 			terrain_generation_thread = std::thread(Generate);
@@ -237,56 +239,25 @@ namespace MyWorld
 		return selectedFace;
 	}
 
-	const glm::vec2 World::syncRegion(bool&& write)
+	const glm::vec2 World::syncZone(const std::optional<glm::vec2>& zone = std::nullopt)
 	{
-		std::lock_guard<std::mutex> guard(region_lock);
+		std::lock_guard<std::mutex> guard(zone_lock);
 
-		if (write)
+		if (zone)
 		{
-			const float
-				rightEdge = region.x + regionWidth,
-				leftEdge = region.x - regionWidth,
-				topEdge = region.y + regionWidth,
-				bottomEdge = region.y - regionWidth;
-
-			if (
-				Camera::getEyeCoords().x < leftEdge - regionWidth   ||
-				Camera::getEyeCoords().x > rightEdge + regionWidth  ||
-				Camera::getEyeCoords().y < bottomEdge - regionWidth ||
-				Camera::getEyeCoords().y > topEdge + regionWidth
-			)
-			{
-				region = glm::vec2{ std::floor(Camera::getEyeCoords().x), std::floor(Camera::getEyeCoords().y) };
-			}
-
-			if (Camera::getEyeCoords().x > rightEdge)
-			{
-				region.x = rightEdge;
-			}
-			else if (Camera::getEyeCoords().x < leftEdge)
-			{
-				region.x = leftEdge;
-			}
-
-			if (Camera::getEyeCoords().y > topEdge)
-			{
-				region.y = topEdge;
-			}
-			else if (Camera::getEyeCoords().y < bottomEdge)
-			{
-				region.y = bottomEdge;
-			}
+			bufferZone = *zone;
 		}
 
-		return region;
+		return bufferZone;
 	}
 
 	// generate terrains in another thread
 	void World::Generate()
 	{
-		while (true)
+		glm::vec2 prevZone = syncZone();
+		while (!gameover)
 		{
-			const glm::vec2 chunkRegion = syncRegion(false);
+			glm::vec2 currentZone = syncZone();
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 	}
@@ -300,36 +271,86 @@ namespace MyWorld
 		if (selectionEnabled)
 		{
 			selectBlock();
-			// TODO: find a better way to render the wireframe
-			if (selectedPos.z != -1.0f) wireframe.Draw();
 		}
 
-		// update chunk buffer region
+		// update chunk buffer zone
 		if (infiniteWorldEnabled)
 		{
-			syncRegion(true);
+			glm::vec2 temp = bufferZone;
+			const float
+				rightEdge = bufferZone.x + zoneWidth,
+				leftEdge = bufferZone.x - zoneWidth,
+				topEdge = bufferZone.y + zoneWidth,
+				bottomEdge = bufferZone.y - zoneWidth;
+
+			if (
+				Camera::getEyeCoords().x < leftEdge - zoneWidth ||
+				Camera::getEyeCoords().x > rightEdge + zoneWidth ||
+				Camera::getEyeCoords().y < bottomEdge - zoneWidth ||
+				Camera::getEyeCoords().y > topEdge + zoneWidth
+			)
+			{
+				temp = glm::vec2{ std::floor(Camera::getEyeCoords().x), std::floor(Camera::getEyeCoords().y) };
+				syncZone(temp);
+			}
+			else
+			{
+				if (Camera::getEyeCoords().x > rightEdge)
+				{
+					temp.x = rightEdge;
+					syncZone(temp);
+				}
+				else if (Camera::getEyeCoords().x < leftEdge)
+				{
+					temp.x = leftEdge;
+					syncZone(temp);
+				}
+
+				if (Camera::getEyeCoords().y > topEdge)
+				{
+					temp.y = topEdge;
+					syncZone(temp);
+				}
+				else if (Camera::getEyeCoords().y < bottomEdge)
+				{
+					temp.y = bottomEdge;
+					syncZone(temp);
+				}
+			}
 		}
 
+		Draw();
+	}
+
+	void World::Draw()
+	{
+		const int chunksNum = chunks.size();
 		// rendering pass 0
-		for (int i = 0; i < chunk_num; i++)
-		{
-		  chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
-		}
-
 		if (BaseObj::getShowHitBox())
 		{
 			player.DrawHitBox();
 		}
 
-		// rendering pass 1
-		for (int i = 0; i < chunk_num; i++)
+		if (selectionEnabled && selectedPos.z != -1.0f)
 		{
-		  chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
+			// TODO: find a better way to render the wireframe
+			wireframe.Draw();
 		}
 
-		for (int i = 0; i < chunk_num; i++)
+		for (int i = 0; i < chunksNum; i++)
 		{
-		  chunks[i]->Draw(Chunk::Phase::WATER_P);
+			chunks[i]->Draw(Chunk::Phase::OPAQUE_P);
+		}
+
+		// rendering pass 1
+		for (int i = 0; i < chunksNum; i++)
+		{
+			chunks[i]->Draw(Chunk::Phase::WATER_PLACEHOLDER_P);
+		}
+
+		for (int i = 0; i < chunksNum; i++)
+		{
+			chunks[i]->Draw(Chunk::Phase::WATER_P);
 		}
 
 		// rendering pass 2
@@ -338,6 +359,7 @@ namespace MyWorld
 
 	void World::Destroy()
 	{
+		terrain_generation_thread.join();
 		for (std::vector<Chunk*>::iterator iter = chunks.begin(); iter != chunks.end(); ++iter)
 		{
 			delete (*iter);

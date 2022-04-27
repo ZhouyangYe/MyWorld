@@ -52,6 +52,26 @@ namespace MyWorld
 		Time::Init();
 	}
 
+	void App::Update()
+	{
+		Time::updateTime();
+		if (Info::shouldShowInfo()) Time::updateFps();
+
+		Window::Begin();
+		Renderer::Begin();
+		Camera::Begin();
+
+		// main game logic
+		World::Update();
+
+		Info::Update();
+		if (Cursor::hideCursor) Cursor::reset();
+
+		Camera::End();
+		Renderer::End();
+		Window::End();
+	}
+
 	void App::Terminate()
 	{
 		// destroy blocks
@@ -72,25 +92,5 @@ namespace MyWorld
 		Player::Destroy();
 
 		Window::Terminate();
-	}
-
-	void App::Update()
-	{
-		Time::updateTime();
-		if (Info::shouldShowInfo()) Time::updateFps();
-
-		Window::Begin();
-		Renderer::Begin();
-		Camera::Begin();
-
-		// main game logic
-		World::Update();
-
-		Info::Update();
-		if (Cursor::hideCursor) Cursor::reset();
-
-		Camera::End();
-		Renderer::End();
-		Window::End();
 	}
 }

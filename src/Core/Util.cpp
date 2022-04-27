@@ -23,6 +23,11 @@ namespace MyWorld
             std::cout << stir << "\n";
         }
 
+        void log(glm::vec2 vec, char* text)
+        {
+            std::cout << text << vec.x << ", " << vec.y << "\n";
+        }
+
         void log(glm::vec3 vec, char* text)
         {
             std::cout << text << vec.x << ", " << vec.y << ", " << vec.z << "\n";

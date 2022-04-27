@@ -15,8 +15,6 @@ namespace MyWorld
 	void Cursor::updateCoord(glm::vec2 coord)
 	{
 		glm::vec2 center = Window::getCenter();
-		if (prevCoord.length == 0)
-			prevCoord = coord;
 
 		delta = coord - prevCoord;
 		prevCoord = hideCursor ? center : coord;

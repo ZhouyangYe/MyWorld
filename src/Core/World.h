@@ -8,9 +8,10 @@ namespace MyWorld
 	class World
 	{
 	private:
-		static std::mutex region_lock;
-		static glm::vec2 region;
-		static int regionWidth;
+		static std::mutex zone_lock;
+		static glm::vec2 bufferZone;
+		static int zoneChunkNum;
+		static int zoneWidth;
 		static int renderDistance; // SETTINGS
 		static float selection_distance_blocks;
 		static float selection_distance_blocks_square;
@@ -24,8 +25,10 @@ namespace MyWorld
 		static PlayerObj player;
 		static std::vector<Chunk*> chunks;
 		static std::thread terrain_generation_thread;
-		static const glm::vec2 syncRegion(bool&& write);
+		static const glm::vec2 syncZone(const std::optional<glm::vec2>& zone);
+		static void Draw();
 	public:
+		static std::atomic_bool gameover;
 		static bool selectionEnabled; // SETTINGS
 		static bool collisionEnabled; // SETTINGS
 		static bool gravityEnabled; // SETTINGS

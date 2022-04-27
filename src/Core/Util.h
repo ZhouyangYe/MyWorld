@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <functional>
+#include <optional>
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
@@ -27,6 +28,7 @@ namespace MyWorld
         std::string readText(const std::string& filepath);
 
         void log(char* stir);
+        void log(glm::vec2 vec, char* text = "");
         void log(glm::vec3 vec, char* text = "");
         void log(float num, char* text = "");
         void log(double num, char* text = "");

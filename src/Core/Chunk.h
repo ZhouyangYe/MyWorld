@@ -29,7 +29,7 @@ namespace MyWorld
 			Block::TYPE type;
 		};
 		// how many num of chunks to be rendered base on player
-		static int WORLD_CHUNK_RENDER_DISTANCE;
+		static int renderDistanceNum;
 		static glm::vec3 spawn_location;
 		static bool showWorldBorder;
 		static FastNoiseLite noise;
@@ -49,8 +49,8 @@ namespace MyWorld
 		static const glm::vec3& getSpawnLocation();
 		// get the type of the specific block
 		static const Block::TYPE&& getType(glm::vec3& pos);
-		static void setShowWorldBorder(bool show);
-		static void setChunkRenderDistanceNum(int num);
+		static void setShowWorldBorder(bool&& show);
+		static void setChunkRenderDistanceNum(int& num);
 	private:
 		glm::vec3 coords;
 		// data of blocks
@@ -96,6 +96,7 @@ namespace MyWorld
 		// custom blocks that user placed
 		std::vector<CustomBlock> custom_blocks;
 	public:
+		const glm::vec3& getCoords();
 		Chunk();
 		Chunk(glm::vec2 coords);
 		~Chunk();

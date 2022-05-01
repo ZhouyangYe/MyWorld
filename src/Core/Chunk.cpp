@@ -3,14 +3,19 @@
 namespace MyWorld
 {
 	// numbers of chunks to be rendered based on the player
-	int Chunk::WORLD_CHUNK_RENDER_DISTANCE = 1;
+	int Chunk::renderDistanceNum = 1;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
 
 	bool Chunk::showWorldBorder = true;
 	FastNoiseLite Chunk::noise;
 	std::vector<Block> Chunk::transparent_blocks;
 
-	void Chunk::setShowWorldBorder(bool show)
+	const glm::vec3& Chunk::getCoords()
+	{
+		return coords;
+	}
+
+	void Chunk::setShowWorldBorder(bool&& show)
 	{
 		showWorldBorder = show;
 	}
@@ -241,7 +246,8 @@ namespace MyWorld
 	void Chunk::faceCullingAndSeparating()
 	{
 		// TODO: 1. frustum culling 2. do this in a separate thread
-		for (int i = 0; i < blocks.size(); i++)
+    int size = blocks.size();
+		for (int i = 0; i < size; i++)
 		{
 			if (blocks[i].type != Block::TYPE::AIR)
 			{
@@ -370,7 +376,7 @@ namespace MyWorld
 	{
 		if (showWorldBorder)
 		{
-			int width = WORLD_CHUNK_RENDER_DISTANCE * CHUNK_WIDTH;
+			int width = renderDistanceNum;
 			if (
 				pos.x > width - 1 ||
 				pos.x < -width ||
@@ -475,8 +481,8 @@ namespace MyWorld
 		}
 	}
 
-	void Chunk::setChunkRenderDistanceNum(int num)
+	void Chunk::setChunkRenderDistanceNum(int& num)
 	{
-		WORLD_CHUNK_RENDER_DISTANCE = num;
+		renderDistanceNum = num;
 	}
 }

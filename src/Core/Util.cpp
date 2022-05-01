@@ -33,6 +33,11 @@ namespace MyWorld
             std::cout << text << vec.x << ", " << vec.y << ", " << vec.z << "\n";
         }
 
+        void log(int num, char* text)
+        {
+            std::cout << text << num << "\n";
+        }
+
         void log(float num, char* text)
         {
             std::cout << text << num << "\n";

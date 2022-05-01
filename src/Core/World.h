@@ -13,6 +13,7 @@ namespace MyWorld
 		static int zoneChunkNum;
 		static int zoneWidth;
 		static int renderDistance; // SETTINGS
+		static int renderDistanceNum;
 		static float selection_distance_blocks;
 		static float selection_distance_blocks_square;
 		static int chunk_num;
@@ -23,17 +24,22 @@ namespace MyWorld
 		static const glm::vec3 NOT_SELECTED;
 		static Wireframe wireframe;
 		static PlayerObj player;
-		static std::vector<Chunk*> chunks;
+		static std::mutex release_lock;
+		static std::mutex chunk_lock;
+		static std::vector<Chunk*> current;
+		static std::vector<Chunk*> work_in_progress;
 		static std::thread terrain_generation_thread;
 		static const glm::vec2 syncZone(const std::optional<glm::vec2>& zone);
+		static bool isOutOfWorld(glm::vec2& coord, glm::vec2& zone);
 		static void Draw();
+		static void Generate();
+		static void ReleaseChunks(std::vector<Chunk*>& to_be_released);
 	public:
 		static std::atomic_bool gameover;
 		static bool selectionEnabled; // SETTINGS
 		static bool collisionEnabled; // SETTINGS
 		static bool gravityEnabled; // SETTINGS
 		static bool infiniteWorldEnabled; // SETTINGS
-		static void Generate();
 		static void Init();
 		static void Update();
 		static void Destroy();

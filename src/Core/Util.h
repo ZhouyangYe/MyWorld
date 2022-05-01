@@ -18,6 +18,9 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <unordered_map>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
 #define BT_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
@@ -30,6 +33,7 @@ namespace MyWorld
         void log(char* stir);
         void log(glm::vec2 vec, char* text = "");
         void log(glm::vec3 vec, char* text = "");
+        void log(int num, char* text = "");
         void log(float num, char* text = "");
         void log(double num, char* text = "");
         void log(bool boo, char* text = "");
@@ -81,12 +85,12 @@ namespace MyWorld
         };
 
         template <typename T>
-        void mergeSortFunc(T arr[], T temp[], int begin, int end, const std::function<float(T item1, T item2)>& compare)
+        void mergeSortFunc(T arr[], T temp[], int& begin, int& end, const std::function<float(T item1, T item2)>& compare)
         {
             if (begin >= end) return;
-            int middle = (end + begin) / 2;
+            int middle = (end + begin) / 2, newBegin = middle + 1;
             mergeSortFunc<T>(arr, temp, begin, middle, compare);
-            mergeSortFunc<T>(arr, temp, middle + 1, end, compare);
+            mergeSortFunc<T>(arr, temp, newBegin, end, compare);
             merge(arr, temp, begin, middle, end, compare);
         };
 
@@ -94,8 +98,10 @@ namespace MyWorld
         template <typename T>
         void mergeSort(T arr[], int size, const std::function<float(T item1, T item2)>& compare)
         {
-            T temp[size];
-            mergeSortFunc<T>(arr, temp, 0, size - 1, compare);
+            T* temp = new T[size];
+            int begin = 0, end = size - 1;
+            mergeSortFunc<T>(arr, temp, begin, end, compare);
+            delete[] temp;
         };
     }
 }

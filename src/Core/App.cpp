@@ -70,6 +70,8 @@ namespace MyWorld
 		Camera::End();
 		Renderer::End();
 		Window::End();
+
+		// TODO: lock framerate
 	}
 
 	void App::Terminate()

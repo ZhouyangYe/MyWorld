@@ -24,7 +24,7 @@
 	23. modeling
 	24. multi-threading
 	25. file system for loading textures and shaders(cross platform)
-	26. increase render distance(1000 maybe?)
+	26. increase render distance(greater than 100 maybe?)
 	27. particle system(rain, snow, etc)
 	28. cmake build configurations(release, debug)
-	29. procedurally terrain generation
+	29. procedurally terrain generation ✔

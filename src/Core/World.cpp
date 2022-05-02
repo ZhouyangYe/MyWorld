@@ -369,9 +369,11 @@ namespace MyWorld
 				}
 				// swap to use updated chunks
 				chunk_lock.lock();
-				current = work_in_progress;
+				current.swap(work_in_progress);
 				chunk_lock.unlock();
 				release_lock.unlock();
+				// copy current to work_in_progress
+				work_in_progress = current;
 
 				Util::mergeSort<glm::vec2>(to_be_created.data(), to_be_created.size(), [&](glm::vec2& item1, glm::vec2& item2) {
 					return glm::length2(item1 - bufferZone) - glm::length2(item2 - bufferZone);
@@ -392,8 +394,9 @@ namespace MyWorld
 
 			// swap to use updated chunks
 			chunk_lock.lock();
-			current = work_in_progress;
+			current.swap(work_in_progress);
 			chunk_lock.unlock();
+			work_in_progress = current;
 
 			prevZone = currentZone;
 		}

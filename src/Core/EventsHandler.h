@@ -6,9 +6,9 @@
 #include "Window/Window.h"
 #include "Cursor.h"
 #include "Renderer/Renderer.h"
-#include "Chunk.h"
+#include "World/Chunk.h"
 #include "Info.h"
-#include "World.h"
+#include "World/World.h"
 
 namespace MyWorld
 {

@@ -49,7 +49,7 @@ namespace MyWorld
 				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -77,7 +77,7 @@ namespace MyWorld
 				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -105,7 +105,7 @@ namespace MyWorld
 				for (float y = startY; y < endY && !done; y++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -134,7 +134,7 @@ namespace MyWorld
 				for (float z = startZ; z < endZ && !done; z++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -164,7 +164,7 @@ namespace MyWorld
 				for (float y = startY; y < endY && !done; y++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -194,7 +194,7 @@ namespace MyWorld
 				for (float x = startX; x < endX && !done; x++)
 				{
 					glm::vec3 blockCoords{ x, y, z };
-					if (notCollide(Chunk::getType(blockCoords))) continue;
+					if (notCollide(TerrainGeneration::getType(blockCoords))) continue;
 
 					HitBox::terrainHitBox.setPos(blockCoords);
 					hitBox->setPos(coords);
@@ -215,7 +215,7 @@ namespace MyWorld
 			const float y = movement.y > 0.0f ? floor(pos.y + hitBox->width) : floor(pos.y);
 			const float z = movement.z > 0.0f ? floor(pos.z + hitBox->height) : floor(pos.z);
 			glm::vec3 blockCoords{ x, y, z };
-			if (!notCollide(Chunk::getType(blockCoords)))
+			if (!notCollide(TerrainGeneration::getType(blockCoords)))
 			{
 				HitBox::terrainHitBox.setPos(blockCoords);
 				hitBox->setPos(pos);

@@ -21,13 +21,16 @@ namespace MyWorld
 		Wireframe::Register();
 		HitBox::Register();
 
+		// initialize terrain generation settings
+		TerrainGeneration::Init();
+
 		// initialize chunk
 		Chunk::Init();
 
 		// initialize world
 		World::Init();
 
-		Camera::Init({ { windowSize.width, windowSize.height }, (float)World::getRenderDistance() * 16, Chunk::getSpawnLocation() });
+		Camera::Init({ { windowSize.width, windowSize.height }, (float)TerrainGeneration::ChunkRenderDistance() * 16, Chunk::getSpawnLocation() });
 		Player::Register();
 
 		Window::setEventCallback([](Event& event)

@@ -1,6 +1,4 @@
 #pragma once
-#include <FastNoiseLite.h>
-
 #include "Renderer/Camera.h"
 #include "Renderer/Model/Model.h"
 #include "Renderer/Model/Blocks/Air.h"
@@ -8,10 +6,7 @@
 #include "Renderer/Model/Blocks/Dirt.h"
 #include "Renderer/Model/Blocks/Water.h"
 #include "Renderer/Model/Blocks/Wireframe.h"
-
-#define CHUNK_DEPTH 386
-#define CHUNK_WIDTH 16
-#define TOTAL_BLOCKS CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_DEPTH
+#include "TerrainGeneration.h"
 
 #define X_OFFSET CHUNK_DEPTH
 #define Y_OFFSET CHUNK_WIDTH * CHUNK_DEPTH
@@ -28,11 +23,7 @@ namespace MyWorld
 			glm::vec3 coords;
 			Block::TYPE type;
 		};
-		// how many num of chunks to be rendered base on player
-		static int renderDistanceNum;
 		static glm::vec3 spawn_location;
-		static bool showWorldBorder;
-		static FastNoiseLite noise;
 		static float&& getLength(Block& block);
 		// transparent blocks to be rendered
 		static std::vector<Block> transparent_blocks;
@@ -47,10 +38,6 @@ namespace MyWorld
 		static void Destroy();
 		static void DrawTransparent();
 		static const glm::vec3& getSpawnLocation();
-		// get the type of the specific block
-		static const Block::TYPE&& getType(glm::vec3& pos);
-		static void setShowWorldBorder(bool&& show);
-		static void setChunkRenderDistanceNum(int& num);
 	private:
 		glm::vec3 coords;
 		// data of blocks

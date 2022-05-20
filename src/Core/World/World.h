@@ -1,6 +1,6 @@
 #pragma once
-#include "Util.h"
-#include "Objects/PlayerObj.h"
+#include "../Util.h"
+#include "../Objects/PlayerObj.h"
 #include "Renderer/Model/Characters/Player.h"
 
 namespace MyWorld
@@ -12,11 +12,8 @@ namespace MyWorld
 		static glm::vec2 bufferZone;
 		static int zoneChunkNum;
 		static int zoneWidth;
-		static int renderDistance; // SETTINGS
-		static int renderDistanceNum;
 		static float selection_distance_blocks;
 		static float selection_distance_blocks_square;
-		static int chunk_num;
 		// the position info of selected block
 		static glm::vec3 selectedPos;
 		// the face of the block selected
@@ -47,7 +44,6 @@ namespace MyWorld
 		static void selectBlock();
 		static const glm::vec3& getSelectedBlockPos();
 		static const Block::DIRECTION& getSelectedFace();
-		static const int& getRenderDistance();
 		static PlayerObj& getPlayer();
 	};
 }

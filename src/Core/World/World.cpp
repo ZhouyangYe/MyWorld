@@ -11,9 +11,6 @@ namespace MyWorld
 	std::vector<Chunk*> World::work_in_progress;
 	std::mutex World::chunk_lock;
 	std::mutex World::release_lock;
-	int World::renderDistance = 3;
-	int World::renderDistanceNum = renderDistance * CHUNK_WIDTH;
-	int World::chunk_num = renderDistance * renderDistance * 4;
 	// chunks will not be updated unless player go out of the zone
 	glm::vec2 World::bufferZone;
 	int World::zoneChunkNum = 1;
@@ -30,8 +27,7 @@ namespace MyWorld
 
 	void World::Init()
 	{
-		Chunk::setChunkRenderDistanceNum(renderDistanceNum);
-		Chunk::setShowWorldBorder(!infiniteWorldEnabled);
+		TerrainGeneration::setShowWorldBorder(!infiniteWorldEnabled);
 
 		if (infiniteWorldEnabled)
 		{
@@ -51,10 +47,10 @@ namespace MyWorld
 		}
 		else
 		{
-			current.reserve(chunk_num);
-			for (int y = -renderDistance; y < renderDistance; y++)
+			current.reserve(TerrainGeneration::ChunkNum());
+			for (int y = -TerrainGeneration::ChunkRenderDistance(); y < TerrainGeneration::ChunkRenderDistance(); y++)
 			{
-				for (int x = -renderDistance; x < renderDistance; x++)
+				for (int x = -TerrainGeneration::ChunkRenderDistance(); x < TerrainGeneration::ChunkRenderDistance(); x++)
 				{
 					current.push_back(new Chunk(glm::vec2{ (float)(x * CHUNK_WIDTH), (float)(y * CHUNK_WIDTH) }));
 				}
@@ -69,11 +65,6 @@ namespace MyWorld
 		return player;
 	}
 
-	const int& World::getRenderDistance()
-	{
-		return renderDistance;
-	}
-
 	void World::updateClosestPoint(bool& blockFound, bool& done, glm::vec3& interceptPoint, glm::vec3& pos, Block::DIRECTION& direction, float& face, float& offset, float& closestPointLength)
 	{
 		const glm::vec3 eyeLocation = Camera::getEyeCoords();
@@ -82,7 +73,7 @@ namespace MyWorld
 		const float length = glm::length2(eyeLocation - interceptPoint);
 		if (length < selection_distance_blocks_square && length < closestPointLength)
 		{
-			if (Chunk::getType(pos) != Block::TYPE::AIR)
+			if (TerrainGeneration::getType(pos) != Block::TYPE::AIR)
 			{
 				closestPointLength = length;
 				selectedPos = pos;
@@ -257,10 +248,10 @@ namespace MyWorld
 	bool World::isOutOfWorld(glm::vec2& coord, glm::vec2& zone)
 	{
 		return
-			coord.x < zone.x - renderDistanceNum  ||
-			coord.x >= zone.x + renderDistanceNum ||
-			coord.y < zone.y - renderDistanceNum  ||
-			coord.y >= zone.y + renderDistanceNum;
+			coord.x < zone.x - TerrainGeneration::ChunkRenderDistanceNum() ||
+			coord.x >= zone.x + TerrainGeneration::ChunkRenderDistanceNum() ||
+			coord.y < zone.y - TerrainGeneration::ChunkRenderDistanceNum() ||
+			coord.y >= zone.y + TerrainGeneration::ChunkRenderDistanceNum();
 	}
 
 	void World::ReleaseChunks(std::vector<Chunk*>& to_be_released)
@@ -351,9 +342,9 @@ namespace MyWorld
 				});
 
 				// put all remained chunks into work_in_progress, and determine which chunks are yet to be created for later use
-				for (int y = -renderDistance; y < renderDistance; y++)
+				for (int y = -TerrainGeneration::ChunkRenderDistance(); y < TerrainGeneration::ChunkRenderDistance(); y++)
 				{
-					for (int x = -renderDistance; x < renderDistance; x++)
+					for (int x = -TerrainGeneration::ChunkRenderDistance(); x < TerrainGeneration::ChunkRenderDistance(); x++)
 					{
 						glm::vec2 coord = glm::vec2{ x, y } * (float)CHUNK_WIDTH + currentZone;
 						if (to_be_added.find(coord) == to_be_added.end())

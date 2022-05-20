@@ -3,7 +3,7 @@
 #include "Renderer/Camera.h"
 #include "Window/Window.h"
 #include "EventsHandler.h"
-#include "World.h"
+#include "World/World.h"
 #include "Time.h"
 #include "Info.h"
 

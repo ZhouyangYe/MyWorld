@@ -2,22 +2,12 @@
 
 namespace MyWorld
 {
-	// numbers of chunks to be rendered based on the player
-	int Chunk::renderDistanceNum = 1;
 	glm::vec3 Chunk::spawn_location{ 0.0f, 0.0f, -1.0f };
-
-	bool Chunk::showWorldBorder = true;
-	FastNoiseLite Chunk::noise;
 	std::vector<Block> Chunk::transparent_blocks;
 
 	const glm::vec3& Chunk::getCoords()
 	{
 		return coords;
-	}
-
-	void Chunk::setShowWorldBorder(bool&& show)
-	{
-		showWorldBorder = show;
 	}
 
 	const glm::vec3& Chunk::getSpawnLocation()
@@ -70,19 +60,19 @@ namespace MyWorld
 		{
 		case Block::DIRECTION::NORTH:
 			isChunkBorder = (int)blockCoords.y == CHUNK_WIDTH - 1;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z }) : blocks[idx + Y_OFFSET].type;
+			adjacentType = isChunkBorder ? TerrainGeneration::getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y + 1.0f, blockCoords.z }) : blocks[idx + Y_OFFSET].type;
 			break;
 		case Block::DIRECTION::SOUTH:
 			isChunkBorder = (int)blockCoords.y == 0;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y - 1.0f, blockCoords.z }) : blocks[idx - Y_OFFSET].type;
+			adjacentType = isChunkBorder ? TerrainGeneration::getType(glm::vec3{ blockCoords.x + coords.x, blockCoords.y + coords.y - 1.0f, blockCoords.z }) : blocks[idx - Y_OFFSET].type;
 			break;
 		case Block::DIRECTION::WEST:
 			isChunkBorder = (int)blockCoords.x == 0;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx - X_OFFSET].type;
+			adjacentType = isChunkBorder ? TerrainGeneration::getType(glm::vec3{ blockCoords.x + coords.x - 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx - X_OFFSET].type;
 			break;
 		case Block::DIRECTION::EAST:
 			isChunkBorder = (int)blockCoords.x == CHUNK_WIDTH - 1;
-			adjacentType = isChunkBorder ? getType(glm::vec3{ blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx + X_OFFSET].type;
+			adjacentType = isChunkBorder ? TerrainGeneration::getType(glm::vec3{ blockCoords.x + coords.x + 1.0f, blockCoords.y + coords.y, blockCoords.z }) : blocks[idx + X_OFFSET].type;
 			break;
 		case Block::DIRECTION::TOP:
 			isChunkBorder = blockCoords.z == CHUNK_DEPTH - 1;
@@ -90,7 +80,7 @@ namespace MyWorld
 			break;
 		case Block::DIRECTION::BOTTOM:
 			isChunkBorder = blockCoords.z == 0;
-			adjacentType = isChunkBorder ? (showWorldBorder ? Block::TYPE::AIR : Block::TYPE::INVALID) : blocks[idx - Z_OFFSET].type;
+			adjacentType = isChunkBorder ? (TerrainGeneration::ShowWorldBorder() ? Block::TYPE::AIR : Block::TYPE::INVALID) : blocks[idx - Z_OFFSET].type;
 			break;
 		default:
 			break;
@@ -285,15 +275,6 @@ namespace MyWorld
 
 	void Chunk::Init()
 	{
-		noise.SetSeed(666);
-		noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		noise.SetFrequency(0.003f);
-		noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-		noise.SetFractalOctaves(6);
-		noise.SetFractalLacunarity(1.5f);
-		noise.SetFractalGain(1.4f);
-		noise.SetFractalWeightedStrength(0.4f);
-		// noise.SetFractalPingPongStrength(1.5f);
 	}
 
 	void Chunk::Destroy()
@@ -341,7 +322,7 @@ namespace MyWorld
 			{
 				for (int z = 0; z < CHUNK_DEPTH; z++)
 				{
-					const Block::TYPE type = getType(glm::vec3{ x + coords.x, y + coords.y, z });
+					const Block::TYPE type = TerrainGeneration::getType(glm::vec3{ x + coords.x, y + coords.y, z });
 
 					// set spawn location
 					if (spawn_location.z == -1.0f && coords.x == 0.0f && coords.y == 0.0f && type == Block::TYPE::AIR)
@@ -369,51 +350,6 @@ namespace MyWorld
 		std::vector<Block>().swap(blocks);
 		batching_index_type1 = 0;
 		batching_index_type2 = 0;
-	}
-
-	// TODO: implement more interesting terrain
-	const Block::TYPE&& Chunk::getType(glm::vec3& pos)
-	{
-		if (showWorldBorder)
-		{
-			int width = renderDistanceNum;
-			if (
-				pos.x > width - 1 ||
-				pos.x < -width ||
-				pos.y > width - 1 ||
-				pos.y < -width ||
-				pos.z > CHUNK_DEPTH - 1 ||
-				pos.z < 0
-			)
-			{
-				return Block::TYPE::AIR;
-			}
-		}
-
-		const float data = (noise.GetNoise(pos.x, pos.y) + 1) / 2;
-		const int surface = (int)(CHUNK_DEPTH * data);
-		const int edge = surface - 1;
-		const int waterLine = 190;
-
-		if (pos.z < surface)
-		{
-			if (pos.z == edge && pos.z >= waterLine)
-			{
-				return Block::TYPE::GRASS;
-			}
-			else
-			{
-				return Block::TYPE::DIRT;
-			}
-		}
-		else if (pos.z <= waterLine)
-		{
-			return Block::TYPE::WATER;
-		}
-		else
-		{
-			return Block::TYPE::AIR;
-		}
 	}
 
 	Chunk::~Chunk()
@@ -479,10 +415,5 @@ namespace MyWorld
 		default:
 			break;
 		}
-	}
-
-	void Chunk::setChunkRenderDistanceNum(int& num)
-	{
-		renderDistanceNum = num;
 	}
 }

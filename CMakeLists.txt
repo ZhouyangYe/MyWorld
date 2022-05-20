@@ -17,8 +17,8 @@ add_executable(${PROJECT_NAME}
   src/Core/Time.cpp
   src/Core/Cursor.h
   src/Core/Cursor.cpp
-  src/Core/Chunk.h
-  src/Core/Chunk.cpp
+  src/Core/World/Chunk.h
+  src/Core/World/Chunk.cpp
   src/Events/Event.h
   src/Events/KeyCode.h
   src/Events/KeyEvent.h
@@ -46,8 +46,8 @@ add_executable(${PROJECT_NAME}
   src/Renderer/Model/Blocks/Water.cpp
   src/Core/Info.h
   src/Core/Info.cpp
-  src/Core/World.h
-  src/Core/World.cpp
+  src/Core/World/World.h
+  src/Core/World/World.cpp
   src/Renderer/Model/Blocks/WireFrame.h
   src/Renderer/Model/Blocks/WireFrame.cpp
   src/Renderer/Model/Model.h
@@ -62,7 +62,9 @@ add_executable(${PROJECT_NAME}
   src/Core/Objects/BaseObj.cpp
   src/Physics/Handler.h
   src/Physics/Handler.cpp
-)
+  src/Core/World/TerrainGeneration.h
+  src/Core/World/TerrainGeneration.cpp
+ "src/Core/World/ChunkGeneration.h")
 
 # add glfw
 add_subdirectory(libs/glfw)

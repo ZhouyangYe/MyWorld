@@ -1,6 +1,6 @@
 #pragma once
 #include "HitBox.h"
-#include "../Core/Chunk.h"
+#include "../Core/World/Chunk.h"
 
 namespace MyWorld
 {

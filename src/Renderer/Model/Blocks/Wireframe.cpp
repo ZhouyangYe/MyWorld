@@ -2,9 +2,9 @@
 
 namespace MyWorld
 {
-	Renderer::PosTextureArrayVertex* Wireframe::cubeVertices = nullptr;
+	Renderer::PosTextureVertex* Wireframe::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Wireframe::vbh = BGFX_INVALID_HANDLE;
-	const uint64_t Wireframe::state = Model::default_state & (~BGFX_STATE_CULL_CW);
+	const uint64_t Wireframe::state = Model::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL;
 	const glm::vec2 Wireframe::face = { 0.0f, 0.0f };
 	const uint8_t Wireframe::faces = 
 		(uint8_t)Block::DIRECTION::NORTH |
@@ -16,8 +16,8 @@ namespace MyWorld
 
 	void Wireframe::Register()
 	{
-		cubeVertices = Model::getVerticesType3(face, face, face, 0.003);
-		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureArrayVertex)), Renderer::PosTextureArrayVertex::layout);
+		cubeVertices = Model::getVerticesType5();
+		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureVertex)), Renderer::PosTextureVertex::layout);
 	}
 
 	void Wireframe::Destroy()
@@ -43,6 +43,6 @@ namespace MyWorld
 
 	void Wireframe::Draw(const uint8_t& faces)
 	{
-		Block::Draw(Model::blockTexture, vbh, Model::getIbh(faces), Renderer::texture_array_program, state);
+		Block::Draw(vbh, Model::getIbh(faces), Renderer::outline_program, state);
 	}
 }

@@ -41,6 +41,7 @@ namespace MyWorld
 		static Renderer::PosColorTextureVertex* getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
 		static Renderer::PosTextureArrayVertex* getVerticesType3(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const float offset = 0.0f);
 		static Renderer::PosColorTextureArrayVertex* getVerticesType4(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color);
+		static Renderer::PosTextureVertex* getVerticesType5();
 		// get ibh when exists, if not, create it and put into cache
 		static const bgfx::IndexBufferHandle& getIbh(const uint8_t& idx);
 		// texture for blocks

@@ -89,6 +89,32 @@ namespace MyWorld
         return vertices;
     }
 
+    // block vertices for texture
+    Renderer::PosTextureVertex* Model::getVerticesType5()
+    {
+        Renderer::PosTextureVertex* vertices = new Renderer::PosTextureVertex[16]{
+            { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, }, // 0 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, }, // 1 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, }, // 2 --- 1,0,1
+            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, }, // 3 --- 0,0,1
+            { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, }, // 4 --- 0,1,1
+            { 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, }, // 5 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, }, // 6 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, }, // 7 --- 1,1,1
+
+            { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, }, // 0 + 8 --- 0,0,0
+            { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, }, // 1 + 8 --- 1,0,0
+            { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, }, // 2 + 8 --- 1,0,1 --- top
+            { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, }, // 3 + 8 --- 0,0,1 --- top
+            { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, }, // 4 + 8 --- 0,1,1 --- top
+            { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, }, // 5 + 8 --- 0,1,0
+            { 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, }, // 6 + 8 --- 1,1,0
+            { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, }  // 7 + 8 --- 1,1,1 --- top
+        };
+
+        return vertices;
+    }
+
     // block vertices for texture(atlas) color
     Renderer::PosColorTextureVertex* Model::getVerticesType2(const glm::vec2& side, const glm::vec2& top, const glm::vec2& bottom, const uint32_t color)
     {

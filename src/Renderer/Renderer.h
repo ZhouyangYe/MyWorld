@@ -116,6 +116,7 @@ namespace MyWorld
 		static bgfx::ProgramHandle color_program;
 		static bgfx::ProgramHandle water_program;
 		static bgfx::ProgramHandle texture_program;
+		static bgfx::ProgramHandle outline_program;
 		static bgfx::ProgramHandle texture_color_program;
 		static bgfx::ProgramHandle texture_array_program;
 		static bgfx::ProgramHandle texture_array_color_program;

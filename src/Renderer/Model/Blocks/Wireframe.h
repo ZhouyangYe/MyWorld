@@ -6,7 +6,7 @@ namespace MyWorld
 	class Wireframe : public Block
 	{
 	private:
-		static Renderer::PosTextureArrayVertex* cubeVertices;
+		static Renderer::PosTextureVertex* cubeVertices;
 		static bgfx::VertexBufferHandle vbh;
 		static const glm::vec2 face;
 		static const uint8_t faces;

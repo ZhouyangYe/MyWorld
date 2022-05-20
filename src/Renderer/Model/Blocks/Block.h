@@ -40,6 +40,7 @@ namespace MyWorld
 		// coords of block, based on chunks
 		glm::vec3 coords;
 		void Draw(Texture* texture, bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state);
+		void Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state);
 		// coords of block, based on the world coordinates
 		glm::vec3 world_coords;
 	};

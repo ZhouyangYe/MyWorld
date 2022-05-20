@@ -43,4 +43,26 @@ namespace MyWorld
         // Submit primitive for rendering to view 0.
         bgfx::submit(0, program);
 	}
+
+    void Block::Draw(bgfx::VertexBufferHandle& vbh, const bgfx::IndexBufferHandle& ibh, bgfx::ProgramHandle& program, const uint64_t& state)
+    {
+        if (ibh.idx == bgfx::kInvalidHandle) return;
+
+        glm::mat4 mtx(1.0f);
+        mtx = glm::translate(mtx, world_coords);
+
+        // Set model matrix for rendering.
+        bgfx::setTransform(&mtx);
+        bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
+
+        // Set vertex and index buffer.
+        bgfx::setVertexBuffer(0, vbh);
+        bgfx::setIndexBuffer(ibh);
+
+        // Set render states.
+        bgfx::setState(state);
+
+        // Submit primitive for rendering to view 0.
+        bgfx::submit(0, program);
+    }
 }

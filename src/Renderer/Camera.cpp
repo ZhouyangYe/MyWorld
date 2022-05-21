@@ -1,10 +1,5 @@
 #include "Camera.h"
 
-#define WALK_SPEED 2.0f
-#define SPRINT_SPEED 3.0f
-#define CRAWL_SPEED 1.0f
-#define MAX_DISTANCE 5.0f
-
 namespace MyWorld
 {
 	const glm::vec3 Camera::WORLD_UP{ 0.0f, 0.0f, 1.0f };
@@ -97,7 +92,7 @@ namespace MyWorld
 		up = param.up;
 		right = glm::normalize(glm::cross(Camera::forward, Camera::up));
 		updateCam();
-		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.01f, param.view_distance);
+		proj = glm::perspective(glm::radians(75.0f), float(param.windowSize.width) / float(param.windowSize.height), 0.1f, param.view_distance);
 	}
 
 	void Camera::Terminate()

@@ -4,9 +4,9 @@
 namespace MyWorld
 {
     bgfx::ProgramHandle Renderer::color_program = BGFX_INVALID_HANDLE;
+    bgfx::ProgramHandle Renderer::outline_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::water_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_program = BGFX_INVALID_HANDLE;
-    bgfx::ProgramHandle Renderer::outline_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_color_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_program = BGFX_INVALID_HANDLE;
     bgfx::ProgramHandle Renderer::texture_array_color_program = BGFX_INVALID_HANDLE;
@@ -48,9 +48,9 @@ namespace MyWorld
 
 
         color_program = Tools::createProgram("vs_color", "fs_color");
+        outline_program = Tools::createProgram("vs_outline", "fs_outline");
         water_program = Tools::createProgram("vs_water", "fs_water");
         texture_program = Tools::createProgram("vs_texture", "fs_texture");
-        outline_program = Tools::createProgram("vs_outline", "fs_outline");
         texture_color_program = Tools::createProgram("vs_texture_color", "fs_texture_color");
         texture_array_program = Tools::createProgram("vs_texture_array", "fs_texture_array");
         texture_array_color_program = Tools::createProgram("vs_texture_array_color", "fs_texture_array_color");
@@ -69,9 +69,9 @@ namespace MyWorld
         Tools::Terminate();
 
         bgfx::destroy(color_program);
+        bgfx::destroy(outline_program);
         bgfx::destroy(water_program);
         bgfx::destroy(texture_program);
-        bgfx::destroy(outline_program);
         bgfx::destroy(texture_color_program);
         bgfx::destroy(texture_array_program);
         bgfx::destroy(texture_array_color_program);

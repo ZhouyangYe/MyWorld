@@ -181,14 +181,14 @@ namespace MyWorld
 						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
 						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
 						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y, floor(xzInterceptPoint.z) };
-						yzDirection = Block::DIRECTION::SOUTH;
+						xzDirection = Block::DIRECTION::SOUTH;
 					}
 					else
 					{
 						factor = abs((eyeLocation.y - xzFace) / forwardVec.y);
 						xzInterceptPoint = { factor * forwardVec.x + eyeLocation.x, xzFace, factor * forwardVec.z + eyeLocation.z };
 						xzPos = { floor(xzInterceptPoint.x), xzInterceptPoint.y - 1.0f, floor(xzInterceptPoint.z) };
-						yzDirection = Block::DIRECTION::NORTH;
+						xzDirection = Block::DIRECTION::NORTH;
 					}
 					updateClosestPoint(blockFound, xzDone, xzInterceptPoint, xzPos, xzDirection, xzFace, yOffset, closestPointLength);
 				}
@@ -200,21 +200,22 @@ namespace MyWorld
 						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
 						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
 						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z };
-						yzDirection = Block::DIRECTION::BOTTOM;
+						xyDirection = Block::DIRECTION::BOTTOM;
 					}
 					else
 					{
 						factor = abs((eyeLocation.z - xyFace) / forwardVec.z);
 						xyInterceptPoint = { factor * forwardVec.x + eyeLocation.x, factor * forwardVec.y + eyeLocation.y, xyFace };
 						xyPos = { floor(xyInterceptPoint.x) , floor(xyInterceptPoint.y), xyInterceptPoint.z - 1.0f };
-						yzDirection = Block::DIRECTION::TOP;
+						xyDirection = Block::DIRECTION::TOP;
 					}
 					updateClosestPoint(blockFound, xyDone, xyInterceptPoint, xyPos, xyDirection, xyFace, zOffset, closestPointLength);
 				}
 			}
 
-			if (blockFound)
+			if (blockFound) {
 				wireframe.setCoords(selectedPos);
+			}
 			else
 			{
 				selectedPos = NOT_SELECTED;
@@ -471,9 +472,9 @@ namespace MyWorld
 			player.DrawHitBox();
 		}
 
+		// draw outline for selected block
 		if (selectionEnabled && selectedPos.z != -1.0f)
 		{
-			// TODO: find a better way to render the wireframe
 			wireframe.Draw();
 		}
 

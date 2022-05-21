@@ -4,6 +4,11 @@
 #include "Core/Time.h"
 #include "Tools.h"
 
+#define WALK_SPEED 2.0f
+#define SPRINT_SPEED 3.0f
+#define CRAWL_SPEED 1.0f
+#define MAX_DISTANCE 3.6f
+
 namespace MyWorld
 {
 	class Camera
@@ -31,7 +36,7 @@ namespace MyWorld
 			WindowSize windowSize;
 			float view_distance;
 			glm::vec3 spawnLocation;
-			float zoom = 5.0f;
+			float zoom = MAX_DISTANCE;
 			glm::vec3 forward{ 1.0f, 0.0f, 0.0f };
 			glm::vec3 up{ 0.0f, 0.0f, 1.0f };
 		};

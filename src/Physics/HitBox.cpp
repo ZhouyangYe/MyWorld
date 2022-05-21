@@ -4,8 +4,14 @@ namespace MyWorld
 {
 	Renderer::PosColorVertex* HitBox::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle HitBox::vbh = BGFX_INVALID_HANDLE;
-	const uint8_t HitBox::faces = 0;
-	const uint64_t HitBox::state = Model::default_state | BGFX_STATE_PT_LINESTRIP;
+	const uint8_t HitBox::faces = 0 |
+		(uint8_t)Block::DIRECTION::NORTH |
+		(uint8_t)Block::DIRECTION::SOUTH |
+		(uint8_t)Block::DIRECTION::WEST |
+		(uint8_t)Block::DIRECTION::EAST |
+		(uint8_t)Block::DIRECTION::TOP |
+		(uint8_t)Block::DIRECTION::BOTTOM;
+	const uint64_t HitBox::state = Model::default_state | BGFX_STATE_PT_LINES;
 	HitBox HitBox::terrainHitBox = HitBox(true, 0.0f, glm::vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f);
 
 	HitBox::~HitBox()

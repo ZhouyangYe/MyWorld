@@ -1,8 +1,15 @@
 #include "Model.h"
 
+//    v4----- v7
+//   /|      /|
+//  v3------v2|
+//  | |     | |
+//  | |v5---|-|v6
+//  |/      |/
+//  v0------v1
+
 namespace MyWorld
 {
-
     const glm::vec3 Model::NorthFaceVec = glm::vec3{ 0.5f, 1.0f, 0.5f };
     const glm::vec3 Model::SouthFaceVec = glm::vec3{ 0.5f, 0.0f, 0.5f };
     const glm::vec3 Model::WestFaceVec = glm::vec3{ 0.0f, 0.5f, 0.5f };
@@ -219,53 +226,43 @@ namespace MyWorld
     // create cache for static index buffer
     void Model::createIbh(const uint8_t& idx)
     {
-        // hack: if idx equal to 0, we get index buffer for hitbox wireframe
-        if (idx == 0)
-        {
-            uint16_t* cubeTriList = new uint16_t[24]
-            {
-                0, 1,
-                0, 3,
-                0, 5,
-                4, 5,
-                4, 3,
-                4, 7,
-                6, 7,
-                6, 5,
-                6, 1,
-                2, 1,
-                2, 7,
-                2, 3
-            };
-            triListPointers[idx] = cubeTriList;
-            ibh[idx] = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, 24 * sizeof(uint16_t)));
-            return;
-        }
-
+        const int length = 8;
         uint8_t counter = 0;
         for (uint8_t i = 0; i < 6; i++)
         {
             if (idx & (1 << i)) counter++;
         }
 
-        uint8_t size = counter * 6;
+        uint8_t size = counter * length;
 
         uint16_t* cubeTriList = new uint16_t[size];
 
-        const uint16_t cubeTriListTemplate[36] =
+        const uint16_t cubeTriListTemplate[6 * length] =
         {
-             6,  5,  4, // North
-             4,  7,  6,
-             0,  1,  2, // South
-             2,  3,  0,
-             5,  0,  3, // West
-             3,  4,  5,
-             1,  6,  7, // East
-             7,  2,  1,
-            11, 10, 15, // Top
-            15, 12, 11,
-            13, 14,  9, // Bottom
-             9,  8, 13
+            5, 4, // North
+            4, 7,
+            7, 6,
+            6, 5,
+            0, 3, // South
+            3, 2,
+            2, 1,
+            1, 0,
+            0, 3, // West
+            3, 4,
+            4, 5,
+            5, 0,
+            1, 2, // East
+            2, 7,
+            7, 6,
+            6, 1,
+            2, 3, // Top
+            3, 4,
+            4, 7,
+            7, 2,
+            1, 0, // Bottom
+            0, 5,
+            5, 6,
+            6, 1
         };
 
         uint8_t pointer = 0;
@@ -273,9 +270,9 @@ namespace MyWorld
         {
             if (idx & (1 << i))
             {
-                for (uint8_t j = 0; j < 6; j++)
+                for (uint8_t j = 0; j < length; j++)
                 {
-                    cubeTriList[pointer * 6 + j] = cubeTriListTemplate[i * 6 + j];
+                    cubeTriList[pointer * length + j] = cubeTriListTemplate[i * length + j];
                 }
                 pointer++;
             }

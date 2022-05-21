@@ -2,22 +2,21 @@
 
 namespace MyWorld
 {
-	Renderer::PosTextureVertex* Wireframe::cubeVertices = nullptr;
+	Renderer::PosColorVertex* Wireframe::cubeVertices = nullptr;
 	bgfx::VertexBufferHandle Wireframe::vbh = BGFX_INVALID_HANDLE;
-	const uint64_t Wireframe::state = Model::default_state & (~BGFX_STATE_CULL_CW) & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL;
-	const glm::vec2 Wireframe::face = { 0.0f, 0.0f };
-	const uint8_t Wireframe::faces = 
+	const uint64_t Wireframe::state = Model::default_state & (~BGFX_STATE_DEPTH_TEST_LESS) | BGFX_STATE_DEPTH_TEST_LEQUAL | BGFX_STATE_PT_LINES;
+	const uint8_t Wireframe::faces = 0 |
 		(uint8_t)Block::DIRECTION::NORTH |
 		(uint8_t)Block::DIRECTION::SOUTH |
-		(uint8_t)Block::DIRECTION::WEST  |
-		(uint8_t)Block::DIRECTION::EAST  |
-		(uint8_t)Block::DIRECTION::TOP   |
+		(uint8_t)Block::DIRECTION::WEST |
+		(uint8_t)Block::DIRECTION::EAST |
+		(uint8_t)Block::DIRECTION::TOP |
 		(uint8_t)Block::DIRECTION::BOTTOM;
 
 	void Wireframe::Register()
 	{
-		cubeVertices = Model::getVerticesType5();
-		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosTextureVertex)), Renderer::PosTextureVertex::layout);
+		cubeVertices = Model::getVerticesType0(0xff333333);
+		vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 16 * sizeof(Renderer::PosColorVertex)), Renderer::PosColorVertex::layout);
 	}
 
 	void Wireframe::Destroy()
@@ -41,7 +40,7 @@ namespace MyWorld
 	Wireframe::~Wireframe()
 	{}
 
-	void Wireframe::Draw(const uint8_t& faces)
+	void Wireframe::Draw()
 	{
 		Block::Draw(vbh, Model::getIbh(faces), Renderer::outline_program, state);
 	}

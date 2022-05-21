@@ -6,18 +6,17 @@ namespace MyWorld
 	class Wireframe : public Block
 	{
 	private:
-		static Renderer::PosTextureVertex* cubeVertices;
+		static Renderer::PosColorVertex* cubeVertices;
 		static bgfx::VertexBufferHandle vbh;
-		static const glm::vec2 face;
-		static const uint8_t faces;
 		static const uint64_t state;
+		static const uint8_t faces;
 	public:
 		static void Register();
 		static void Destroy();
 	public:
 		Wireframe();
 		~Wireframe();
-		void Draw(const uint8_t& faces = faces);
+		void Draw();
 		void setCoords(const glm::vec3& coords);
 	};
 }

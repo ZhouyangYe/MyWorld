@@ -64,7 +64,11 @@ add_executable(${PROJECT_NAME}
   src/Physics/Handler.cpp
   src/Core/World/TerrainGeneration.h
   src/Core/World/TerrainGeneration.cpp
- "src/Core/World/ChunkGeneration.h")
+  src/Core/World/ChunkGeneration.h
+  src/Core/World/ChunkGeneration.cpp
+  src/Core/World/GameState.h
+  src/Core/World/GameState.cpp
+)
 
 # add glfw
 add_subdirectory(libs/glfw)

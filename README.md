@@ -29,3 +29,4 @@
 	28. cmake build configurations(release, debug)
 	29. procedurally terrain generation ✔
 	30. octree
+	31. switch to Vulkan instead of bgfx

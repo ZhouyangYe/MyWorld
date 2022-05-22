@@ -28,7 +28,7 @@ namespace MyWorld
 		WindowSize size;
 		WindowVersion version;
 		std::string title;
-		WindowParams() : title("Untitled") {}
+		WindowParams() : title("My World") {}
 		WindowParams(WindowSize& _size, WindowVersion& _version, std::string& _title) : size(_size), version(_version), title(_title) {}
 	};
 

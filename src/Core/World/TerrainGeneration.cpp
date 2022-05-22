@@ -3,7 +3,7 @@
 namespace MyWorld
 {
 	FastNoiseLite TerrainGeneration::noise;
-	int TerrainGeneration::renderDistance = 3;
+	int TerrainGeneration::renderDistance = 20;
 	// numbers of chunks to be rendered based on the player
 	int TerrainGeneration::renderDistanceNum = renderDistance * CHUNK_WIDTH;
 	int TerrainGeneration::chunk_num = renderDistance * renderDistance * 4;

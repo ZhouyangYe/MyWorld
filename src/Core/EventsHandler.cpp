@@ -80,7 +80,7 @@ namespace MyWorld
 				}
 				break;
 			case Key::Escape:
-				World::gameover = true;
+				GameState::gameover = true;
 				Window::setShouldWindowClose(true);
 				break;
 			default:

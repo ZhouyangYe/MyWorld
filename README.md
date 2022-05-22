@@ -1,4 +1,4 @@
-<img src="https://github.com/ZhouyangYe/MyWorld/blob/master/resources/screenshot.png" />
+<img src="https://github.com/ZhouyangYe/MyWorld/blob/master/resources/images/screenshot.png" />
 
 # TODOs:
 	1. camera ✔

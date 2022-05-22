@@ -1,3 +1,5 @@
+<img src="https://github.com/ZhouyangYe/MyWorld/blob/master/resources/screenshot.png" />
+
 # TODOs:
 	1. camera ✔
 	2. chunk greedy meshing and batching ✔

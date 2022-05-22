@@ -25,7 +25,7 @@
 	22. block placement and destruction
 	23. modeling
 	24. multi-threading ✔
-	25. file system for loading textures and shaders(cross platform)
+	25. file system for loading textures and shaders
 	26. increase render distance(greater than 100 maybe?)
 	27. particle system(rain, snow, etc)
 	28. cmake build configurations(release, debug)
